@@ -41,6 +41,9 @@ function readImdbData() {
         console.log("IMDB ratings imported!");
       });
     } else {
+      if (!fs.existsSync("./datastore")) {
+        fs.mkdirSync("./datastore");
+      }
       console.log("IMDB ratings file not found!");
       refreshImdbData("https://datasets.imdbws.com/title.ratings.tsv.gz", imdbRatingsFilePath);
     }
