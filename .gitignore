@@ -1,5 +1,6 @@
 /cert
-/datastore
 /.vscode
 /node_modules
+*.gz
+*.tsv
 *.txt
