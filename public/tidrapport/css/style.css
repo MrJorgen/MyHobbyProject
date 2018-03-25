@@ -1,4 +1,60 @@
 body {
-  width: 30cm;
-  height: 20cm;
+  position: relative;
+    margin: auto;
+    padding: 0px;
+    width: 29.7cm;
+    height: 20.99cm;
+    background-image: url(../img/veckoarbetstidskort.jpg);
+    background-size: 29.7cm 21cm;
+    background-repeat: no-repeat;
+    background-position-y: -10px;
+    background-position-x: center;
+    font-family: 'Handlee', cursive;
+  }
+
+  @media screen {
+    body {
+      border: 1px solid black;
+    }
+  }
+
+  /*
+  font-family: 'Handlee', cursive;
+  font-family: 'Architects Daughter', cursive;
+  font-family: 'Italianno', cursive;
+  font-family: 'Delius', cursive;
+  font-family: 'Short Stack', cursive;
+  font-family: 'Crafty Girls', cursive;
+  font-family: 'Waiting for the Sunrise', cursive;
+  font-family: 'Dekko', cursive;
+  font-family: 'Swanky and Moo Moo', cursive;
+  */
+  
+input {
+  font-family: 'Coming Soon', cursive;
+  font-weight: bold;
+  width: 100%;
+  border: none;
+  background: transparent;
+}
+
+#company {
+  position: absolute;
+  top: 0.75cm;
+  left: 2cm;
+  width: 8cm;
+}
+
+#city {
+  position: absolute;
+  top: 1.35cm;
+  left: 1.2cm;
+  width: 6cm;
+}
+
+#driver {
+  position: absolute;
+  top: 1.35cm;
+  left: 9.8cm;
+  width: 6cm;
 }
