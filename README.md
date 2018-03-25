@@ -1,6 +1,6 @@
 # My Hobby Project
 
-## To install an run the app:
+## To install and run the app:
 
 * Run <code>npm install</code> after cloning
 
