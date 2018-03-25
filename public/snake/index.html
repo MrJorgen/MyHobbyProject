@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Snake - The Classic(Nokia) Game</title>
+	<link id="fonts" href="https://fonts.googleapis.com/css?family=Baumans|Inconsolata|McLaren|Overlock|Rakkas|Righteous|Stint+Ultra+Expanded|Unkempt" rel="stylesheet">
+	<style type="text/css">
+		@import url("https://fonts.googleapis.com/css?family=VT323");
+		@font-face {
+		    font-family: Guru;
+		    src: url("etc/guru0.ttf");
+		}
+
+		body {
+			background: #000;
+			color: silver;
+			font-size: 1em;
+			font-family: Baumans;
+			font-weight: bolder;
+		}
+		.container {
+			margin: 10px auto;
+			width: 100%;
+			text-align: center;
+			display: flex;
+		}
+
+		.flexbox {
+			display: flex;
+			justify-content: space-between;
+			width: 370px;
+			margin: 70px auto 0px auto;
+		}
+		.container canvas {
+			display: block;
+			margin: 0px auto;
+		}
+		#score {
+			/*margin: 10px auto;*/
+		}
+		#score::before {
+			content: "Score: ";
+		}
+		#level::before {
+			content: "Level: ";
+		}
+		#food::before {
+			content: "To next level: ";
+		}
+
+		#gameover {
+			font-family: VT323, serif;
+			color: #ddd;
+			font-size: 4em;
+			/*font-weight: bold;*/
+			position: relative;
+			margin-top: -280px;
+			display: none;
+		}
+		#settings {
+			float: left;
+			display: inline;
+		}
+		.sidebars {
+			max-width: 150px;
+		}
+	</style>
+</head>
+<body>
+	<div id="game_info" class="flexbox">
+		<span id="score">0</span>
+		<span id="level">1</span>
+		<span id="food">10</span>
+	</div>
+	<div class="container">
+		<canvas id="snake" width="400" height="300"></canvas>
+		<!-- <p id="gameover"><strong>Game Over</strong><small><br>Play again?<br>Y/N</small></p>-->
+	</div>
+	<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+	<script src="snake.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Tetris</title>
+	<style type="text/css">
+		body{
+			background: #000;
+		}
+		.container{
+			margin: 100px auto;
+			width: 240px;
+		}
+		.container canvas{
+			border: 2px solid white;
+		}
+		#score{
+			margin: 10px auto;
+			text-align: center;
+			font-family: verdana, sans-serif;
+			font-size: 1.5em;
+			color: silver;
+		}
+		#score::before{
+			content: "Score: ";
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div id="score">0</div>
+		<canvas id="tetris" width="240" height="400"></canvas>
+	</div>
+	<script src="tetris.js"></script>
+</body>
+</html>

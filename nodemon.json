@@ -1,0 +1,15 @@
+{
+   "verbose": true,
+   "ignore": [
+      "phpMyAdmin/*",
+      "cube_timer/*",
+      "*.png",
+      "*.jpg",
+      "*.gif",
+      "/*.handlebars"
+   ],
+   "watch": [
+      "views/*",
+      "*.*"
+   ]
+}

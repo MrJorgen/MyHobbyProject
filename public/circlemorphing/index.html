@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>CircleMorphing</title>
+        <script src="utils.js"></script>
+        <script src="main.js"></script>
+
+        <link id="fonts" href="https://fonts.googleapis.com/css?family=Sarpanch" rel="stylesheet">
+        <style>
+            * {
+                margin: 0;
+                overflow: hidden;
+            }
+
+            #font_preload {
+                font-family: Sarpanch;
+                position: absolute;
+                top: -1000px;
+                visibility: hidden;
+            }
+
+            #canvas,
+            #bgCanvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 2;
+            }
+
+            #morphMode {
+                position: absolute;
+                left: 2%;
+                top: 2%;
+                z-index: 10;
+            }
+        </style>
+    </head>
+
+    <body>
+        <select onchange="setup()" name="MorphMode" id="morphMode">
+            <option selected="selected" value="Remove">Remove point by point</option>
+            <option value="Straight">Straight morph</option>
+            <option value="Additive">Add/remove corners</option>
+        </select>
+        <div id="font_preload">Hi</div>
+        <canvas id="canvas"></canvas>
+    </body>
+
+</html>

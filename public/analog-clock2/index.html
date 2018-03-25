@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Analog Clock</title>
+        <script src="main.js"></script>
+        <!-- <script src="test.js"></script> -->
+        <link id="fonts" href="https://fonts.googleapis.com/css?family=Sarpanch" rel="stylesheet">
+        <style>
+            * {
+                margin: 0;
+                overflow: hidden;
+            }
+
+            #font_preload {
+                font-family: Sarpanch;
+                position: absolute;
+                top: -1000px;
+                visibility: hidden;
+            }
+
+            #canvas,
+            #bgCanvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 2;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="font_preload">Hi</div>
+        <canvas id="canvas"></canvas>
+    </body>
+
+</html>

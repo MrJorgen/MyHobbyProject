@@ -1,0 +1,26 @@
+{
+  "name": "socket-chat-example",
+  "version": "0.0.1",
+  "description": "my first socket.io app",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "client-sessions": "^0.8.0",
+    "csv": "^2.0.0",
+    "csvtojson": "^1.1.9",
+    "ejs": "^2.5.7",
+    "express": "^4.15.2",
+    "express-force-ssl": "^0.3.2",
+    "express-handlebars": "^3.0.0",
+    "faker": "^4.1.0",
+    "handlebars": "^4.0.11",
+    "handlebars-helpers": "^0.10.0",
+    "moment": "^2.21.0",
+    "mongoose": "^5.0.7",
+    "node-tsv-json": "^0.2.1",
+    "request": "^2.83.0",
+    "socket.io": "^1.7.3"
+  },
+  "scripts": {
+    "start": "node app.js"
+  }
+}

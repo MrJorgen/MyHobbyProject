@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous">
+    <link rel="stylesheet" href="https://bootswatch.com/4/slate/bootstrap.css">
+    <link rel="stylesheet" href="/movie.css">
+    <link href="https://fonts.googleapis.com/css?family=Acme|Arima+Madurai:400,700|Asul|Averia+Sans+Libre|Averia+Serif+Libre|Baloo|Bowlby+One+SC|Bubblegum+Sans|Coiny|Concert+One|Corben|Crushed|Days+One|Doppio+One|Federo|Fredericka+the+Great|Fredoka+One|Gruppo|Kanit|Lemonada|Lobster|Mada:500|Mirza|Oleo+Script+Swash+Caps|Passion+One|Patua+One|Shanti"
+      rel="stylesheet">
+    <!--
+         font-family: 'Acme',sans-serif;
+         font-family: 'Patua One', cursive;
+         font-family: 'Kanit', sans-serif;
+         font-family: 'Passion One', cursive;
+         font-family: 'Concert One', cursive;
+         font-family: 'Fredoka One', cursive;
+         font-family: 'Arima Madurai', cursive;
+1        font-family: 'Days One', sans-serif; 
+         font-family: 'Bubblegum Sans', cursive;
+         font-family: 'Doppio One', sans-serif;
+         font-family: 'Mada', sans-serif;
+         font-family: 'Gruppo', cursive;
+         font-family: 'Averia Serif Libre', cursive;
+         font-family: 'Oleo Script Swash Caps', cursive;
+         font-family: 'Crushed', cursive;
+         font-family: 'Corben', cursive;
+         font-family: 'Averia Sans Libre', cursive;
+         font-family: 'Shanti', sans-serif;
+      -->
+      <style>
+      body {
+        /* background-image: linear-gradient(to bottom, rgba(39, 43, 48, 0.8) 0%, rgba(39, 43, 48, 0.8) 100%), url(<%= config.images.secure_base_url + config.images.backdrop_sizes[3] + data.backdrop_path %>); */
+      }
+      .background-color {
+        min-height: 100vh;
+      }
+      
+      .background-image::before {
+        content: "";  
+        filter: brightness(20%) grayscale(100%) opacity(50%);
+        background-image: url(<%= config.images.secure_base_url + config.images.backdrop_sizes[3] + data.backdrop_path %>);
+        background-size: cover;
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: -100;
+      }
+
+
+      </style>
+    <title>My Movies - <%= data.title %></title>
+  </head>
+  <body>
+  <div class="background-image">
+  <div class="background-color">
+  <% include ./partials/navbar %>
+      <h3 class="border-bottom pb-3"><%= data.title %> (<%= new Date(data.release_date).getFullYear() %>)</h3>
+      <div class="row">
+        <div class="col">
+          <div class="w-100">
+            <div class="rounded w-100">
+              <% if (data.images.posters.length > 0) { %>
+                <img id="getColorFrom" class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.images.posters[0].file_path %>" alt="">
+              <% } else { %>
+                <img id="getColorFrom" class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.poster_path %>" alt="">
+              <% } %>
+            </div>
+            <% if (data.belongs_to_collection){ %>
+              <% include ./partials/collection %>
+            <% } %>
+          </div>
+        </div>
+        <div class="col">
+          <div class="w-100" style="display: inline-flex;">
+            <div class="">
+              <svg class="circle-chart" viewbox="0 0 200 200" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                <circle class="circle-chart__background" stroke="hsla(<%= data.vote_average * 12 %>, 75%, 80%, 1)" stroke-width="20" fill="rgba(0, 0, 0, 0.5)" cx="100" cy="100" r="80"
+                />
+                <circle class="circle-chart__circle" stroke-width="20" stroke="hsl(<%= data.vote_average * 12 %>, 75%, 40%)" stroke-dasharray="<%= data.vote_average * 50 %>, 502.4"
+                  stroke-linecap="round" fill="none" cx="100" cy="100" r="80" />
+                  <!-- <line x1="0" y1="100" x2="200" y2="100" style="stroke:rgb(0,0,0);stroke-width: 1" /> -->
+                <g class="circle-chart__info">
+                  <text class="circle-chart__percent" x="100" y="120" fill="#fff">
+                    <tspan id="percent"><%= data.vote_average * 10 %></tspan><tspan style="font-size: 50%" dy="-20">%</tspan>
+                  </text>
+                </g>
+              </svg>
+            </div>
+            <div style="padding-left: 15px;" class="lh-50">
+               based on <%= data.vote_count %> user ratings
+            </div>
+            </div>
+            <% if(imdbRatings[data.imdb_id]) { %>
+            <div class="w-100 pb-2 pt-2 imdbRating">
+              <a href="https://www.imdb.com/title/<%= data.imdb_id %>">
+                <img style="vertical-align: text-bottom;" src="https://ia.media-imdb.com/images/G/01/imdb/plugins/rating/images/imdb_37x18.png" alt="<%= data.title %> on IMDb">
+              </a>
+              <span class="rating"><%= imdbRatings[data.imdb_id].rating %>/<span class="ofTen">10 </span></span><span class="votes"><%= parseInt(imdbRatings[data.imdb_id].votes).toLocaleString() %> votes</span>
+            </div>
+            <% } %>
+
+          <p><strong>Released:</strong><br> <%= data.release_date %></p>
+          <p><strong>Overview:</strong><br> <%- data.overview %></p>
+          
+          <%# All this to find out id there is more than one director %>
+          <% if (data.credits.crew.filter((e) => { return e.job == "Director" }).map((e) => e.name).length > 1) { %>
+            <p><strong>Directors:</strong>
+          <% } else { %>
+            <p><strong>Director:</strong>
+          <% } %>
+          <br>
+          <%= data.credits.crew.filter((e) => { return e.job == "Director" }).map((e) => e.name).join(", ") %>
+          <%# All this to find out id there is more than one director %>
+
+          <p><strong>Runtime:</strong><br>
+          <%=  Math.floor(data.runtime / 60) + "h " + (data.runtime % 60) + "min" %></p>
+          <p>
+            <strong>Genre: </strong><br>
+              <%= data.genres.map((e) => e.name ).join(", "); %>
+          </p>
+          <div class="links">
+            <% if(data.imdb_id) { %>
+            <a href="https://www.imdb.com/title/<%= data.imdb_id %>">
+              <img src="/IMDB_Logo_2016.svg">
+            </a><!-- IMDB id -->
+            <a href="https://hdbits.org/browse.php?imdb=<%= data.imdb_id %>">
+              <img src="/HDBits_logo_small.png">
+            </a><!-- IMDB id -->
+            <% } %>
+            <a href="https://www.themoviedb.org/movie/<%= data.id %>">
+              <img src="/primary-green.svg">
+            </a><!-- The Movie DB id -->
+            <a href="https://www.google.se/search?q=<%= data.title %>">
+              <img src="/Google_2015_logo.svg">
+            </a><!-- Movie title -->
+          </div>
+          <!-- Embed official trailer(if there is one) -->
+          <% 
+            function findOfficialYoutubeVideo(){
+              if(data.videos){
+                let videos = data.videos.results;
+                videos = videos.filter((video) => {
+                  return (video.name == "Official Trailer" && video.site == "YouTube");
+                });
+                if(videos.length != 0){
+                  return videos[0].key;
+                } else {
+                  return false;
+                }
+            }
+            }
+          %>
+          <% if(findOfficialYoutubeVideo()){ %>
+            <iframe style="min-width: 376px; min-height: 212px;" src="https://www.youtube.com/embed/<%= findOfficialYoutubeVideo() %>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          <% } %>  
+          </div>
+        <div class="col">
+          <ul class="list-group">
+            <li class="list-group-item">
+              <strong>Cast:</strong>
+            </li>
+            <% 
+              for (let i = 0; i < data.credits.cast.length; i++) {
+              if(i >= 5) break;
+            %>
+            <li class="list-group-item">
+              <a href="/movies/person/<%= data.credits.cast[i].id %>"  class="profile-image-container">
+                <% if (data.credits.cast[i].profile_path) { %>
+                <!-- -->
+                <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/original<%= data.credits.cast[i].profile_path %>" alt="">
+                <!-- -->
+                <% } else { %>
+                <img class="profile-photo rounded-5" src="/unknown.png" alt="">
+                <!-- -->
+                <% } %>
+              </a>
+              <div class="profile-name-container">
+                <span class="profile-name-text">
+                  <strong><%= data.credits.cast[i].name %></strong>
+                  <br>
+                  <small>as<br><%= data.credits.cast[i].character %></small>
+                </span>
+              </div>
+            </li>
+            <% } %>
+          </ul>
+        </div>
+        <!-- <div class="col"></div> -->
+      </div>
+    <script>
+      let scrollTimer = null;
+      window.addEventListener("resize",  startAnimation);
+
+
+      window.addEventListener('scroll', function(e) {
+        console.log("Scroll detected!");
+        if(scrollTimer !== null) {
+            clearTimeout(scrollTimer);
+        } else {
+            // startAnimation(e);
+            scrollTimer = setTimeout(() => {
+              startAnimation(e);
+            }, 150);
+        }
+      }, false);
+
+      
+      // animElem.getBoundingClientRect().bottom + animElem.getBoundingClientRect().height < window.innerHeight
+      // animElem.getBoundingClientRect().top > 0 
+
+      function startAnimation(e){
+        let animElem = document.querySelector(".circle-chart__circle");
+        if(animElem.getBoundingClientRect().bottom - animElem.getBoundingClientRect().height > 0 ||
+        animElem.getBoundingClientRect().top > 0) {
+          // Start animation
+          console.log("Scrolling...", window.scrollY);
+          // console.log(e);
+        }
+      }
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"></script>
+    <script src="/vibrant.js"></script>
+    <script>
+      // let imgPath = "<%= config.images.secure_base_url + config.images.backdrop_sizes[3] + data.backdrop_path %>";
+      let imgPath = document.querySelector("#getColorFrom").src;
+      
+      Vibrant.from(imgPath).getPalette().then((palette) => {
+        console.log(palette);
+        // document.body.style.color = `rgba(${palette.LightMuted._rgb.join(", ")}, 0.5`;
+        //document.body.style.filter = "grayscale(100%)";
+
+        document.querySelector(".background-color").style.backgroundColor = `rgba(${palette.DarkVibrant._rgb.join(", ")}, 0.5`;
+        document.body.style.color = `rgb(${palette.LightVibrant._rgb.join(", ")}`;
+      });
+    </script>
+    </div>
+    </div>
+    </body>
+
+</html>

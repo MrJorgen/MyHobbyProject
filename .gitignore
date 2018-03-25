@@ -1,0 +1,5 @@
+/cert
+/datastore
+/.vscode
+/node_modules
+*.txt
