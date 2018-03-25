@@ -4,14 +4,12 @@ const
   http = require('http').Server(app), // Server http
   fs = require("fs"), // Fs = filesystem, not sure if I really need this
   mongoose = require('mongoose'), // module for talking to MongoDB
-  helpers = require('handlebars-helpers')(), // Hmm, what's this?
   faker = require('faker'), // Don't think this is needed anymore, but keeping it for now
   forceSsl = require('express-force-ssl'), // This force non-secure connections to use secure connection(ssl)
   moment = require("moment"), // Time & date formatter
   session = require("client-sessions"), // Cookie middleware
   bodyParser = require('body-parser'), // For reading form inputs, not needed right now
-  path = require('path'), // path middleware
-  expHbs = require("express-handlebars"); // handlebars template engine
+  path = require('path'); // path middleware
   
 let port, sslPort, options = {};
 
