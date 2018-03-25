@@ -2,4 +2,5 @@
 /datastore
 /.vscode
 /node_modules
+/datastore
 *.txt
