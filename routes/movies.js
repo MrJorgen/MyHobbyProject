@@ -1,6 +1,5 @@
 const express = require('express'),
   router = express.Router(),
-  apiKey = 'e7cc34fa166523447bb881f64eb0ca52',
   request = require('request'),
   fs = require("fs"),
   bodyParser = require('body-parser'),
@@ -9,6 +8,10 @@ const express = require('express'),
 
 let titleHeader = "";
 
+
+let apiKey = fs.readFileSync("./tmdb_api_key.txt", {
+  encoding: "UTF-8"
+});
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
