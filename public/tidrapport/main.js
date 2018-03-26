@@ -1,3 +1,9 @@
+document.addEventListener("DOMContentLoaded", (e) => {
+  document.querySelector("#weekNrInput").value = new Date().getWeek();
+})
+
+
+
 // Returns the ISO week of the date.
 Date.prototype.getWeek = function () {
   let date = new Date(this.getTime());

@@ -1,3 +1,8 @@
+:root {
+  --line1-top: 0.8cm;
+  --line2-top: 1.4cm;
+}
+
 body {
   position: relative;
     margin: auto;
@@ -15,6 +20,12 @@ body {
   @media screen {
     body {
       border: 1px solid black;
+    }
+  }
+
+  @media print {
+    html {
+      zoom: 98%;
     }
   }
 
@@ -36,26 +47,33 @@ input {
   width: 100%;
   border: none;
   background: transparent;
-	color: rgb(60,74,133);
+	color: rgb(20, 54, 189);
 }
 
 #company {
   position: absolute;
-  top: 0.75cm;
-  left: 2.1cm;
-  width: 8cm;
+  top: var(--line1-top);
+  left: 2.2cm;
+  width: 7.5cm;
 }
 
 #city {
   position: absolute;
-  top: 1.35cm;
-  left: 1.4cm;
+  top: var(--line2-top);
+  left: 1.5cm;
   width: 6cm;
 }
 
 #driver {
   position: absolute;
-  top: 1.35cm;
-  left: 9.8cm;
+  top: var(--line2-top);
+  left: 9.9cm;
   width: 6cm;
+}
+
+#weekNr {
+  position: absolute;
+  top: var(--line1-top);
+  left: 23.2cm;
+  width: 1.5cm;
 }
