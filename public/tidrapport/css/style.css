@@ -64,11 +64,46 @@ input {
   width: 6cm;
 }
 
-#driver {
+#name {
   position: absolute;
   top: var(--line2-top);
   left: 9.9cm;
   width: 6cm;
+}
+
+#dateStart {
+  position: absolute;
+  top: var(--line2-top);
+  left: 24.1cm;
+  width: 1cm;
+}
+
+#monthStart {
+  position: absolute;
+  top: var(--line2-top);
+  left: 25cm;
+  width: 1cm;
+}
+
+#dateEnd {
+  position: absolute;
+  top: var(--line2-top);
+  left: 26.2cm;
+  width: 1cm;
+}
+
+#monthEnd {
+  position: absolute;
+  top: var(--line2-top);
+  left: 27.15cm;
+  width: 1cm;
+}
+
+#year {
+  position: absolute;
+  top: var(--line2-top);
+  left: 28.5cm;
+  width: 1cm;
 }
 
 #weekNr {
