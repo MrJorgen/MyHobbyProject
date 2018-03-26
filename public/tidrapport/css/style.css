@@ -5,9 +5,9 @@ body {
     width: 29.7cm;
     height: 20.99cm;
     background-image: url(../img/veckoarbetstidskort.jpg);
-    background-size: 29.7cm 21cm;
+    background-size: calc(29.7cm - 1%) calc(21cm - 1%);
     background-repeat: no-repeat;
-    background-position-y: -10px;
+    background-position-y: -1%;
     background-position-x: center;
     font-family: 'Handlee', cursive;
   }
@@ -21,7 +21,6 @@ body {
   /*
   font-family: 'Handlee', cursive;
   font-family: 'Architects Daughter', cursive;
-  font-family: 'Italianno', cursive;
   font-family: 'Delius', cursive;
   font-family: 'Short Stack', cursive;
   font-family: 'Crafty Girls', cursive;
@@ -30,9 +29,11 @@ body {
   font-family: 'Swanky and Moo Moo', cursive;
   */
   
-input {
-  font-family: 'Coming Soon', cursive;
-  font-weight: bold;
+  input {
+    font-family: 'Coming Soon', cursive;
+    font-weight: bold;
+    font-size: .9em;
+    
   width: 100%;
   border: none;
   background: transparent;
@@ -41,14 +42,14 @@ input {
 #company {
   position: absolute;
   top: 0.75cm;
-  left: 2cm;
+  left: 2.1cm;
   width: 8cm;
 }
 
 #city {
   position: absolute;
   top: 1.35cm;
-  left: 1.2cm;
+  left: 1.4cm;
   width: 6cm;
 }
 
