@@ -47,68 +47,72 @@ input {
   width: 100%;
   border: none;
   background: transparent;
-	color: rgb(20, 54, 189);
+  color: rgb(20, 54, 189);
 }
 
 #company {
   position: absolute;
   top: var(--line1-top);
   left: 2.2cm;
-  width: 7.5cm;
+  width: 7.3cm;
 }
 
 #city {
   position: absolute;
   top: var(--line2-top);
   left: 1.5cm;
-  width: 6cm;
+  width: 5.8cm;
 }
 
 #name {
   position: absolute;
   top: var(--line2-top);
   left: 9.9cm;
-  width: 6cm;
+  width: 5.5cm;
+}
+
+#weekNr {
+  position: absolute;
+  top: var(--line1-top);
+  left: 23cm;
+  width: 0.6cm;
 }
 
 #dateStart {
   position: absolute;
   top: var(--line2-top);
-  left: 24.1cm;
-  width: 1cm;
+  left: 24cm;
+  width: 0.6cm;
 }
 
 #monthStart {
   position: absolute;
   top: var(--line2-top);
-  left: 25cm;
-  width: 1cm;
+  left: 24.9cm;
+  width: 0.6cm;
 }
 
 #dateEnd {
   position: absolute;
   top: var(--line2-top);
-  left: 26.2cm;
-  width: 1cm;
+  left: 26.1cm;
+  width: 0.6cm;
 }
 
 #monthEnd {
   position: absolute;
   top: var(--line2-top);
-  left: 27.15cm;
-  width: 1cm;
+  left: 27.1cm;
+  width: 0.6cm;
 }
 
 #year {
   position: absolute;
   top: var(--line2-top);
   left: 28.5cm;
-  width: 1cm;
+  width: 0.6cm;
 }
 
-#weekNr {
-  position: absolute;
-  top: var(--line1-top);
-  left: 23.2cm;
-  width: 1.5cm;
+.center {
+  text-align: center;
 }
