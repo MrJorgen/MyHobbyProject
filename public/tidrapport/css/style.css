@@ -211,13 +211,14 @@ textarea {
 
 #mainTable td {
   font-family: Arial;
-  font-size: 8pt;
-  border: 1pt solid black;
+  font-size: 9pt;
+  border-right: 1pt solid black;
+  border-left: 1pt solid black;
   border-spacing: 0;
   text-align: center;
 }
 
-.noBottomBorder {
+.noBottomBorder td {
   border-bottom: none !important;
 }
 
@@ -226,7 +227,7 @@ textarea {
 }
 
 .alignTop {
-  vertical-align: text-top;
+  vertical-align: top;
 }
 
 .h20 {
@@ -236,4 +237,17 @@ textarea {
 .dotted td {
   border: none;
   border-bottom: dotted 0.7pt gray !important;
+}
+
+.borderTop td {
+  border-top: 1pt solid black;
+}
+
+.smallFont td {
+  font-size: 8pt !important;
+}
+
+.alignLeft td {
+  text-align: left !important;
+  padding-left: 3pt;
 }
