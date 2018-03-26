@@ -3,53 +3,85 @@
   --line2-top: 1.4cm;
 }
 
+html {
+  background-color: lightgray;
+}
+
 body {
   position: relative;
-    margin: auto;
-    padding: 0px;
-    width: 29.7cm;
-    height: 20.99cm;
-    background-image: url(../img/veckoarbetstidskort.jpg);
-    background-size: calc(29.7cm - 1%) calc(21cm - 1%);
-    background-repeat: no-repeat;
-    background-position-y: -1%;
-    background-position-x: center;
-    font-family: 'Handlee', cursive;
-  }
+  margin: auto;
+  padding: 0;
+  width: 29.7cm;
+  height: 21cm;
+  background-color: #fff;
+  box-sizing: border-box;
+}
 
-  @media screen {
-    body {
-      border: 1px solid black;
-    }
-  }
+#mainContent {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  /* background-image: url(../img/veckoarbetstidskort.jpg); */
+  background-size: 99%;
+  background-position-x: center;
+  background-position-y: 1pt;
+  background-repeat: no-repeat;
+}
 
-  @media print {
-    html {
-      zoom: 98%;
-    }
+@media screen {
+  body {
+    border: 1px solid black;
   }
+}
 
-  /*
-  font-family: 'Handlee', cursive;
-  font-family: 'Architects Daughter', cursive;
-  font-family: 'Delius', cursive;
-  font-family: 'Short Stack', cursive;
-  font-family: 'Crafty Girls', cursive;
+/* @media print {
+  html {
+    zoom: 98%;
+  }
+} */
+
+/*
+font-family: 'Handlee', cursive;
+font-family: 'Architects Daughter', cursive;
+font-family: 'Delius', cursive;
+font-family: 'Short Stack', cursive;
+font-family: 'Crafty Girls', cursive;
   font-family: 'Waiting for the Sunrise', cursive;
   font-family: 'Dekko', cursive;
   font-family: 'Swanky and Moo Moo', cursive;
   */
-  
-input {
-  font-family: 'Coming Soon', cursive;
-  font-weight: bold;
-  font-size: .9em;
-  width: 100%;
-  border: none;
-  background: transparent;
-  color: rgb(20, 54, 189);
-}
 
+  input {
+    /* font-family: 'Coming Soon', cursive; */
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    margin: 0;
+    margin-top: -1pt;
+    padding-top: 0;
+    /* font-weight: bold; */
+    font-size: .9em;
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: rgb(20, 54, 189);
+  }
+  
+textarea {
+  margin: 0;
+  margin-top: -1pt;
+  padding-top: 0;
+  width: 294px;
+  height: 55px;
+  background: transparent;
+  line-height: 1.5em;
+  overflow: hidden;
+  /*font-family: Coming Soon;
+  font-weight: bold; */
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  color: rgb(20, 54, 189);
+  border: none;
+}
+    
 #company {
   position: absolute;
   top: var(--line1-top);
@@ -115,4 +147,93 @@ input {
 
 .center {
   text-align: center;
+}
+
+#sunDesc {
+  position: absolute;
+  left: 808px;
+  top: 122px;
+}
+
+#monDesc {
+  position: absolute;
+  left: 808px;
+  top: 180px;
+}
+
+#tueDesc {
+  position: absolute;
+  left: 808px;
+  top: 239px;
+}
+
+#wedDesc {
+  position: absolute;
+  left: 808px;
+  top: 297px;
+}
+
+#thurDesc {
+  position: absolute;
+  left: 808px;
+  top: 356px;
+}
+
+#friDesc {
+  position: absolute;
+  left: 808px;
+  top: 414px;
+}
+
+#satDesc {
+  position: absolute;
+  left: 808px;
+  top: 473px;
+}
+
+.test {
+  position: absolute;
+  top: 14.2cm;
+  left: 19.2cm;
+  font-family: Arial;
+  font-size: 9.2pt;
+  font-stretch: normal;
+}
+
+#mainTable {
+  position: relative;
+  width: 28cm;
+  top: 2cm;
+  /* left: 0.6cm; */
+  margin: 0px auto;
+  border-collapse: collapse;
+}
+
+#mainTable td {
+  font-family: Arial;
+  font-size: 8pt;
+  border: 1pt solid black;
+  border-spacing: 0;
+  text-align: center;
+}
+
+.noBottomBorder {
+  border-bottom: none !important;
+}
+
+.noTopBorder td {
+  border-top: none !important;
+}
+
+.alignTop {
+  vertical-align: text-top;
+}
+
+.h20 {
+  height: 20pt;
+  vertical-align: bottom;
+}
+.dotted td {
+  border: none;
+  border-bottom: dotted 0.7pt gray !important;
 }

@@ -48,3 +48,21 @@ Date.prototype.addDays = function(days) {
   dat.setDate(dat.getDate() + days);
   return dat;
 }
+
+// document.addEventListener("click", (e) => {
+//   e.preventDefault();
+//   console.log(e);
+//   makeNewInput(e);
+// });
+
+function makeNewInput(e) {
+  if (e.target == document.body) {
+    let tmpElm = document.createElement("input");
+    tmpElm.type = "text";
+    tmpElm.style.position = "absolute";
+    tmpElm.style.left = e.offsetX + "px";
+    tmpElm.style.top = e.offsetY + "px";
+    document.body.appendChild(tmpElm);
+    tmpElm.focus();
+  }
+}
