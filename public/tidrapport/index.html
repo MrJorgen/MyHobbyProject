@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="./css/style.css">
   <link href="https://fonts.googleapis.com/css?family=Architects+Daughter|Coming+Soon|Crafty+Girls|Dekko|Delius|Handlee|Italianno|Short+Stack|Swanky+and+Moo+Moo|Waiting+for+the+Sunrise"
@@ -12,13 +12,21 @@
 <body>
   <div id="mainContent">
     <div id="company">
-      <input type="text" name="companyInput" id="companyInput" value="">
+      <label for="companyInput">Företag:</label>
+      <input type="text" name="companyInput" id="companyInput" value="TJ Trucking">
+      <span></span>
     </div>
     <div id="city">
-      <input type="text" name="cityInput" id="cityInput" value="">
+      <label for="cityInput">Ort:</label>
+      <input type="text" name="cityInput" id="cityInput" value="Norrköping">
     </div>
     <div id="name">
-      <input type="text" name="nameInput" id="nameInput" value="">
+      <label for="nameInput">Förare/Namn:</label>
+      <input type="text" name="nameInput" id="nameInput" value="Jörgen Karlsson">
+    </div>
+    <div id="anstNr">
+      <label for="anstNrInput">Anst nr:</label>
+      <input type="text" name="anstNrInput" id="anstNrInput" value="21">
     </div>
     <div id="weekNr">
       <input class="center" type="text" name="weekNrInput" id="weekNrInput" value="">
@@ -40,65 +48,49 @@
     </div>
     <table id="mainTable" cellspacing="0">
       <tr class="borderTop smallFont">
-        <td class="noBottomBorder alignTop" style="width: 1.7cm;"><strong>Veckodag</strong></td>
+        <td class="noBottomBorder alignTop" style="width: 1.6cm;"><strong>Veckodag</strong></td>
         <td rowspan="2" style="width: 2.7cm;"><strong>Ord. arbetstid</strong><br>från/till<br>kl</td>
-        <td rowspan="2" style="width: 2.5cm;"><strong>Arbetstid</strong><br>från/till<br>kl</td>
-        <td rowspan="2" style="width: 2.5cm;"><strong>Raster</strong><br>från/till<br>kl</td>
-        <td rowspan="2" style="width: 0.9cm;"><strong>S:a arb tim</strong></td>
-        <td class="noBottomBorder alignTop" colspan="2" style="width: 3cm;"><strong>OB-tid</strong></td>
-        <td rowspan="2" style="width: 1.5cm;"><strong>Övertid </strong>tim/min</td>
-        <td class="noBottomBorder alignTop" colspan="2" style="width: 4cm;"><strong>Traktamente</strong></td>
-        <td rowspan="2" style="width: 1.7cm;"><strong>Bilreg.-</strong><br>alt. ordn.-nr</td>
-        <td rowspan="2" style="width: 7.5cm;"><strong>Anm./Ant. VILOTID</strong></td>
+        <td rowspan="2" style="width: 2.3cm;"><strong>Arbetstid</strong><br>från/till<br>kl</td>
+        <td rowspan="2" style="width: 2.3cm;"><strong>Raster</strong><br>från/till<br>kl</td>
+        <td rowspan="2" style="width: 1.2cm;"><strong>S:a arb tim</strong></td>
+        <td class="noBottomBorder alignTop" colspan="2" style="width: 2.7cm;"><strong>OB-tid</strong></td>
+        <td rowspan="2" style="width: 1.6cm;"><strong>Övertid </strong>tim/min</td>
+        <td class="noBottomBorder alignTop" colspan="2" style="width: 3.4cm;"><strong>Traktamente</strong></td>
+        <td rowspan="2" style="width: 2.2cm;"><strong>Bilreg.-</strong><br>alt. ordn.-nr</td>
+        <td rowspan="2" style="width: 7.7cm;"><strong>Anm./Ant. VILOTID</strong></td>
       </tr>
-      <tr class="smallFont" style="height: 9pt;">
-        <td class="noTopBorder">datum</td>
-        <td class="noTopBorder">Vardag</td>
-        <td class="noTopBorder">Helgdag</td>
-        <td class="noTopBorder">från/till kl</td>
-        <td class="noTopBorder">Logi</td>
+      <tr class="smallFont noTopBorder" style="height: 9pt;">
+        <td>datum</td>
+        <td>vardag</td>
+        <td>helgdag</td>
+        <td>från/till kl</td>
+        <td>Logi</td>
       </tr>
-      <tr class="h20 dotted borderTop alignLeft">
-        <td>Söndag</td>
+      <tr class="h20 dotted borderTop">
+        <td class="alignLeft">Söndag</td>
+        <td></td>
+        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr class="h20 noTopBorder">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr class="h20 dotted borderTop alignLeft">
-        <td>Måndag</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
       </tr>
       <tr class="h20 noTopBorder">
         <td></td>
@@ -110,51 +102,32 @@
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
       </tr>
-      <tr class="h20 dotted borderTop alignLeft">
-        <td>Tisdag</td>
+      <tr class="h20 dotted borderTop">
+        <td class="alignLeft">Måndag</td>
+        <td></td>
+        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr class="h20 noTopBorder">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr class="h20 dotted borderTop alignLeft">
-        <td>Onsdag</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
       </tr>
       <tr class="h20 noTopBorder">
         <td></td>
@@ -166,51 +139,32 @@
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
       </tr>
-      <tr class="h20 dotted borderTop alignLeft">
-        <td>Torsdag</td>
+      <tr class="h20 dotted borderTop">
+        <td class="alignLeft">Tisdag</td>
+        <td></td>
+        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr class="h20 noTopBorder">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr class="h20 dotted borderTop alignLeft">
-        <td>Fredag</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
       </tr>
       <tr class="h20 noTopBorder">
         <td></td>
@@ -222,28 +176,145 @@
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
       </tr>
-      <tr class="h20 dotted borderTop alignLeft">
-        <td>Lördag</td>
+      <tr class="h20 dotted borderTop">
+        <td class="alignLeft">Onsdag</td>
+        <td></td>
+        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
       </tr>
       <tr class="h20 noTopBorder">
         <td></td>
         <td></td>
         <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr class="h20 dotted borderTop">
+        <td class="alignLeft">Torsdag</td>
+        <td></td>
+        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+      </tr>
+      <tr class="h20 noTopBorder">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr class="h20 dotted borderTop">
+        <td class="alignLeft">Fredag</td>
+        <td></td>
+        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+      </tr>
+      <tr class="h20 noTopBorder">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr class="h20 dotted borderTop">
+        <td class="alignLeft">Lördag</td>
+        <td></td>
+        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+        <td class="noMargin" rowspan="2">
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3 dotted"></div>
+          <div class="noMargin h40_3"></div>
+        </td>
+      </tr>
+      <tr class="h20 noTopBorder">
         <td></td>
         <td></td>
         <td></td>

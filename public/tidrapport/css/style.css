@@ -1,6 +1,8 @@
 :root {
-  --line1-top: 0.8cm;
-  --line2-top: 1.4cm;
+  --line1-top: 1cm;
+  --line2-top: 1.6cm;
+  --left-margin: 0.7cm;
+  --dotted: 0.8pt dotted darkgray;
 }
 
 html {
@@ -12,9 +14,11 @@ body {
   margin: auto;
   padding: 0;
   width: 29.7cm;
-  height: 21cm;
+  height: 20.99cm;
   background-color: #fff;
   box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10pt;
 }
 
 #mainContent {
@@ -35,37 +39,30 @@ body {
   }
 }
 
-/* @media print {
-  html {
-    zoom: 98%;
-  }
+/* @page {
+  size: A4 landscape;
+  margin: 0%;
 } */
 
-/*
-font-family: 'Handlee', cursive;
-font-family: 'Architects Daughter', cursive;
-font-family: 'Delius', cursive;
-font-family: 'Short Stack', cursive;
-font-family: 'Crafty Girls', cursive;
-  font-family: 'Waiting for the Sunrise', cursive;
-  font-family: 'Dekko', cursive;
-  font-family: 'Swanky and Moo Moo', cursive;
-  */
+input {
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  margin: 0;
+  padding: 0 0 0 2pt;
+  font-size: .9em;
+  border: none;
+  background: transparent;
+  color: rgb(20, 54, 189);
+}
 
-  input {
-    /* font-family: 'Coming Soon', cursive; */
-    font-family: "Comic Sans MS", cursive, sans-serif;
-    margin: 0;
-    margin-top: -1pt;
-    padding-top: 0;
-    /* font-weight: bold; */
-    font-size: .9em;
-    width: 100%;
-    border: none;
-    background: transparent;
-    color: rgb(20, 54, 189);
-  }
-  
+input::after {
+  content: '';  
+  width: 100%;
+  position: relative;
+  bottom: 2pt;
+  border-bottom: var(--dotted);
+  left: 0;
+}
+
 textarea {
   margin: 0;
   margin-top: -1pt;
@@ -81,26 +78,61 @@ textarea {
   color: rgb(20, 54, 189);
   border: none;
 }
-    
+
+label {
+  float: left;
+  margin-top: 1pt;
+  position: relative;
+  top: 0;
+  left: 0;
+}
+
 #company {
-  position: absolute;
+  position: relative;
   top: var(--line1-top);
-  left: 2.2cm;
-  width: 7.3cm;
+  left: var(--left-margin);
+  width: 1.2cm;
+}
+
+#company label {
+  width: 1.2cm;
+}
+
+#company input, #company span {
+  position: absolute;
+  top: 0;
+  width: 7.5cm;
+  height: 12pt;
+  z-index: 100;
+  padding-left: 6pt;
+}
+
+#company span {
+  border-bottom: var(--dotted);
+  margin-left: 0.15cm;
+  z-index: 0;
+  top: -2pt;
 }
 
 #city {
   position: absolute;
   top: var(--line2-top);
-  left: 1.5cm;
-  width: 5.8cm;
+  left: var(--left-margin);
+  width: 6.4cm;
 }
 
 #name {
   position: absolute;
   top: var(--line2-top);
-  left: 9.9cm;
-  width: 5.5cm;
+  left: 7.8cm;
+  width: 7.5cm;
+}
+
+#anstNr {
+  position: absolute;
+  top: var(--line2-top);
+  left: 17.7cm;
+  width: 3.5cm;
 }
 
 #weekNr {
@@ -201,19 +233,19 @@ textarea {
 }
 
 #mainTable {
-  position: relative;
-  width: 28cm;
-  top: 2cm;
-  /* left: 0.6cm; */
-  margin: 0px auto;
+  position: absolute;
+  width: 28.3cm;
+  top: 2.2cm;
+  left: 0.7cm;
+  /* margin: 0px auto; */
   border-collapse: collapse;
 }
 
 #mainTable td {
   font-family: Arial;
   font-size: 9pt;
-  border-right: 1pt solid black;
-  border-left: 1pt solid black;
+  border-right: 0.7pt solid black;
+  border-left: 0.7pt solid black;
   border-spacing: 0;
   text-align: center;
 }
@@ -230,24 +262,42 @@ textarea {
   vertical-align: top;
 }
 
-.h20 {
-  height: 20pt;
+.h20 td {
+  height: 0.68cm;
   vertical-align: bottom;
 }
 .dotted td {
   border: none;
-  border-bottom: dotted 0.7pt gray !important;
+  border-bottom: var(--dotted) !important;
+  z-index: -10;
+}
+
+.dotted {
+  border: none;
+  border-bottom: var(--dotted) !important;
+  z-index: -10;
 }
 
 .borderTop td {
-  border-top: 1pt solid black;
+  border-top: 0.7pt solid black;
 }
 
 .smallFont td {
   font-size: 8pt !important;
 }
 
-.alignLeft td {
+.alignLeft {
   text-align: left !important;
   padding-left: 3pt;
+}
+
+.noMargin {
+  margin: 0 !important;
+  padding: 0 !important;
+  border-collapse: collapse;
+}
+
+.h40_3 {
+  height: calc(100% / 3);
+  width: 100%;
 }

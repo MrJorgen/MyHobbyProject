@@ -21,6 +21,9 @@
 
 // });
 
+let viewport = document.querySelector("#viewport");
+viewport.content = "width=device-width, initial-scale=" + 1 / window.devicePixelRatio;
+
 function getFirstDayOfWeek() {
   let tmpDate = new Date();
   while (tmpDate.getDay() !== 0) {
