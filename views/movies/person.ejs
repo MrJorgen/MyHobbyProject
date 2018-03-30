@@ -37,7 +37,13 @@
 
 <body>
   <% include ./partials/navbar %>
-    <h3 class="border-bottom pb-3"><%= data.name %> (<%= new Date(data.birthday).getFullYear() %>-<% if(data.deathday) { %><%= new Date(data.deathday).getFullYear() %><% } %>) </h3>
+    <h3 class="border-bottom pb-3"><%= data.name %>
+    <% if(data.birthday) { %>
+      (<%= new Date(data.birthday).getFullYear() %>
+      -
+      <% if(data.deathday) { %><%= new Date(data.deathday).getFullYear() %><% } %>)
+    <% } %>
+    </h3>
     <div class="row">
       <div class="col">
         <div class="w-100">
@@ -45,17 +51,18 @@
             <% if(data.images.profiles.length > 0) { %>
               <%# Sort array by vote_average %>
                 <%
-                data.images.profiles.sort((a, b) => {
-                  return parseFloat(b.vote_average) - parseFloat(a.vote_average);
-                });
-              %>
+                  data.images.profiles.sort((a, b) => {
+                    return parseFloat(b.vote_average) - parseFloat(a.vote_average);
+                  });
+                %>
                   <img class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.images.profiles[0].file_path %>" alt="">
                   <% } else { %>
                     <img class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.poster_path %>" alt="">
                     <% } %>
           </div>
           <div>
-            <% function calculate_age(startDate, deathDate) {
+            <%
+              function calculate_age(startDate, deathDate) {
                 if(deathDate){
                   endDate = new Date(deathDate);
                 } else {
@@ -64,14 +71,15 @@
                 let diff_ms = endDate.getTime() - startDate.getTime();
                 let age_dt = new Date(diff_ms);
                 return Math.abs(age_dt.getUTCFullYear() - 1970);
-              } %>
+              } 
+            %>
               <% let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' }; %>
                 <% if(data.deathday) { %>
                   <p><strong>Born:</strong><br>
                     <%= new Date(data.birthday).toLocaleDateString("en-US", dateOptions) %>
                       <% if(data.place_of_birth) { %> in
                         <%= data.place_of_birth %>
-                          <% } %>
+                      <% } %>
                   </p>
                   <p><strong>Died:</strong><br>
                     <%= new Date(data.deathday).toLocaleDateString("en-US", dateOptions) %>(age
@@ -82,7 +90,7 @@
                         <%= calculate_age(new Date(data.birthday)) %>)
                           <% if(data.place_of_birth) { %> in
                             <%= data.place_of_birth %>
-                              <% } %>
+                          <% } %>
                     </p>
                     <% } %>
           </div>

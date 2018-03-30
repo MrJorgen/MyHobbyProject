@@ -120,14 +120,14 @@ function getAndSaveConfig() {
 
 router.get("/person/:id?", (req, res) => {
   let personId = req.params.id;
-  let personUrl = `https://api.themoviedb.org/3/person/${personId}?api_key=${apiKey}&append_to_response=credits,images,tagged_image`;
+  let personUrl = `https://api.themoviedb.org/3/person/${personId}?api_key=${apiKey}&append_to_response=credits,images,tagged_image,keywords,videos,similar,recommendations`;
   renderPage(personUrl, res, "./movies/person");
 });
 
 router.get("/movie/:id?", (req, res) => {
   let id = req.params.id;
   if (parseInt(id) !== NaN) {
-    url = `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&append_to_response=videos,credits,images&include_image_language=en,null`;
+    url = `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&append_to_response=credits,images,tagged_image,keywords,videos,similar,recommendations`;
     renderPage(url, res, './movies/single_movie');
   }
 });
