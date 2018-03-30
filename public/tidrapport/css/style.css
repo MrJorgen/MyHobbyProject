@@ -80,7 +80,6 @@ textarea {
 }
 
 label {
-  float: left;
   margin-top: 1pt;
   position: relative;
   top: 0;
@@ -115,10 +114,30 @@ label {
 }
 
 #city {
-  position: absolute;
-  top: var(--line2-top);
+  position: relative;
+  top: 1cm;
   left: var(--left-margin);
-  width: 6.4cm;
+  width: 1.2cm;
+}
+
+#city label {
+  width: 1.2cm;
+}
+
+#city input, #city span {
+  position: absolute;
+  top: 0;
+  width: 7.5cm;
+  height: 12pt;
+  z-index: 100;
+  padding-left: 6pt;
+}
+
+#city span {
+  border-bottom: var(--dotted);
+  margin-left: 0.15cm;
+  z-index: 0;
+  top: -2pt;
 }
 
 #name {

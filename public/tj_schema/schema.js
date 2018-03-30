@@ -1,118 +1,136 @@
-const drivers = ['Janne', 'Daniel', 'Jörgen', 'Sanna', 'Stefan', 'Robin'];
+const drivers = ['Janne', 'Jörgen', 'Sanna', 'Stefan'];
 
 const schema = [
-  // Vecka 11
+  // Vecka 14
   // Måndag
   [
     {
-      '177': drivers[4],
-      '172': drivers[5],
-      '175': drivers[0],
+      '175': drivers[2],
       '176': drivers[3],
+      '177': drivers[1],
     },
     // Tisdag
     {
-      '177': drivers[4],
-      '172': drivers[5],
       '175': drivers[0],
       '176': drivers[3],
+      '177': drivers[1],
     },
     // Onsdag
     {
+      '175': drivers[0],
+      '176': drivers[3],
       '177': drivers[2],
-      '172': drivers[4],
-      '175': drivers[3],
-      '176': drivers[1],
     },
     // Torsdag
     {
-      '177': drivers[2],
-      '172': drivers[5],
       '175': drivers[0],
-      '176': drivers[1],
+      '176': drivers[2],
+      '177': drivers[1],
     },
     // Fredag
     {
-      '177': drivers[2],
-      '172': drivers[5],
       '175': drivers[0],
-      '176': drivers[1],
+      '176': drivers[2],
+      '177': drivers[1],
     },
   ],
-  // Vecka 12
+  // Vecka 15
   // Måndag
   [
     {
-      '177': drivers[2],
-      '172': drivers[5],
       '175': drivers[0],
-      '176': drivers[1],
+      '176': drivers[2],
+      '177': drivers[1],
     },
     // Tisdag
     {
-      '177': drivers[2],
-      '172': drivers[5],
-      '175': drivers[0],
-      '176': drivers[1],
+      '175': drivers[2],
+      '176': drivers[3],
+      '177': drivers[1],
     },
     // Onsdag
     {
-      '177': drivers[4],
-      '172': drivers[5],
       '175': drivers[0],
       '176': drivers[3],
+      '177': drivers[1],
     },
     // Torsdag
     {
+      '175': drivers[0],
+      '176': drivers[3],
       '177': drivers[2],
-      '172': drivers[4],
-      '175': drivers[3],
-      '176': drivers[1],
     },
     // Fredag
     {
+      '175': drivers[0],
+      '176': drivers[3],
       '177': drivers[2],
-      '172': drivers[4],
-      '175': drivers[3],
-      '176': drivers[1],
     },
   ],
-  // Vecka 13
+  // Vecka 16
   // Måndag
   [
     {
+      '175': drivers[0],
+      '176': drivers[3],
       '177': drivers[2],
-      '172': drivers[4],
-      '175': drivers[3],
-      '176': drivers[1],
     },
     // Tisdag
     {
-      '177': drivers[2],
-      '172': drivers[4],
-      '175': drivers[3],
-      '176': drivers[1],
+      '175': drivers[0],
+      '176': drivers[2],
+      '177': drivers[1],
     },
     // Onsdag
     {
-      '177': drivers[2],
-      '172': drivers[5],
-      '175': drivers[0],
-      '176': drivers[1],
+      '175': drivers[2],
+      '176': drivers[3],
+      '177': drivers[1],
     },
     // Torsdag
     {
-      '172': drivers[5],
-      '177': drivers[4],
       '175': drivers[0],
       '176': drivers[3],
+      '177': drivers[1],
     },
     // Fredag
     {
-      '177': drivers[4],
-      '172': drivers[5],
       '175': drivers[0],
       '176': drivers[3],
+      '177': drivers[1],
+    },
+  ],
+  // Vecka 17
+  // Måndag
+  [
+    {
+      '175': drivers[0],
+      '176': drivers[2],
+      '177': drivers[1],
+    },
+    // Tisdag
+    {
+      '175': drivers[0],
+      '176': drivers[3],
+      '177': drivers[2],
+    },
+    // Onsdag
+    {
+      '175': drivers[0],
+      '176': drivers[2],
+      '177': drivers[1],
+    },
+    // Torsdag
+    {
+      '175': drivers[2],
+      '176': drivers[3],
+      '177': drivers[1],
+    },
+    // Fredag
+    {
+      '177': drivers[2],
+      '175': drivers[3],
+      '176': drivers[1],
     },
   ],
 ];

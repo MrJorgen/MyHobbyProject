@@ -19,7 +19,7 @@ import {
 let dayNames = ['Mån', 'Tis', 'Ons', 'Tors', 'Fre'],
   weeksToDisplay = 3,
   width = window.innerWidth,
-  schemaStartWeek = 11,
+  schemaStartWeek = 10,
   schemaLength = schema.length;
 let today = new Date();
 let urlParams = new URLSearchParams(window.location.search);
@@ -206,12 +206,30 @@ Date.prototype.getWeek = function () {
   );
 };
 
+function outOfOrder() {
+  let canvas = document.createElement("canvas");
+  let context = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.position = "absolute";
+  document.body.appendChild(canvas);
+  context.beginPath();
+  context.lineWidth = 3;
+  context.strokeStyle = "#F00";
+  context.moveTo(0, 0);
+  context.lineTo(window.innerWidth, window.innerHeight);
+  context.moveTo(0, window.innerHeight);
+  context.lineTo(window.innerWidth, 0);
+  context.stroke();
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('#dateInput').setAttribute('min', new Date().toISOString().split('T')[0]);
   for (let driver of drivers){
     document.querySelector('#nameInput').add(new Option(driver, driver));
   }
   makeScedule();
+  // outOfOrder();
 });
 
 document.querySelector('#dateInput').addEventListener('change', function () {

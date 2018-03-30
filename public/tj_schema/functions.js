@@ -1,7 +1,7 @@
 export {craeateSceduleByPerson, dateToString};
 
 function craeateSceduleByPerson (name, scedule, today) {
-  let schemaStartWeek = 11, schemaLength = scedule.length;
+  let schemaStartWeek = 10, schemaLength = scedule.length;
   let personalScedule = JSON.parse (JSON.stringify (scedule));
 
   // Loop weeks
