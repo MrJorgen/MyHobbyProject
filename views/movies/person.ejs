@@ -125,12 +125,12 @@
           <li class="list-group-item">
             <strong>Known For</strong>
           </li>
-          <% for (let i = 0; i < data.credits.cast.length; i++) { %>
+          <% for (let i = 0; i < data.combined_credits.cast.length; i++) { %>
             <% if(i >= 5) { break; } %>
               <li class="list-group-item">
-                <a href="/movies/movie/<%= data.credits.cast[i].id %>" class="profile-image-container">
-                  <% if (data.credits.cast[i].poster_path) { %>
-                    <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/original<%= data.credits.cast[i].poster_path %>" alt="">
+                <a href="/movies/movie/<%= data.combined_credits.cast[i].id %>" class="profile-image-container">
+                  <% if (data.combined_credits.cast[i].poster_path) { %>
+                    <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/original<%= data.combined_credits.cast[i].poster_path %>" alt="">
                     <% } else { %>
                       <img class="profile-photo rounded-5" src="/unknown.png" alt="">
                       <!-- -->
@@ -138,9 +138,9 @@
                 </a>
                 <div class="profile-name-container">
                   <span class="profile-name-text">
-                  <strong><%= data.credits.cast[i].title %></strong>
+                  <strong><%= data.combined_credits.cast[i].title %></strong>
                   <br>
-                  <small>as<br><%= data.credits.cast[i].character %></small>
+                  <small>as<br><%= data.combined_credits.cast[i].character %></small>
                 </span>
                 </div>
               </li>

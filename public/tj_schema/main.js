@@ -96,7 +96,7 @@ function makeTable(id, currentDay, leftMargin) {
       } else {
         tmpCell.innerHTML =
           dayNames[i] +
-          `<span class=\"nobold small\">${dateToString(startOfWeek, i)}</span>`;
+          `<span class=\"nobold small\"> ${dateToString(startOfWeek, i)}</span>`;
         if (i == today.getDay() - 1 && currentWeek == today.getWeek()) {
           tmpCell.classList.add('active', 'active-top');
         }

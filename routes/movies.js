@@ -120,17 +120,26 @@ function getAndSaveConfig() {
 
 router.get("/person/:id?", (req, res) => {
   let personId = req.params.id;
-  let personUrl = `https://api.themoviedb.org/3/person/${personId}?api_key=${apiKey}&append_to_response=credits,images,tagged_image,keywords,videos,similar,recommendations`;
+  let personUrl = `https://api.themoviedb.org/3/person/${personId}?api_key=${apiKey}&append_to_response=credits,combined_credits,images,tagged_image,keywords,videos,similar,recommendations`;
   renderPage(personUrl, res, "./movies/person");
 });
 
-router.get("/movie/:id?", (req, res) => {
-  let id = req.params.id;
-  if (parseInt(id) !== NaN) {
-    url = `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&append_to_response=credits,images,tagged_image,keywords,videos,similar,recommendations`;
-    renderPage(url, res, './movies/single_movie');
-  }
+["/movie/:id?", "/tv/:id?",].forEach((path, index) => {
+  router.get(path, (req, res) => {
+    let media = "";
+    if (index == 0) {
+      media = "movie";
+    } else {
+      media = "tv";
+    }
+    let id = req.params.id;
+    if (parseInt(id) !== NaN) {
+      url = `https://api.themoviedb.org/3/${media}/${id}?api_key=${apiKey}&append_to_response=credits,images,tagged_image,keywords,videos,similar,recommendations`;
+      renderPage(url, res, './movies/single_movie');
+    }
+  });
 });
+
 
 router.post("/*", (req, res) => {
   let query = encodeURIComponent(req.body.query);
