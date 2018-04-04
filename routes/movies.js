@@ -188,7 +188,7 @@ function renderPage(url, res, page, oldData) {
     if (response.statusCode === 200) {
       // This is tricky...
       if (data.belongs_to_collection) {
-        console.log("Getting collection data...");
+        // Getting collection data
         let collectionUrl = `https://api.themoviedb.org/3/collection/${data.belongs_to_collection.id}?api_key=${apiKey}`;
         renderPage(collectionUrl, res, page, data);
       } else {

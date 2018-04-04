@@ -183,8 +183,10 @@
               <div class="profile-name-container">
                 <span class="profile-name-text">
                   <strong><%= data.credits.cast[i].name %></strong>
+                  <% if (data.credits.cast[i].character) { %>
                   <br>
                   <small>as<br><%= data.credits.cast[i].character %></small>
+                  <% } %>
                 </span>
               </div>
             </li>

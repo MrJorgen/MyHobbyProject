@@ -105,7 +105,7 @@ const schema = [
   [
     {
       '175': drivers[0],
-      '176': drivers[2],
+      '176': drivers[3],
       '177': drivers[1],
     },
     // Tisdag

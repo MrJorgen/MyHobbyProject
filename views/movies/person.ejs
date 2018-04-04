@@ -140,8 +140,10 @@
                 <div class="profile-name-container">
                   <span class="profile-name-text">
                   <strong><%= data.combined_credits.cast[i].title %></strong>
-                  <br>
-                  <small>as<br><%= data.combined_credits.cast[i].character %></small>
+                  <% if (data.combined_credits.cast[i].character) { %>
+                    <br>
+                    <small>as<br><%= data.combined_credits.cast[i].character %></small>
+                  <% } %>
                 </span>
                 </div>
               </li>
