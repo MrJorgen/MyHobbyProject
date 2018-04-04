@@ -51,15 +51,17 @@
           <div class="rounded w-100">
             <% if(data.images.profiles.length > 0) { %>
               <%# Sort array by vote_average %>
-                <%
-                  data.images.profiles.sort((a, b) => {
-                    return parseFloat(b.vote_average) - parseFloat(a.vote_average);
-                  });
-                %>
-                  <img class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.images.profiles[0].file_path %>" alt="">
-                  <% } else { %>
-                    <img class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.poster_path %>" alt="">
-                    <% } %>
+              <%
+                data.images.profiles.sort((a, b) => {
+                  return parseFloat(b.vote_average) - parseFloat(a.vote_average);
+                });
+              %>
+              <img class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.images.profiles[0].file_path %>" alt="">
+            <% } else if(data.poster_path) { %>
+              <img class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.poster_path %>" alt="">
+            <% } else { %>
+                <img class="w-100 rounded" src="https://via.placeholder.com/600x900/?text=No+Image..." alt="">
+            <% } %>
           </div>
           <div>
             <%
@@ -75,25 +77,26 @@
               } 
             %>
               <% let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' }; %>
+              <p><strong>Born:</strong><br>
                 <% if(data.deathday) { %>
-                  <p><strong>Born:</strong><br>
-                    <%= new Date(data.birthday).toLocaleDateString("en-US", dateOptions) %>
-                      <% if(data.place_of_birth) { %> in
-                        <%= data.place_of_birth %>
-                      <% } %>
+                  <%= new Date(data.birthday).toLocaleDateString("en-US", dateOptions) %>
+                  <% if(data.place_of_birth) { %> in
+                    <%= data.place_of_birth %>
+                  <% } %>
                   </p>
                   <p><strong>Died:</strong><br>
-                    <%= new Date(data.deathday).toLocaleDateString("en-US", dateOptions) %>(age
-                      <%= calculate_age(new Date(data.birthday), new Date(data.deathday)) %>)</p>
-                  <% } else { %>
-                    <p><strong>Born:</strong><br>
-                      <%= new Date(data.birthday).toLocaleDateString("en-US", dateOptions) %>(age
-                        <%= calculate_age(new Date(data.birthday)) %>)
-                          <% if(data.place_of_birth) { %> in
-                            <%= data.place_of_birth %>
-                          <% } %>
-                    </p>
-                    <% } %>
+                  <%= new Date(data.deathday).toLocaleDateString("en-US", dateOptions) %>(age
+                  <%= calculate_age(new Date(data.birthday), new Date(data.deathday)) %>)</p>
+                <% } else if(data.birthday) { %>
+                  <%= new Date(data.birthday).toLocaleDateString("en-US", dateOptions) %>(age
+                  <%= calculate_age(new Date(data.birthday)) %>)
+                  <% if(data.place_of_birth) { %> in
+                    <%= data.place_of_birth %>
+                  <% } %>
+                  </p>
+                <% } else { %>
+                  <p>No info...</p>
+                <% } %>
           </div>
         </div>
       </div>
@@ -129,21 +132,30 @@
           <% for (let i = 0; i < data.combined_credits.cast.length; i++) { %>
             <% if(i >= 5) { break; } %>
               <li class="list-group-item">
-                <a href="/movies/movie/<%= data.combined_credits.cast[i].id %>" class="profile-image-container">
+                <a href="/movies/<%= data.combined_credits.cast[i].media_type %>/<%= data.combined_credits.cast[i].id %>" class="profile-image-container">
                   <% if (data.combined_credits.cast[i].poster_path) { %>
                     <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/original<%= data.combined_credits.cast[i].poster_path %>" alt="">
-                    <% } else { %>
-                      <img class="profile-photo rounded-5" src="/unknown.png" alt="">
-                      <!-- -->
-                      <% } %>
+                  <% } else { %>
+                    <img class="profile-photo rounded-5" src="/unknown.png" alt="">
+                  <% } %>
                 </a>
                 <div class="profile-name-container">
-                  <span class="profile-name-text">
-                  <strong><%= data.combined_credits.cast[i].title %></strong>
+                <span class="profile-name-text">
+                  <% if(data.combined_credits.cast[i].media_type == "movie") { %>
+                    <strong><%= data.combined_credits.cast[i].title %></strong>
+                  <% } else if(data.combined_credits.cast[i].media_type == "tv") { %>
+                    <strong><%= data.combined_credits.cast[i].name %></strong>
+                  <% } %>
                   <% if (data.combined_credits.cast[i].character) { %>
                     <br>
-                    <small>as<br><%= data.combined_credits.cast[i].character %></small>
+                    <small>as<br><%= data.combined_credits.cast[i].character %>
+                    <% if(data.combined_credits.cast[i].media_type == "tv") { %>
+                      (<%= data.combined_credits.cast[i].episode_count %>
+                      <%= data.combined_credits.cast[i].episode_count > 1 ? "episodes" : "episode" %>)
+                    <% } %>
+                    </small>
                   <% } %>
+
                 </span>
                 </div>
               </li>
