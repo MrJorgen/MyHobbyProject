@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<script type="module" src="main.js"></script>
+		<link rel="stylesheet" href="style.css" />
+		<link href="https://fonts.googleapis.com/css?family=Exo+2|Maven+Pro|Play" rel="stylesheet" />
+		<link rel="shortcut icon" href="./img/icon12.png" type="image/png" />
+		<title>Sudoku</title>
+	</head>
+
+	<body>
+		<div id="main">
+			<table id="sudoku-table">
+				<caption>
+					Sudoku
+				</caption>
+				<tbody>
+					<tr>
+						<td data-box="1" data-col="0" data-row="0">
+						</td>
+						<td data-box="1" data-col="1" data-row="0">
+						</td>
+						<td data-box="1" data-col="2" data-row="0">
+						</td>
+						<td data-box="2" data-col="3" data-row="0">
+						</td>
+						<td data-box="2" data-col="4" data-row="0">
+						</td>
+						<td data-box="2" data-col="5" data-row="0">
+						</td>
+						<td data-box="3" data-col="6" data-row="0">
+						</td>
+						<td data-box="3" data-col="7" data-row="0">
+						</td>
+						<td data-box="3" data-col="8" data-row="0">
+						</td>
+					</tr>
+					<tr>
+						<td data-box="1" data-col="0" data-row="1">
+						</td>
+						<td data-box="1" data-col="1" data-row="1">
+						</td>
+						<td data-box="1" data-col="2" data-row="1">
+						</td>
+						<td data-box="2" data-col="3" data-row="1">
+						</td>
+						<td data-box="2" data-col="4" data-row="1">
+						</td>
+						<td data-box="2" data-col="5" data-row="1">
+						</td>
+						<td data-box="3" data-col="6" data-row="1">
+						</td>
+						<td data-box="3" data-col="7" data-row="1">
+						</td>
+						<td data-box="3" data-col="8" data-row="1">
+						</td>
+					</tr>
+					<tr>
+						<td data-box="1" data-col="0" data-row="2">
+						</td>
+						<td data-box="1" data-col="1" data-row="2">
+						</td>
+						<td data-box="1" data-col="2" data-row="2">
+						</td>
+						<td data-box="2" data-col="3" data-row="2">
+						</td>
+						<td data-box="2" data-col="4" data-row="2">
+						</td>
+						<td data-box="2" data-col="5" data-row="2">
+						</td>
+						<td data-box="3" data-col="6" data-row="2">
+						</td>
+						<td data-box="3" data-col="7" data-row="2">
+						</td>
+						<td data-box="3" data-col="8" data-row="2">
+						</td>
+					</tr>
+					<tr>
+						<td data-box="4" data-col="0" data-row="3">
+						</td>
+						<td data-box="4" data-col="1" data-row="3">
+						</td>
+						<td data-box="4" data-col="2" data-row="3">
+						</td>
+						<td data-box="5" data-col="3" data-row="3">
+						</td>
+						<td data-box="5" data-col="4" data-row="3">
+						</td>
+						<td data-box="5" data-col="5" data-row="3">
+						</td>
+						<td data-box="6" data-col="6" data-row="3">
+						</td>
+						<td data-box="6" data-col="7" data-row="3">
+						</td>
+						<td data-box="6" data-col="8" data-row="3">
+						</td>
+					</tr>
+					<tr>
+						<td data-box="4" data-col="0" data-row="4">
+						</td>
+						<td data-box="4" data-col="1" data-row="4">
+						</td>
+						<td data-box="4" data-col="2" data-row="4">
+						</td>
+						<td data-box="5" data-col="3" data-row="4">
+						</td>
+						<td data-box="5" data-col="4" data-row="4">
+						</td>
+						<td data-box="5" data-col="5" data-row="4">
+						</td>
+						<td data-box="6" data-col="6" data-row="4">
+						</td>
+						<td data-box="6" data-col="7" data-row="4">
+						</td>
+						<td data-box="6" data-col="8" data-row="4">
+						</td>
+					</tr>
+					<tr>
+						<td data-box="4" data-col="0" data-row="5">
+						</td>
+						<td data-box="4" data-col="1" data-row="5">
+						</td>
+						<td data-box="4" data-col="2" data-row="5">
+						</td>
+						<td data-box="5" data-col="3" data-row="5">
+						</td>
+						<td data-box="5" data-col="4" data-row="5">
+						</td>
+						<td data-box="5" data-col="5" data-row="5">
+						</td>
+						<td data-box="6" data-col="6" data-row="5">
+						</td>
+						<td data-box="6" data-col="7" data-row="5">
+						</td>
+						<td data-box="6" data-col="8" data-row="5">
+						</td>
+					</tr>
+					<tr>
+						<td data-box="7" data-col="0" data-row="6">
+						</td>
+						<td data-box="7" data-col="1" data-row="6">
+						</td>
+						<td data-box="7" data-col="2" data-row="6">
+						</td>
+						<td data-box="8" data-col="3" data-row="6">
+						</td>
+						<td data-box="8" data-col="4" data-row="6">
+						</td>
+						<td data-box="8" data-col="5" data-row="6">
+						</td>
+						<td data-box="9" data-col="6" data-row="6">
+						</td>
+						<td data-box="9" data-col="7" data-row="6">
+						</td>
+						<td data-box="9" data-col="8" data-row="6">
+						</td>
+					</tr>
+					<tr>
+						<td data-box="7" data-col="0" data-row="7">
+						</td>
+						<td data-box="7" data-col="1" data-row="7">
+						</td>
+						<td data-box="7" data-col="2" data-row="7">
+						</td>
+						<td data-box="8" data-col="3" data-row="7">
+						</td>
+						<td data-box="8" data-col="4" data-row="7">
+						</td>
+						<td data-box="8" data-col="5" data-row="7">
+						</td>
+						<td data-box="9" data-col="6" data-row="7">
+						</td>
+						<td data-box="9" data-col="7" data-row="7">
+						</td>
+						<td data-box="9" data-col="8" data-row="7">
+						</td>
+					</tr>
+					<tr>
+						<td data-box="7" data-col="0" data-row="8">
+						</td>
+						<td data-box="7" data-col="1" data-row="8">
+						</td>
+						<td data-box="7" data-col="2" data-row="8">
+						</td>
+						<td data-box="8" data-col="3" data-row="8">
+						</td>
+						<td data-box="8" data-col="4" data-row="8">
+						</td>
+						<td data-box="8" data-col="5" data-row="8">
+						</td>
+						<td data-box="9" data-col="6" data-row="8">
+						</td>
+						<td data-box="9" data-col="7" data-row="8">
+						</td>
+						<td data-box="9" data-col="8" data-row="8">
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<th id="table-footer" colspan="9"></th>
+				</tfoot>
+			</table>
+			<button type="button" id="startButton">New Game</button>
+      <button type="button" id="calcButton">Calculate moves</button>
+      <div style="font-size: 0.5em; vertical-align: middle; display: inline;">
+        <label for="generate">Generate: </label><input type="checkbox" name="generate" id="generate" style="vertical-align: middle; width: 0.75em;" checked>
+        &nbsp;&nbsp;
+        <label for="difficulty">Difficulty: </label>
+        <select name="difficulty" id="difficulty">
+          <option value="easy" selected>Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+		</div>
+	</body>
+</html>

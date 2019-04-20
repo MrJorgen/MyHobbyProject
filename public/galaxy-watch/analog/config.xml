@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns:tizen="http://tizen.org/ns/widgets" xmlns="http://www.w3.org/ns/widgets" id="http://yourdomain/AmbientWatch" version="1.0.0" viewmodes="maximized">
+    <tizen:application id="82lcB0sSo4.AmbientWatch" package="82lcB0sSo4" required_version="2.3.1" ambient_support="enable"/>
+    <tizen:category name="http://tizen.org/category/wearable_clock"/>
+    <content src="index.html"/>
+    <feature name="http://tizen.org/feature/screen.size.all"/>
+    <tizen:privilege name="http://tizen.org/privilege/alarm"/>
+    <icon src="icon.png"/>
+    <name>AmbientWatch</name>
+    <tizen:profile name="wearable"/>
+</widget>

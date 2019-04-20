@@ -102,7 +102,7 @@ function initLevel(currentLevel){
 		case 1:
 			break;
 	
-		// Centered vertical line. Half of arenasize with a quarter space on each side(top & bottom).
+		// Centered vertical line. Half of arenaheight with a quarter space on each side(top & bottom).
 		case 2:
 			var x = (arenaSize.x / 2 | 0);
 			for(var y = (arenaSize.y / 4 | 0); y <= ((arenaSize.y / 4) * 3 | 0); y++){

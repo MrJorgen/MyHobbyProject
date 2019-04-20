@@ -5,3 +5,4 @@
 *.tsv
 *.txt
 *.php
+/public/log

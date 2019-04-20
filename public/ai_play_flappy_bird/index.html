@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0, minimal-ui">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Flappy Bird</title>
+        <link rel="shortcut icon" href="./favicon.ico">
+        <!-- <script type="module" src="bird.js"></script>
+        <script type="module" src="sprites.js"></script> -->
+        
+        <link id="fonts" href="https://fonts.googleapis.com/css?family=Sarpanch" rel="stylesheet">
+        <style>
+            body {
+                background-color: black;
+            }
+
+            * {
+                margin: 0;
+                overflow: hidden;
+            }
+
+            #font_preload {
+                font-family: Sarpanch;
+                position: absolute;
+                top: -1000px;
+                visibility: hidden;
+            }
+
+            #canvas,
+            #bgCanvas {
+                display: block;
+                margin: auto;
+                z-index: 2;
+            }
+
+            img {
+                display: none;
+            }
+        </style>
+    </head>
+    
+    <body>
+      <canvas id="canvas"></canvas>
+      <img id="spriteSheet" src="./img/sprite1.png" alt="">
+      <audio id="die" src="./sounds/sfx_die.ogg"></audio>
+      <audio id="hit" src="./sounds/sfx_hit.ogg"></audio>
+      <audio id="point" src="./sounds/sfx_point.ogg"></audio>
+      <audio id="swooshing" src="./sounds/sfx_swooshing.ogg"></audio>
+      <audio id="wing" src="./sounds/sfx_wing.ogg"></audio>
+      <script type="module" src="game.js" defer></script>
+    </body>
+    
+    </html>

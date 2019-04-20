@@ -171,21 +171,18 @@
             %>
             <li class="list-group-item">
               <a href="/movies/person/<%= data.credits.cast[i].id %>"  class="profile-image-container">
-                <% if (data.credits.cast[i].profile_path) { %>
-                <!-- -->
+              <% if (data.credits.cast[i].profile_path) { %>
                 <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/original<%= data.credits.cast[i].profile_path %>" alt="">
-                <!-- -->
-                <% } else { %>
+              <% } else { %>
                 <img class="profile-photo rounded-5" src="/unknown.png" alt="">
-                <!-- -->
-                <% } %>
+              <% } %>
               </a>
               <div class="profile-name-container">
                 <span class="profile-name-text">
                   <strong><%= data.credits.cast[i].name %></strong>
                   <% if (data.credits.cast[i].character) { %>
-                  <br>
-                  <small>as<br><%= data.credits.cast[i].character %></small>
+                    <br>
+                    <small>as<br><%= data.credits.cast[i].character %></small>
                   <% } %>
                 </span>
               </div>
