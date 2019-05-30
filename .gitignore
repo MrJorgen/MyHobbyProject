@@ -6,3 +6,4 @@
 *.txt
 *.php
 /public/log
+.env

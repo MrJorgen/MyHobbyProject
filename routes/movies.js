@@ -11,7 +11,7 @@ let titleHeader = "";
 
 let apiKey = fs.readFileSync("./tmdb_api_key.txt", {
   encoding: "UTF-8"
-});
+}) || process.env.API_KEY;
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
