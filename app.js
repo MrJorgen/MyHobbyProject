@@ -15,7 +15,7 @@ let port, sslPort, options = {}, heroku = false;
 
 app.locals.moment = require("moment");
 
-console.log(__dirname);
+// console.log(__dirname);
 if (__dirname == "/home/pi/web") {
   port = 3000; // Set port variable
   sslPort = 3001; // Set secure port variable
@@ -33,8 +33,8 @@ if (__dirname == "/home/pi/web") {
     cert: fs.readFileSync(sslPath + 'fullchain.pem')
   };
 } else {
-  console.log(process.env);
-  port = process.env.port || 3000;
+  console.log(process.env.PORT);
+  port = process.env.PORT || 5000;
   heroku = true;
 }
 
