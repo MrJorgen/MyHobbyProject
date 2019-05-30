@@ -11,7 +11,7 @@ const
   bodyParser = require('body-parser'), // For reading form inputs, not needed right now
   path = require('path'); // path middleware
   
-let port, sslPort, options = {};
+let port, sslPort, options = {}, heroku = false;
 
 app.locals.moment = require("moment");
 
@@ -34,10 +34,13 @@ app.locals.moment = require("moment");
     };
   } else {
     port = process.env.port;
+    heroku = true;
   }
   
+if (!heroku) {
   const https = require("https").createServer(options, app),
-      io = require('socket.io')(https);
+    io = require('socket.io')(https);
+}
 
   /*
   ------------------------------------------------------------------------------------------------
@@ -218,7 +221,7 @@ http.listen(port, () => {
 });
 
 // Main server, serve all requests
-if (!process.env.port) {
+if (!heroku) {
   https.listen(sslPort, () => {
     console.log(`(Secure) server listening on port: ${sslPort}`);
   });
