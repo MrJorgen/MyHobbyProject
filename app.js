@@ -17,7 +17,7 @@ app.locals.moment = require("moment");
 
   console.log(__dirname);
   if (__dirname == "/home/pi/web") {
-    port = process.env.port || 3000; // Set port variable
+    port = 3000; // Set port variable
     sslPort = 3001; // Set secure port variable
     options = {
       key: fs.readFileSync(__dirname + "/cert/privkey.pem"),
@@ -25,13 +25,15 @@ app.locals.moment = require("moment");
       ca: fs.readFileSync(__dirname + "/cert/chain.pem")
     };
   } else if (__dirname == "/home/web") {
-    port = process.env.port || 80; // Set port variable
+    port = 80; // Set port variable
     sslPort = 443; // Set secure port variable
     let sslPath = "/etc/letsencrypt/live/mrjorgen.dynu.net/";
     options = {
       key: fs.readFileSync(sslPath + 'privkey.pem'),
       cert: fs.readFileSync(sslPath + 'fullchain.pem')
     };
+  } else {
+    port = process.env.port;
   }
   
   const https = require("https").createServer(options, app),
