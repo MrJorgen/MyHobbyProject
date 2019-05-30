@@ -136,7 +136,7 @@ export class Bird {
     this.active = true;
     if (!this.crashed) {
       // this.vy = -6.3;
-      this.vy = -6;
+      this.vy = -5.5;
       // sfx.wing.currentTime = 0;
       // sfx.wing.play();
     }

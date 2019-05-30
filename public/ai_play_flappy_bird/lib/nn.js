@@ -21,6 +21,12 @@ let tanh = new ActivationFunction(
 
 export class NeuralNetwork {
   // TODO: document what a, b, c are
+  /**
+   * A simple neuralNetwork class
+   * @param {Number} a Number of input nodes(integer)
+   * @param {Number} b Number of hidden nodes(integer)
+   * @param {Number} c Number of output nodes(integer)
+   */
   constructor(a, b, c) {
     if (a instanceof NeuralNetwork) {
       this.input_nodes = a.input_nodes;
@@ -33,9 +39,9 @@ export class NeuralNetwork {
       this.bias_h = a.bias_h.copy();
       this.bias_o = a.bias_o.copy();
     } else {
-      this.input_nodes = a;
-      this.hidden_nodes = b;
-      this.output_nodes = c;
+      this.input_nodes = parseInt(a);
+      this.hidden_nodes = parseInt(b);
+      this.output_nodes = parseInt(c);
 
       this.weights_ih = new Matrix(this.hidden_nodes, this.input_nodes);
       this.weights_ho = new Matrix(this.output_nodes, this.hidden_nodes);
@@ -51,8 +57,6 @@ export class NeuralNetwork {
     // TODO: copy these as well
     this.setLearningRate();
     this.setActivationFunction();
-
-
   }
 
   predict(input_array) {
@@ -164,8 +168,8 @@ export class NeuralNetwork {
   mutate(rate) {
     function mutate(val) {
       if (Math.random() < rate) {
-        return val + (Math.random() * 0.2) - 0.1;
-        // return 2 * Math.random() - 1;
+        return randomDist(val - 0.2, val + 0.2, 3);
+        // return val + (Math.random() * 0.2) - 0.1;
         // return Math.random() * 1000 - 1;
       } else {
         return val;
@@ -176,4 +180,16 @@ export class NeuralNetwork {
     this.bias_h.map(mutate);
     this.bias_o.map(mutate);
   }
+
+  crossOver(a, b) {
+
+  }
+}
+
+function randomDist(min, max, iterations) {
+  var total = 0;
+  for(var i = 0; i < iterations; i += 1) {
+    total += min + Math.random() * (max - min);
+  }
+  return total / iterations;
 }
