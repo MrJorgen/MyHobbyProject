@@ -216,6 +216,8 @@ http.listen(port, () => {
 });
 
 // Main server, serve all requests
-https.listen(sslPort, () => {
-  console.log(`(Secure) server listening on port: ${sslPort}`);
-});
+if (!process.env.port) {
+  https.listen(sslPort, () => {
+    console.log(`(Secure) server listening on port: ${sslPort}`);
+  });
+}
