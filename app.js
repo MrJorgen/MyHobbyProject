@@ -33,6 +33,7 @@ if (__dirname == "/home/pi/web") {
     cert: fs.readFileSync(sslPath + 'fullchain.pem')
   };
 } else {
+  console.log(process.env);
   port = process.env.port;
   heroku = true;
 }
