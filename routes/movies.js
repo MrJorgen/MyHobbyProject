@@ -6,12 +6,15 @@ const express = require('express'),
   zlib = require("zlib"),
   readline = require("readline");
 
-let titleHeader = "";
+let titleHeader = "", API_KEY;
 
-
-let apiKey = fs.readFileSync("./tmdb_api_key.txt", {
-  encoding: "UTF-8"
-}) || process.env.API_KEY;
+try {
+  apiKey = fs.readFileSync("./tmdb_api_key.txt", {
+    encoding: "UTF-8"
+  });
+} catch {
+  apiKey = process.env.API_KEY;
+}
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
