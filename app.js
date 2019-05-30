@@ -15,7 +15,7 @@ let port, sslPort, options = {}, heroku = false;
 
 app.locals.moment = require("moment");
 
-// console.log(__dirname);
+console.log(__dirname);
 if (__dirname == "/home/pi/web") {
   port = 3000; // Set port variable
   sslPort = 3001; // Set secure port variable
@@ -33,7 +33,6 @@ if (__dirname == "/home/pi/web") {
     cert: fs.readFileSync(sslPath + 'fullchain.pem')
   };
 } else {
-  console.log(process.env.PORT);
   port = process.env.PORT || 5000;
   heroku = true;
 }
@@ -84,7 +83,9 @@ making regular backups of this folder is ideal.
 
 let users = 0;
 
-app.use(forceSsl);
+if (!heroku) {
+  app.use(forceSsl);
+}
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/css"));
 app.use(express.static(__dirname + "/js"));
@@ -93,6 +94,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false,
 }));
+/*
 app.use(session({
   cookieName: 'mySession', // cookie name dictates the key name added to the request object
   secret: '8Xe3bNj3_-h39p-rGMW-hMRMVh6cbu_w', // should be a large unguessable string
@@ -105,6 +107,7 @@ app.use(session({
     secure: true // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
   }
 }));
+*/
 
 app.set("views", __dirname + "/views");
 app.set('view engine', 'ejs');
