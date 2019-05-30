@@ -10,77 +10,77 @@ const
   session = require("client-sessions"), // Cookie middleware
   bodyParser = require('body-parser'), // For reading form inputs, not needed right now
   path = require('path'); // path middleware
-  
+
 let port, sslPort, options = {}, heroku = false;
 
 app.locals.moment = require("moment");
 
-  console.log(__dirname);
-  if (__dirname == "/home/pi/web") {
-    port = 3000; // Set port variable
-    sslPort = 3001; // Set secure port variable
-    options = {
-      key: fs.readFileSync(__dirname + "/cert/privkey.pem"),
-      cert: fs.readFileSync(__dirname + "/cert/cert.pem"),
-      ca: fs.readFileSync(__dirname + "/cert/chain.pem")
-    };
-  } else if (__dirname == "/home/web") {
-    port = 80; // Set port variable
-    sslPort = 443; // Set secure port variable
-    let sslPath = "/etc/letsencrypt/live/mrjorgen.dynu.net/";
-    options = {
-      key: fs.readFileSync(sslPath + 'privkey.pem'),
-      cert: fs.readFileSync(sslPath + 'fullchain.pem')
-    };
-  } else {
-    port = process.env.port;
-    heroku = true;
-  }
-  
+console.log(__dirname);
+if (__dirname == "/home/pi/web") {
+  port = 3000; // Set port variable
+  sslPort = 3001; // Set secure port variable
+  options = {
+    key: fs.readFileSync(__dirname + "/cert/privkey.pem"),
+    cert: fs.readFileSync(__dirname + "/cert/cert.pem"),
+    ca: fs.readFileSync(__dirname + "/cert/chain.pem")
+  };
+} else if (__dirname == "/home/web") {
+  port = 80; // Set port variable
+  sslPort = 443; // Set secure port variable
+  let sslPath = "/etc/letsencrypt/live/mrjorgen.dynu.net/";
+  options = {
+    key: fs.readFileSync(sslPath + 'privkey.pem'),
+    cert: fs.readFileSync(sslPath + 'fullchain.pem')
+  };
+} else {
+  port = process.env.port;
+  heroku = true;
+}
+
 if (!heroku) {
   const https = require("https").createServer(options, app),
     io = require('socket.io')(https);
 }
 
-  /*
-  ------------------------------------------------------------------------------------------------
-  How to setup node with SSL!
-  https://startupnextdoor.com/how-to-obtain-and-renew-ssl-certs-with-lets-encrypt-on-node-js/
-  
-  This directory contains your keys and certificates.
-  /etc/letsencrypt/live/mrjorgen.dynu.net/
-  
-  `privkey.pem`: the private key for your certificate.
-  `fullchain.pem`: the certificate file used in most server software.
-  `chain.pem`: used for OCSP stapling in Nginx >= 1.3 .7.
-  `cert.pem`: will break many server configurations, and should not be used
-  without reading further documentation(see link below).
-  
-  We recommend not moving these files.For more information, see the Certbot
-  User Guide at https: //certbot.eff.org/docs/using.html#where-are-my-certificates.
-  
-  IMPORTANT NOTES:
-  - Congratulations! Your certificate and chain have been saved at:
-  /etc/letsencrypt/live/mrjorgen.dynu.net/fullchain.pem
-  Your key file has been saved at:
-  /etc/letsencrypt/live/mrjorgen.dynu.net/privkey.pem
-  Your cert will expire on 2018-06-22. To obtain a new or tweaked
-  version of this certificate in the future, simply run certbot-auto
-  again. To non-interactively renew *all* of your certificates, run
-  "certbot-auto renew"
-  - Your account credentials have been saved in your Certbot
-  configuration directory at /etc/letsencrypt. You should make a
-  secure backup of this folder now. This configuration directory will
-  also contain certificates and private keys obtained by Certbot so
-  making regular backups of this folder is ideal.
-  
-  ------------------------------------------------------------------------------------------------
-  /etc/letsencrypt/live/mrjorgen.dynu.net/privkey.pem
-  /etc/letsencrypt/live/mrjorgen.dynu.net/chain.pem
-  /etc/letsencrypt/live/mrjorgen.dynu.net/privkey.pem
-  */
+/*
+------------------------------------------------------------------------------------------------
+How to setup node with SSL!
+https://startupnextdoor.com/how-to-obtain-and-renew-ssl-certs-with-lets-encrypt-on-node-js/
  
-    
+This directory contains your keys and certificates.
+/etc/letsencrypt/live/mrjorgen.dynu.net/
+ 
+`privkey.pem`: the private key for your certificate.
+`fullchain.pem`: the certificate file used in most server software.
+`chain.pem`: used for OCSP stapling in Nginx >= 1.3 .7.
+`cert.pem`: will break many server configurations, and should not be used
+without reading further documentation(see link below).
+ 
+We recommend not moving these files.For more information, see the Certbot
+User Guide at https: //certbot.eff.org/docs/using.html#where-are-my-certificates.
+ 
+IMPORTANT NOTES:
+- Congratulations! Your certificate and chain have been saved at:
+/etc/letsencrypt/live/mrjorgen.dynu.net/fullchain.pem
+Your key file has been saved at:
+/etc/letsencrypt/live/mrjorgen.dynu.net/privkey.pem
+Your cert will expire on 2018-06-22. To obtain a new or tweaked
+version of this certificate in the future, simply run certbot-auto
+again. To non-interactively renew *all* of your certificates, run
+"certbot-auto renew"
+- Your account credentials have been saved in your Certbot
+configuration directory at /etc/letsencrypt. You should make a
+secure backup of this folder now. This configuration directory will
+also contain certificates and private keys obtained by Certbot so
+making regular backups of this folder is ideal.
+ 
+------------------------------------------------------------------------------------------------
+/etc/letsencrypt/live/mrjorgen.dynu.net/privkey.pem
+/etc/letsencrypt/live/mrjorgen.dynu.net/chain.pem
+/etc/letsencrypt/live/mrjorgen.dynu.net/privkey.pem
+*/
+
+
 let users = 0;
 
 app.use(forceSsl);
@@ -107,17 +107,6 @@ app.use(session({
 
 app.set("views", __dirname + "/views");
 app.set('view engine', 'ejs');
-
-// Bring in Mongoose model and open connection
-mongoose.connect('mongodb://127.0.0.1/livechat', (err) => {
-  if (err) {
-    console.log("Error connecting to db: " + err);
-  }
-});
-let db = mongoose.connection;
-db.on("errror", (err) => console.log("Error opening connection to db: " + err));
-db.once("open", () => console.log("Connected to MongoDB!"));
-let Message = require("./models/messages");
 
 // Home page
 app.get('/', (req, res) => {
@@ -151,69 +140,82 @@ app.get("/ToDo", (req, res) => {
   });
 });
 
-// Chat page
-app.get("/chat", (req, res) => {
-
-  if (!req.mySession.username) {
-    req.mySession.username = "John Doe";
-  };
-  // socket.username = req.mySession.username;
-
-  // 1000 milli, 60 seconds, 60 minutes = 1 hour
-  Message.find({
-    timestamp: {
-      $gte: new Date().getTime() - 1000 * 60 * 60
-    }
-  }, (err, messages) => {
+if (!heroku) {
+  // Bring in Mongoose model and open connection
+  mongoose.connect('mongodb://127.0.0.1/livechat', (err) => {
     if (err) {
-      console.log("Error retrieving data from db: " + err);
-    } else {
-      res.render("home", {
-        title: "Live Chat",
-        messages: messages,
-        username: req.mySession.username,
-        mainPage: "chat"
-      });
+      console.log("Error connecting to db: " + err);
     }
   });
+  let db = mongoose.connection;
+  db.on("errror", (err) => console.log("Error opening connection to db: " + err));
+  db.once("open", () => console.log("Connected to MongoDB!"));
+  let Message = require("./models/messages");
 
-});
+  // Chat page
+  app.get("/chat", (req, res) => {
 
-// Insert chat messages to database and check everytime a new chat message
-// is inserted for messages older than 1 hour (and remove them)
+    if (!req.mySession.username) {
+      req.mySession.username = "John Doe";
+    };
+    // socket.username = req.mySession.username;
 
-io.on('connection', (socket) => {
-  console.log("A user connected!");
-  users++;
-  console.log("Current users: " + users);
-  socket.on('chat message', (msg) => {
-    let message = new Message();
-
-    // message.user = msg.user;
-    message.user = socket.username;
-    message.message = msg.message;
-    message.timestamp = msg.timestamp;
-    message.save((err, msg) => {
+    // 1000 milli, 60 seconds, 60 minutes = 1 hour
+    Message.find({
+      timestamp: {
+        $gte: new Date().getTime() - 1000 * 60 * 60
+      }
+    }, (err, messages) => {
       if (err) {
-        console.log("Error inserting data to db: " + err);
+        console.log("Error retrieving data from db: " + err);
       } else {
-        console.log(msg.user + " says " + msg.message);
-        io.emit('chat message', msg);
+        res.render("home", {
+          title: "Live Chat",
+          messages: messages,
+          username: req.mySession.username,
+          mainPage: "chat"
+        });
       }
     });
+
   });
 
-  socket.on("add user", (username) => {
-    socket.username = username;
-    console.log(username + " connected to chat");
-  });
+  // Insert chat messages to database and check everytime a new chat message
+  // is inserted for messages older than 1 hour (and remove them)
 
-  socket.on('disconnect', () => {
-    console.log("User disconnected.");
-    users--;
+  io.on('connection', (socket) => {
+    console.log("A user connected!");
+    users++;
     console.log("Current users: " + users);
+    socket.on('chat message', (msg) => {
+      let message = new Message();
+
+      // message.user = msg.user;
+      message.user = socket.username;
+      message.message = msg.message;
+      message.timestamp = msg.timestamp;
+      message.save((err, msg) => {
+        if (err) {
+          console.log("Error inserting data to db: " + err);
+        } else {
+          console.log(msg.user + " says " + msg.message);
+          io.emit('chat message', msg);
+        }
+      });
+    });
+
+    socket.on("add user", (username) => {
+      socket.username = username;
+      console.log(username + " connected to chat");
+    });
+
+    socket.on('disconnect', () => {
+      console.log("User disconnected.");
+      users--;
+      console.log("Current users: " + users);
+    });
   });
-});
+}
 
 // This server is for forwarding to SSL only
 http.listen(port, () => {
