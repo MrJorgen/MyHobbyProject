@@ -34,7 +34,7 @@ if (__dirname == "/home/pi/web") {
   };
 } else {
   console.log(process.env);
-  port = process.env.port;
+  port = process.env.port || 3000;
   heroku = true;
 }
 
