@@ -222,7 +222,7 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
     // Måndag
     [
       {
-        "171": drivers[3],
+        "171": drivers[1],
         "172": drivers[0],
         "175": drivers[2],
         "176": drivers[5],
@@ -230,7 +230,7 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
       },
       // Tisdag
       {
-        "171": drivers[3],
+        "171": drivers[1],
         "172": drivers[0],
         "175": drivers[2],
         "176": drivers[5],
