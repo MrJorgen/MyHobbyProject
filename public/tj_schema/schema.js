@@ -1,4 +1,5 @@
-const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Linda", "Martin", "Sanna"],
+const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "Sanna"],
+  trucks = ["171", "172", "175", "176", "177"],
   schemaStartDate = new Date("2019-06-03"),
   schema = [
     // 7 veckors rullande schema
