@@ -1,7 +1,7 @@
 import { NeuralNetwork } from "./NN.js";
 
 export class Snake {
-  constructor(x, y, scale = 10) {
+  constructor(x, y, scale = 10, width, height) {
     this.x = x;
     this.y = y;
     this.scale = scale;
@@ -10,7 +10,7 @@ export class Snake {
     this.dead = false;
     this.canMove = true;
     this.tail = [];
-    this.brain = new NeuralNetwork(6, 16, 4);
+    this.brain = new NeuralNetwork(4, 4, 4);
     this.age = 0;
     this.directions = {
       UP: { x: 0, y: -this.scale },
@@ -19,6 +19,7 @@ export class Snake {
       LEFT: { x: -this.scale, y: 0 }
     }
     this.dir = this.directions.RIGHT;
+    this.lifeSpan = (width / this.scale) * (height / this.scale);
   }
 
   think(width, height, food) {
@@ -29,14 +30,14 @@ export class Snake {
     inputs.push(this.y / height);
 
     // Where am I going?
-    inputs.push((this.dir.x + this.scale) / this.scale * 2);
-    inputs.push((this.dir.y + this.scale) / this.scale * 2);
+    // inputs.push((this.dir.x + this.scale) / this.scale * 2);
+    // inputs.push((this.dir.y + this.scale) / this.scale * 2);
     
     // Where is the food?
     inputs.push(food.x / width);
     inputs.push(food.y / height);
 
-
+    console.log(inputs);
     let outputs = this.brain.predict(inputs);
     let index = outputs.indexOf(Math.max(...outputs));
 

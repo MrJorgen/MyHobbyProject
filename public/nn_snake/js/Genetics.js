@@ -17,7 +17,9 @@ export class Genetics {
     }
 
     calculateFitness(calcSnake) {
-        let fitness = calcSnake.age + calcSnake.score * 10;
+        // let fitness = calcSnake.age + calcSnake.score * 10;
+        // let fitness = calcSnake.score * 10;
+        let fitness = calcSnake.age;
         console.log(fitness);
         return fitness;
     }

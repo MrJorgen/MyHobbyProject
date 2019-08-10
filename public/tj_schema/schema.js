@@ -1,6 +1,6 @@
 const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "Sanna"],
   trucks = ["171", "172", "175", "176", "177"],
-  schemaStartDate = new Date("2019-06-03"),
+  schemaStartDate = new Date("2019-08-12"),
   schema = [
     // 7 veckors rullande schema
     // Vecka 23(1)
@@ -8,7 +8,7 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
     [
       {
         "171": drivers[4],
-        "172": drivers[3],
+        "172": drivers[0],
         "175": drivers[1],
         "176": drivers[5],
         "177": drivers[6],
@@ -16,7 +16,7 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
       // Tisdag
       {
         "171": drivers[4],
-        "172": drivers[3],
+        "172": drivers[0],
         "175": drivers[1],
         "176": drivers[5],
         "177": drivers[6],
@@ -24,23 +24,23 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
       // Onsdag
       {
         "171": drivers[4],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[5],
-        "177": drivers[3],
+        "177": drivers[0],
       },
       // Torsdag
       {
-        "171": drivers[1],
-        "172": drivers[0],
+        "171": drivers[4],
+        "172": drivers[3],
         "175": drivers[2],
-        "176": drivers[5],
+        "176": drivers[1],
         "177": drivers[6],
       },
       // Fredag
       {
         "171": drivers[1],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[5],
         "177": drivers[6],
@@ -50,24 +50,24 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
     // Måndag
     [
       {
-        "171": drivers[3],
-        "172": drivers[0],
+        "171": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[1],
         "177": drivers[6],
       },
       // Tisdag
       {
-        "171": drivers[3],
-        "172": drivers[0],
-        "175": drivers[2],
+        "171": drivers[4],
+        "172": drivers[3],
+        "175": drivers[0],
         "176": drivers[1],
         "177": drivers[6],
       },
       // Onsdag
       {
         "171": drivers[4],
-        "172": drivers[3],
+        "172": drivers[0],
         "175": drivers[1],
         "176": drivers[5],
         "177": drivers[6],
@@ -75,18 +75,18 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
       // Torsdag
       {
         "171": drivers[4],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[5],
-        "177": drivers[3],
+        "177": drivers[0],
       },
       // Fredag
       {
         "171": drivers[4],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[5],
-        "177": drivers[3],
+        "177": drivers[0],
       },
     ],
     // Vecka 25(3)
@@ -94,7 +94,7 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
     [
       {
         "171": drivers[4],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[5],
         "177": drivers[6],
@@ -102,15 +102,15 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
       // Tisdag
       {
         "171": drivers[4],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[5],
         "177": drivers[6],
       },
       // Onsdag
       {
-        "171": drivers[3],
-        "172": drivers[0],
+        "171": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[1],
         "177": drivers[6],
@@ -118,7 +118,7 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
       // Torsdag
       {
         "171": drivers[4],
-        "172": drivers[3],
+        "172": drivers[0],
         "175": drivers[1],
         "176": drivers[5],
         "177": drivers[6],
@@ -126,7 +126,7 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
       // Fredag
       {
         "171": drivers[4],
-        "172": drivers[3],
+        "172": drivers[0],
         "175": drivers[1],
         "176": drivers[5],
         "177": drivers[6],
@@ -137,30 +137,30 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
     [
       {
         "171": drivers[4],
-        "172": drivers[0],
-        "175": drivers[3],
+        "172": drivers[3],
+        "175": drivers[1],
         "176": drivers[5],
-        "177": drivers[1],
+        "177": drivers[0],
       },
       // Tisdag
       {
         "171": drivers[4],
-        "172": drivers[0],
-        "175": drivers[3],
+        "172": drivers[3],
+        "175": drivers[1],
         "176": drivers[5],
-        "177": drivers[1],
+        "177": drivers[0],
       },
       // Onsdag
       {
         "171": drivers[4],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[5],
         "177": drivers[6],
       },
       // Torsdag
       {
-        "171": drivers[3],
+        "171": drivers[4],
         "172": drivers[0],
         "175": drivers[2],
         "176": drivers[1],
@@ -168,8 +168,8 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
       },
       // Fredag
       {
-        "171": drivers[3],
-        "172": drivers[0],
+        "171": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[1],
         "177": drivers[6],
@@ -180,14 +180,14 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
     [
       {
         "171": drivers[4],
-        "172": drivers[3],
+        "172": drivers[0],
         "175": drivers[2],
         "176": drivers[1],
         "177": drivers[6],
       },
       // Tisdag
       {
-        "171": drivers[4],
+        "171": drivers[0],
         "172": drivers[3],
         "175": drivers[2],
         "176": drivers[1],
@@ -196,15 +196,15 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
       // Onsdag
       {
         "171": drivers[4],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[1],
         "176": drivers[5],
-        "177": drivers[3],
+        "177": drivers[0],
       },
       // Torsdag
       {
         "171": drivers[4],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[5],
         "177": drivers[6],
@@ -212,7 +212,7 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
       // Fredag
       {
         "171": drivers[4],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[5],
         "177": drivers[6],
@@ -223,20 +223,12 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
     [
       {
         "171": drivers[1],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[5],
         "177": drivers[6],
       },
       // Tisdag
-      {
-        "171": drivers[1],
-        "172": drivers[0],
-        "175": drivers[2],
-        "176": drivers[5],
-        "177": drivers[6],
-      },
-      // Onsdag
       {
         "171": drivers[4],
         "172": drivers[3],
@@ -244,21 +236,29 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
         "176": drivers[1],
         "177": drivers[6],
       },
-      // Torsdag
+      // Onsdag
       {
         "171": drivers[4],
         "172": drivers[0],
+        "175": drivers[2],
+        "176": drivers[1],
+        "177": drivers[6],
+      },
+      // Torsdag
+      {
+        "171": drivers[4],
+        "172": drivers[3],
         "175": drivers[1],
         "176": drivers[5],
-        "177": drivers[3],
+        "177": drivers[0],
       },
       // Fredag
       {
         "171": drivers[4],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[1],
         "176": drivers[5],
-        "177": drivers[3],
+        "177": drivers[0],
       },
     ],
     // Vecka 29(7)
@@ -266,23 +266,23 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
     [
       {
         "171": drivers[4],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[5],
-        "177": drivers[3],
+        "177": drivers[0],
       },
       // Tisdag
       {
         "171": drivers[4],
-        "172": drivers[0],
-        "175": drivers[2],
+        "172": drivers[3],
+        "175": drivers[0],
         "176": drivers[5],
-        "177": drivers[3],
+        "177": drivers[6],
       },
       // Onsdag
       {
         "171": drivers[1],
-        "172": drivers[0],
+        "172": drivers[3],
         "175": drivers[2],
         "176": drivers[5],
         "177": drivers[6],
@@ -290,7 +290,7 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
       // Torsdag
       {
         "171": drivers[4],
-        "172": drivers[3],
+        "172": drivers[0],
         "175": drivers[2],
         "176": drivers[1],
         "177": drivers[6],
@@ -298,7 +298,7 @@ const drivers = ["Dennis", "Ingemar", "Janne", "Jörgen", "Emma", "Martin", "San
       // Fredag
       {
         "171": drivers[4],
-        "172": drivers[3],
+        "172": drivers[0],
         "175": drivers[2],
         "176": drivers[1],
         "177": drivers[6],

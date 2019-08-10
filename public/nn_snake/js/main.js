@@ -1,7 +1,7 @@
 import { Snake } from "./Snake.js";
 import { Food } from "./Food.js";
 import { Genetics } from "./Genetics.js";
-(function() {
+(function () {
   let canvas = document.querySelector("#snake"),
     ctx = canvas.getContext("2d"),
     width = (canvas.width = 400),
@@ -14,7 +14,7 @@ import { Genetics } from "./Genetics.js";
     frameCounter = null,
     score = document.querySelector("#score"),
     oldSnake,
-    speed = 1000 / 60,
+    speed = 1000 / 120,
     generation = 1,
     bestScore = {
       score: 0,
@@ -29,17 +29,17 @@ import { Genetics } from "./Genetics.js";
         bestScore.generation = generation;
         score.textContent = "Best score: " + bestScore.score + " At generation: " + bestScore.generation;
       }
-      let newSnake = new Snake(width / 2, height / 2, scale);
+      let newSnake = new Snake(width / 2, height / 2, scale, width, height);
       newSnake.brain = evolution.newSnake(oldSnake, snake);
       oldSnake = snake;
       snake = newSnake;
-      
+
       document.querySelector("#generation").textContent = generation;
       generation++;
     }
     else {
-      snake = new Snake(width / 2, height / 2, scale);
-      oldSnake = new Snake(width / 2, height / 2, scale);
+      snake = new Snake(width / 2, height / 2, scale, width, height);
+      oldSnake = new Snake(width / 2, height / 2, scale, width, height);
     }
     food = new Food();
     food.newPosition(width, height);
@@ -47,7 +47,7 @@ import { Genetics } from "./Genetics.js";
     frameCounter = window.requestAnimationFrame(animate);
   }
 
-  function simulate() {}
+  function simulate() { }
 
   function animate(time = 0) {
     const deltaTime = time - lastTime;
@@ -59,28 +59,32 @@ import { Genetics } from "./Genetics.js";
     if (moveTimer >= speed) {
       snake.update();
       snake.checkCollision(width, height);
-      snake.think(width, height, food);
-
-      // Check if snake eats food
-      if (snake.x === food.x && snake.y === food.y) {
-        let foodPos = true;
-        do {
-          food.newPosition(width, height);
-          foodPos = true;
-          snake.tail.forEach(tail => {
-            if (tail.x == food.x && tail.y == food.y) {
-              foodPos = false;
-            }
-          });
-        } while (!foodPos);
-        food.show(ctx);
-        snake.growing = true;
-        snake.score++;
-        // score.textContent = snake.score;
-      }
-      
-      // Draw everything
       if (!snake.dead) {
+        snake.think(width, height, food);
+
+        // Check if snake eats food
+        if (snake.x === food.x && snake.y === food.y) {
+          let foodPos = true;
+          do {
+            food.newPosition(width, height);
+            foodPos = true;
+            snake.tail.forEach(tail => {
+              if (tail.x == food.x && tail.y == food.y) {
+                foodPos = false;
+              }
+            });
+          } while (!foodPos);
+          food.show(ctx);
+          snake.growing = true;
+          snake.lifeSpan = (width / scale) * (height / scale);
+          snake.score++;
+          // score.textContent = snake.score;
+        }
+        snake.age++;
+        snake.lifeSpan--;
+        if (snake.lifeSpan <= 0) { snake.dead = true };
+
+        // Draw everything
         // Clear canvas
         ctx.fillStyle = "#ccc";
         ctx.strokeStyle = "#000";
@@ -88,9 +92,6 @@ import { Genetics } from "./Genetics.js";
 
         // Optional grid
         drawGrid();
-
-        snake.age++;
-
         food.show(ctx);
         snake.show(ctx);
 
@@ -140,6 +141,13 @@ import { Genetics } from "./Genetics.js";
             snake.dir = snake.directions.DOWN;
             snake.canMove = false;
           }
+          break;
+
+        // Spacebar
+        case 32:
+          console.log(e);
+          //animate();
+          frameCounter = window.requestAnimationFrame(animate);
           break;
       }
     }
