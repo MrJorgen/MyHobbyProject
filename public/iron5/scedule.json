@@ -1,0 +1,162 @@
+{
+    "Vecka 6": {
+        "Måndag": {
+            "177": "Robin",
+            "172": "Stefan",
+            "175": "Janne",
+            "176": "Jean"
+        },
+        "Tisdag": {
+            "177": "Robin",
+            "172": "Sanna",
+            "175": "Janne",
+            "176": "Jean"
+        },
+        "Onsdag": {
+            "177": "Sanna",
+            "172": "Jörgen",
+            "175": "Janne",
+            "176": "Stefan"
+        },
+        "Torsdag": {
+            "177": "Robin",
+            "172": "Jörgen",
+            "175": "Sanna",
+            "176": "Jean"
+        },
+        "Fredag": {
+            "177": "Stefan",
+            "172": "Jörgen",
+            "175": "Janne",
+            "176": "Jean"
+        }
+    },
+    "Vecka 7": {
+        "Måndag": {
+            "177": "Stefan",
+            "172": "Jörgen",
+            "175": "Janne",
+            "176": "Jean"
+        },
+        "Tisdag": {
+            "177": "Sanna",
+            "172": "Jörgen",
+            "175": "Janne",
+            "176": "Jean"
+        },
+        "Onsdag": {
+            "177": "Robin",
+            "172": "Jörgen",
+            "175": "Stefan",
+            "176": "Sanna"
+        },
+        "Torsdag": {
+            "177": "Robin",
+            "172": "Sanna",
+            "175": "Janne",
+            "176": "Stefan"
+        },
+        "Fredag": {
+            "177": "Robin",
+            "172": "Jörgen",
+            "175": "Janne",
+            "176": "Jean"
+        }
+    },
+    "Vecka 8": {
+        "Måndag": {
+            "177": "Robin",
+            "172": "Jörgen",
+            "175": "Janne",
+            "176": "Jean"
+        },
+        "Tisdag:": {
+            "177": "Sanna",
+            "172": "Jörgen",
+            "175": "Janne",
+            "176": "Jean"
+        },
+        "Onsdag": {
+            "177": "Robin",
+            "172": "Stefan",
+            "175": "Sanna",
+            "176": "Jean"
+        },
+        "Torsdag": {
+            "177": "Robin",
+            "172": "Stefan",
+            "175": "Sanna",
+            "176": "Jean"
+        },
+        "Fredag": {
+            "177": "Robin",
+            "172": "Jörgen",
+            "175": "Janne",
+            "176": "Stefan"
+        }
+    },
+    "Vecka 9": {
+        "Måndag": {
+            "177": "Robin",
+            "172": "Jörgen",
+            "175": "Janne",
+            "176": "Stefan"
+        },
+        "Tisdag": {
+            "177": "Robin",
+            "172": "Jörgen",
+            "175": "Janne",
+            "176": "Sanna"
+        },
+        "Onsdag": {
+            "177": "Stefan",
+            "172": "Jörgen",
+            "175": "Sanna",
+            "176": "Jean"
+        },
+        "Torsdag": {
+            "177": "Stefan",
+            "172": "Sanna",
+            "175": "Janne",
+            "176": "Jean"
+        },
+        "Fredag": {
+            "177": "Robin",
+            "172": "Jörgen",
+            "175": "Stefan",
+            "176": "Jean"
+        }
+    },
+    "Vecka 10": {
+        "Måndag": {
+            "177": "Robin",
+            "172": "Jörgen",
+            "175": "Stefan",
+            "176": "Jean"
+        },
+        "Tisdag": {
+            "177": "Robin",
+            "172": "Jörgen",
+            "175": "Stefan",
+            "176": "Sanna"
+        },
+        "Onsdag": {
+            "177": "Robin",
+            "172": "Sanna",
+            "175": "Janne",
+            "176": "Jean"
+        },
+        "Torsdag": {
+            "177": "Stefan",
+            "172": "Jörgen",
+            "175": "Janne",
+            "176": "Sanna"
+        },
+        "Fredag": {
+            "177": "Robin",
+            "172": "Stefan",
+            "175": "Janne",
+            "176": "Jean"
+        }
+    }
+}
