@@ -6,4 +6,5 @@
 *.txt
 *.php
 /public/log
+/cert_old
 .env
