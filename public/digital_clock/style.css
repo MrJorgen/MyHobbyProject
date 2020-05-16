@@ -1,0 +1,53 @@
+@font-face {
+	font-family: "7seg";
+	src: url("./fonts/7segment.woff") format("woff");
+}
+
+@font-face {
+	font-family: "7seg-Classic";
+	src: url("./fonts/DSEG7-Classic/DSEG7Classic-Bold.woff") format("woff");
+}
+
+@font-face {
+	font-family: "7seg-Modern";
+	src: url("./fonts/DSEG7-Modern/DSEG7Modern-Bold.woff") format("woff");
+}
+
+canvas {
+	margin: calc(50% - 24.5px) auto;
+	display: block;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+}
+
+#clockDiv {
+	margin: auto;
+	width: 360px;
+	height: 360px;
+	border: 4px silver;
+	border-style: solid;
+	border-radius: 50%;
+	background-color: black;
+	font-family: "7seg-Classic";
+  font-size: 68px;
+  text-align: center;
+}
+
+#time::before {
+  content: "88:88:88";
+  color: rgba(0, 0, 0, 0.04);
+  position: absolute;
+}
+
+#time {
+  margin-top: 50px;
+  padding: 5px;
+  background-color: rgb(47, 106, 49);
+  position: absolute;
+  border-collapse: collapse;
+  border: 3px solid black;
+  border-radius: 5px;
+}

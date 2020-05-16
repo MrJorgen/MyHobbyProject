@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #000;
+  /* background-image: url("../img/2560x1600_px_city_Cityscape_landscape_Overcast_river_Skyscraper_sunset-789562.jpg"); */
+  /* background-image: url("../img/933996.jpg"); */
+  /* background-image: url("../img/3109784-architecture_buildings_city_city-lights_cityscape_cloudy_downtown_lights_night_skyscraper_tower_urban.jpg"); */
+  /* background-image: url("../img/3334627-city-evening-night-blue-building.jpg"); */
+  /* background-image: url("../img/5243505-cloud-skyscraper-sky-building-urban-cityscape-storm-overcast-city-dark-downtown-night-tower-blue-cloudy-skyline-one-world-trade-new-york-new-york-city-creative-commons-images.jpg"); */
+  /* background-image: url("../img/5280684-tower-city-urban-skyscraper-cityscape-building-japan-orange-blue-cloudy-overcast-asium-skyline-tokyo-tokyo-tower-public-domain-images.jpg"); */
+  /* background-image: url("../img/5359538-downtown-skyline-water-detroit-cloud-blue-river-sky-building-long-exposure-night-light-city-blue-blue-sky-city-lights-overcast-day-creative-commons-images.jpg"); */
+  /* background-image: url("../img/1555630527875_GGK2620IB.2-1.jpg"); */
+  /* background-image: url("../img/a-winter-night-view-from-qinngorput-towards-nuuk-in-greenland.jpg"); */
+  /* background-image: url("../img/h_51382770.jpg"); */
+  /* background-size: 100%; */
+  background-size: cover;
+  background-position: center;
+}
+
+canvas {
+  display: block;
+}

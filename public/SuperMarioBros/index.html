@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Super Mario</title>
+		<link rel="icon" href="./img/mario-icon.png" sizes="192x192" />
+		<!-- More info here: https://themushroomkingdom.net/smb_breakdown.shtml -->
+		<style>
+			body {
+				background: #000;
+				margin: 0;
+			}
+
+			#screen {
+				display: block;
+				image-rendering: pixelated;
+				height: 50vh;
+				margin: auto;
+			}
+		</style>
+    <script type="module" src="./js/main.js"></script>
+	</head>
+
+	<body>
+		<canvas id="screen" width="256" height="224"></canvas>
+    <!-- <audio src="./sound/smb_theme.mp3" onplay="soundLoaded(this, 0.6)" autoplay="autoplay" loop="loop"></audio>
+    <audio src="./sound/smb_mariodie.mp3" onplay="soundLoaded(this, 1)" autoplay="autoplay"></audio>
+    <audio src="./sound/smb_jump-small.mp3" onplay="soundLoaded(this, 1)"></audio> -->
+    <script>
+      function soundLoaded(sound, volume){
+        console.log(sound);
+        // sound.playbackRate = 1;
+        sound.volume = volume;
+      }
+    </script>
+	</body>
+</html>

@@ -1,0 +1,119 @@
+body {
+    margin: 0px;
+    font-size: 1em;
+    font-family: Titillium Web, Verdana, Geneva, Tahoma, sans-serif;
+    user-select: none;
+    /* overflow-x: hidden; */
+    /* max-width: 768px; */
+    width: 100%;
+}
+
+table {
+    font-size: 0.9em;
+    font-family: Titillium Web, Verdana, Geneva, Tahoma, sans-serif;
+    width: 100%;
+    max-width: 500px;
+    padding: 4px;
+    border-collapse: collapse;
+}
+
+table td,
+table th {
+    text-align: left;
+    padding-left: 5px;
+}
+
+table tr.week {
+    border-bottom: 1px solid #555;
+    border-top: 1px solid #555;
+}
+
+table tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+table tr:nth-child(even) {
+    background-color: #d5d5d5;
+}
+
+table th.weeknr {
+    text-align: center;
+    padding: 0px;
+}
+
+#container {
+    margin: 0px auto;
+    max-width: 500px;
+}
+
+#inputContainer {
+    display: grid;
+    grid-template-columns: 50vw 50vw;
+    width: 100vw;
+    position: absolute;
+    bottom: 2px;
+    font-size: 1em;
+    max-width: 768px;
+}
+
+#inputContainer label {
+    width: 100%;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+#inputContainer div {
+    padding: 0px 3px;
+}
+
+#dateInput {
+    width: 100%;
+}
+
+#nameInput {
+    width: 100%;
+}
+
+.active {
+    /* background-color: rgba(255, 0, 0, 0.05); */
+    border-left: 2px solid rgba(255, 0, 0, 0.5);
+    border-right: 2px solid rgba(255, 0, 0, 0.5);
+    border-radius: 1%;
+}
+
+.active-top {
+    border-top: 2px solid rgba(255, 0, 0, 0.5);
+}
+
+.active-bottom {
+    border-bottom: 2px solid rgba(255, 0, 0, 0.5);
+}
+
+.nobold {
+    font-weight: normal;
+}
+
+.small {
+    font-size: 0.7em;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #555 !important;
+}
+
+.border-top {
+    border-top: 1px solid #555;
+}
+
+.red {
+    color: red;
+}
+
+label {
+  margin: 0;
+}
+
+.form-control {
+  height: auto;
+  padding: 0;
+}

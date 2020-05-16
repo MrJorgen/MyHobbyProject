@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+        <title>Pool</title>
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+            }
+
+            #canvas {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                z-index: 5;
+            }
+
+            #bg_canvas {
+                top: 0px;
+                left: 0px;
+                position: absolute;
+                z-index: 1;
+            }
+        </style>
+    </head>
+
+    <body>
+        <img id="table" src="pool_table_new.png">
+        <canvas id="bg_canvas"></canvas>
+        <canvas id="canvas"></canvas>
+        <script src="particle.js"></script>
+
+        <script src="poolball.js"></script>
+        <script src="pool.js"></script>
+        <!-- <script src="test.js"></script> -->
+    </body>
+
+</html>

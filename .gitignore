@@ -1,0 +1,9 @@
+/cert
+/.vscode
+/node_modules
+*.gz
+*.tsv
+*.txt
+*.php
+/public/log
+.env

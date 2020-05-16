@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Minesweeper</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<style>
+	h1 img{
+		height: 1.2em;
+		margin: 0px 15px -0.2em 15px;
+	}
+
+	.header {
+		display: flex;
+		justify-content: center;
+		text-align: center;
+	}
+
+	.header h1{
+		margin: auto;
+	}
+
+	#container {
+	    display: flex;
+	    justify-content: space-between;
+	    margin: 0px auto;
+	    background-color: black;
+	    border-radius: 8px;
+        align-items: center;
+	}
+	
+	.display_numbers {
+		margin: 7px;
+	    height: 49px;
+	}
+
+	.numbers {
+	    float: left;
+	    margin-left: 1px;
+	    /*background-color: red;*/
+	    background-image: url("./img/numbers.gif");
+	    background-size: 1000%;
+	    width: 28px;
+	    height: 49px;
+	}
+	
+	.num0{
+		background-position: 0px 0px; 
+	}
+	.num1{
+		/*background-position: -28px 0px;*/
+		background-position: 11.111% 0px;
+	}
+	.num2{
+		background-position: 22.222% 0px; 
+	}
+	.num3{
+		background-position: 33.333% 0px; 
+	}
+	.num4{
+		background-position: 44.444% 0px; 
+	}
+	.num5{
+		background-position: 55.555% 0px; 
+	}
+	.num6{
+		background-position: 66.666% 0px; 
+	}
+	.num7{
+		background-position: 77.777% 0px; 
+	}
+	.num8{
+		background-position: 88.888% 0px; 
+	}
+	.num9{
+		background-position: 100% 0px; 
+	}
+
+	#smiley{
+		height: 30px;
+		text-align: center;
+	}
+	.markers img{
+		width: 40px;
+		
+	}
+	.markers{
+		display: inline-block;
+		height: 40px;
+		border: 2px solid transparent;
+	}
+
+	#touch_controls {
+		width: 50%;
+		margin: 0px auto;
+		text-align: center;
+		display: block;
+	}
+	.active{
+		border: 2px dotted red;
+	}
+
+	#settings{
+		margin: 10px auto;
+		text-align: center;
+		display: flex;
+		justify-content: space-between;
+	}
+	#settings div{
+		display: inline-block;
+	}
+</style>
+<body style="font-family: Verdana, Arial, sans-serif;">
+		<img id="bomb" style="display: none;" src="./img/mine2.png" alt="">
+		<img id="square" style="display: none;" src="./img/tile.png" alt="">
+		<img id="mine_expload" style="display: none;" src="./img/mine.png" alt="">
+		<img id="flag" style="display: none;" src="./img/tile3.png" alt="">
+		<img id="tiles" style="display: none;" src="./img/tiles.png" alt="">
+		<div class="header"><h1><img src="./img/mine2.png" alt="">Minesweeper<img src="./img/mine2.png" alt=""></h1></div>
+		<div id="settings">
+			<div>
+				<span>Difficulty: </span>
+				<select name="difficulty" id="difficulty_select">
+					<option value="beginner">Beginner</option>
+					<option value="intermediate">Intermediate</option>
+					<option value="expert">Expert</option>
+				</select>
+			</div>
+			<div>
+				<span>Size: </span>
+				<select name="size" id="size_select">
+					<option value="16">16</option>
+					<option value="20">20</option>
+					<option value="24">24</option>
+					<option value="28">28</option>
+					<option value="32">32</option>
+					<option value="36">36</option>
+					<option value="42">42</option>
+					<option value="48">48</option>
+					<option value="56">56</option>
+					<option value="64">64</option>
+				</select>
+			</div>
+			<div>
+				<span>Theme: </span>
+				<select name="theme" id="theme_select">
+					<option value="classic">Classic</option>
+					<option value="modern">Modern</option>
+					<option value="modern2">Modern 2</option>
+				</select>
+			</div>
+		</div>
+		<div id="container">
+			<div class="display_numbers" id="bomb_container">
+				<div class="numbers num0" id="bomb_number0"></div>
+				<div class="numbers num0" id="bomb_number1"></div>
+				<div class="numbers num0" id="bomb_number2"></div>
+			</div>
+			<div>
+				<img onclick="loadImage();" id="smiley" src="./img/smiley1.png" alt="">
+				<!-- <p >🙂</p> -->
+			</div>
+			<div class="display_numbers" id="timer_container">
+				<div class="numbers num0" id="number0"></div>
+				<div class="numbers num0" id="number1"></div>
+				<div class="numbers num0" id="number2"></div>
+			</div>
+		</div>
+		<canvas style="margin: 10px auto; display: block;" id="game" height="400" width="400"></canvas>
+		<div id="touch_controls" class="marker_container">
+			<div onclick="changeAction(0, this);" class="markers active"><img src="./img/mine2.png" alt=""></div>
+			<div onclick="changeAction(2, this);" class="markers"><img src="./img/tile3.png" alt=""></div>
+			<!-- <div onclick="" class="markers"><img src="./img/Tile2.png" alt=""></div> -->
+		</div>
+		<script src="themes.js"></script>
+		<script src="cell.js"></script>
+		<script src="game.js"></script>
+		<script>
+			document.addEventListener('DOMContentLoaded', loadImage, false);
+		</script>
+	</body>
+	</html>

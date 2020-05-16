@@ -1,0 +1,89 @@
+<style>
+      form {
+            padding: 3px;
+            position: fixed;
+            bottom: 0px;
+      }
+
+      form input {
+            border: 0;
+            padding: 10px;
+            width: 90%;
+            margin-right: .5%;
+      }
+
+      #m {
+            display: inline-block;
+            padding-bottom: 6px;
+            padding-top: 6px;
+      }
+
+      #messages-container {
+            width: 350px;
+      }
+
+      form button {
+            border: none;
+            padding: 10px;
+      }
+
+      #messages li {
+            padding: 5px 10px;
+            font-size: small;
+      }
+
+      #messages li:nth-child(odd) {
+            background: #eee;
+      }
+
+      #messages .chat-user {
+            font-weight: bold;
+            /* padding-left: 0.2em; */
+      }
+
+      #messages .chat-user::after {
+            content: ":";
+      }
+
+      #messages .chat-msg {
+            /* padding-left: 0.25em; */
+      }
+
+      #messages .chat-time::before {
+            content: "(";
+      }
+
+      #messages .chat-time::after {
+            content: ")";
+      }
+</style>
+
+<div class="container">
+  <div id="messages-container" data-user="<%= username %>" class="container">
+    <ul class="list-group" id="messages">
+    <% messages.forEach((message) => { %>      
+      <li class="list-group-item">
+        <% if(message.timestamp) { %>
+          <span class="chat-time"><%= moment(message.timestamp).fromNow() %></span>
+        <% } else { %>
+          <span class="chat-time">00:00:00</span>
+        <% } %>
+        <span class="chat-user"><%= message.user %></span>
+        <span class="chat-msg"><%= message.message %></span>
+      </li>
+    <% }) %>
+    </ul>
+  </div>
+
+  <div id="form-container">
+    <form class="form-group" action="">
+      <input type="text" class="form-control" id="m" autocomplete="off" />
+      <button class="btn btn-primary">Send</button>
+    </form>
+  </div>
+</div>
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="faker.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.21.0/moment.js"></script>
+<script src="livechat.js"></script>

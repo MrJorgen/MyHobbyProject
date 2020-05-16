@@ -1,0 +1,121 @@
+@keyframes marking {
+	from {
+    filter: opacity(0.1);
+		/* background-color: transparent; */
+	}
+	to {
+		filter: opacity(1);
+		/* background-color: #ffd258; */
+	}
+}
+
+body {
+	font-family: "Exo 2", sans-serif;
+	font-size: 2.2em;
+}
+
+#maintable {
+	margin: auto;
+	text-align: center;
+	border-collapse: collapse;
+	border: 2px solid black;
+}
+
+td {
+	border: 0.9px solid black;
+	width: 50px;
+	height: 50px;
+}
+
+thead {
+	font-size: 2.4rem;
+	font-weight: bolder;
+	border: 2px solid black;
+}
+
+.bricka {
+	border-bottom: 2px solid black;
+}
+
+#newBtn {
+  position: absolute;
+	top: 45px;
+	left: 25px;
+	font-size: 1.5rem;
+}
+
+#usedNrs {
+  position: absolute;
+	top: 100px;
+	margin: 10px;
+	width: 35vw;
+}
+
+.usedNumbers {
+  display: inline-block;
+	margin: 10px;
+	border-radius: 50%;
+	border: 0.9px solid black;
+	width: 50px;
+	height: 50px;
+	text-align: center;
+	padding: 3px 1px 0px 1px;
+}
+
+.bingo {
+  /* border: 2px solid rgb(255, 0, 0); */
+  animation-name: marking;
+  animation-duration: 0.25s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+
+}
+
+#current {
+  position: absolute;
+	top: 25px;
+	width: 75px;
+	height: 75px;
+	left: 100px;
+}
+
+.img0 {
+  background-image: url("./img/yellow_dab.svg");
+}
+
+.img1 {
+  background-image: url("./img/orange_dab.svg");
+}
+
+.img2 {
+  background-image: url("./img/pink_dab.svg");
+}
+
+.img3 {
+  background-image: url("./img/purple_dab.svg");
+}
+
+.img4 {
+  background-image: url("./img/red_dab.svg");
+}
+
+.img5 {
+  background-image: url("./img/teal_dab.svg");
+}
+
+.marked {
+  /* background-clip: content-box;
+  border-radius: 50%; */
+  animation-name: marking;
+  animation-duration: 0.25s;
+  animation-iteration-count: 5;
+  animation-direction: alternate;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 48px;
+  filter: blur(1px);
+}

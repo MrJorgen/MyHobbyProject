@@ -1,0 +1,47 @@
+<% include ./partials/header %> <% if(mainPage) { %> <%- include(mainPage) %> <% } else { %>
+  <style>
+    section {
+      margin-top: 1em;
+      color: #333;
+    }
+    h4 {
+      margin-top: 2em;
+      margin-bottom: 1em;
+    }
+    a:hover {
+      text-decoration: none;
+      color: #00a;
+      font-weight: bold;
+    }
+  </style>
+<div class="container">
+	<h4>Welcome!</h4>
+	<section>
+		This is my private little homepage. This is where I keep my projects. Most of them is done with the the inspiration of two
+		<a href="https://www.youtube.com">YouTube</a> channels. One is <a href="https://www.youtube.com/user/shiffman">The Coding Train</a> and the other
+		one is <a href="https://www.youtube.com/user/codingmath">Coding Math</a>. Oh, and the Super Mario thing is from
+		<a href="https://www.youtube.com/channel/UC8A0M0eDttdB11MHxX58vXQ">Meth Meth Method</a> which I've tried to enhance and the Rubiks Cube&trade; is
+		from <a href="http://iamthecu.be/">Rubiks Cube Explorer</a>. Most of the project aren't completed, a thing I for some reason have trouble with,
+    even in real life. I have so many projects at home which isn't completed either...
+    <!-- 😀 👨‍🔧 👨 + 🔨 = ❌ -->
+	</section>
+	<section>
+    This is by the way running Node.js on a <a href="https://www.raspberrypi.org/products/raspberry-pi-3-model-b/">Raspberry Pi 3</a>
+    located in my home. It's a wonderful cheap little device acting as a webserver which can actually do a lot of things. I might also
+    start a new hardware project soon. I've been checking out the <a href="https://magicmirror.builders/">Magic Mirror</a>
+		and it looks amazing, but I don't have a spare monitor so I have to go buy a new one.
+	</section>
+	<section>
+		That's it. If you want to contact me, do it 
+		<script>
+			let mailAddress0 = "<a href='mailto:",
+				mailAddress1 = "mr.jo",
+				mailAddress2 = "rgen@b",
+				mailAddress3 = "redba",
+				mailAddress4 = "nd.net",
+				mailAddress5 = "'>here.</a>";
+			document.write(mailAddress0 + mailAddress1 + mailAddress2 + mailAddress3 + mailAddress4 + mailAddress5);
+		</script>
+	</section>
+</div>
+<% } %> <% include ./partials/footer %>

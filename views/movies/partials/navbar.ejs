@@ -1,0 +1,55 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+  <a class="navbar-brand" href="https://www.themoviedb.org/"><img style="height: 28px;"src="/powered-by-rectangle-green.svg" alt=""></a>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation" style="">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarColor01">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/movies">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/movies/popular">Popular</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/movies/top_rated">Top Rated</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/movies/upcoming">Upcoming</a>
+      </li>
+    </ul>
+
+    <form action="/movies" method="post" class="form-inline my-2 my-lg-0">
+    <div class="input-group">
+      <input type="text" name="query" id="searchInput" class="form-control" placeholder="Movie title..." aria-label="Recipient's username" aria-describedby="basic-addon2">
+      <i id="filtersubmit" class="fa fa-search"></i>
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+      </div>
+    </div>
+<!--
+      <input class="form-control mr-sm-2" name="query" type="text" placeholder="Search">
+      <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+-->
+    </form>
+  </div>
+</nav>
+<script>
+  document.addEventListener("DOMContentLoaded",(ev) => {
+    let cP = location.pathname;
+    cP = cP.substring(cP.lastIndexOf("/"), cP.length);
+    [...document.querySelectorAll(`a[href=\"/movies${cP}\"]`)]
+    .map((e) => {
+      e.classList.add("active");
+      e.parentNode.classList.add("active");
+    });
+    console.log(cP);
+  });
+  
+  let nodeData = <%- JSON.stringify(data) %>;
+  console.log(<%- JSON.stringify(data) %> );
+  console.log(<%- JSON.stringify(imdbRatings[data.imdb_id]) %> );
+</script>

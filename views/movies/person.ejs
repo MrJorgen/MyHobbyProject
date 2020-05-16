@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" href="/favicon/favicon-32x32.png" type="image/png">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://bootswatch.com/4/slate/bootstrap.css">
+  <link rel="stylesheet" href="/movie.css">
+  <link href="https://fonts.googleapis.com/css?family=Acme|Arima+Madurai:400,700|Asul|Averia+Sans+Libre|Averia+Serif+Libre|Baloo|Bowlby+One+SC|Bubblegum+Sans|Coiny|Concert+One|Corben|Crushed|Days+One|Doppio+One|Federo|Fredericka+the+Great|Fredoka+One|Gruppo|Kanit|Lemonada|Lobster|Mada:500|Mirza|Oleo+Script+Swash+Caps|Passion+One|Patua+One|Shanti"
+    rel="stylesheet">
+  <!--
+         font-family: 'Acme',sans-serif;
+         font-family: 'Patua One', cursive;
+         font-family: 'Kanit', sans-serif;
+         font-family: 'Passion One', cursive;
+         font-family: 'Concert One', cursive;
+         font-family: 'Fredoka One', cursive;
+         font-family: 'Arima Madurai', cursive;
+1        font-family: 'Days One', sans-serif;
+         font-family: 'Bubblegum Sans', cursive;
+         font-family: 'Doppio One', sans-serif;
+         font-family: 'Mada', sans-serif;
+         font-family: 'Gruppo', cursive;
+         font-family: 'Averia Serif Libre', cursive;
+         font-family: 'Oleo Script Swash Caps', cursive;
+         font-family: 'Crushed', cursive;
+         font-family: 'Corben', cursive;
+         font-family: 'Averia Sans Libre', cursive;
+         font-family: 'Shanti', sans-serif;
+      -->
+  <title>My Movies -
+    <%= data.name %>
+  </title>
+</head>
+
+<body>
+  <% include ./partials/navbar %>
+    <h3 class="border-bottom pb-3"><%= data.name %>
+    <% if(data.birthday) { %>
+      (<%= new Date(data.birthday).getFullYear() %>
+      -
+      <% if(data.deathday) { %><%= new Date(data.deathday).getFullYear() %><% } %>)
+    <% } %>
+    </h3>
+    <div class="row">
+      <div class="col">
+        <div class="w-100">
+          <div class="rounded w-100">
+            <% if(data.images.profiles.length > 0) { %>
+              <%# Sort array by vote_average %>
+              <%
+                data.images.profiles.sort((a, b) => {
+                  return parseFloat(b.vote_average) - parseFloat(a.vote_average);
+                });
+              %>
+              <img class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.images.profiles[0].file_path %>" alt="">
+            <% } else if(data.poster_path) { %>
+              <img class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.poster_path %>" alt="">
+            <% } else { %>
+                <img class="w-100 rounded" src="https://via.placeholder.com/600x900/?text=No+Image..." alt="">
+            <% } %>
+          </div>
+          <div>
+            <%
+              function calculate_age(startDate, deathDate) {
+                if(deathDate){
+                  endDate = new Date(deathDate);
+                } else {
+                  endDate = new Date();
+                }
+                let diff_ms = endDate.getTime() - startDate.getTime();
+                let age_dt = new Date(diff_ms);
+                return Math.abs(age_dt.getUTCFullYear() - 1970);
+              } 
+            %>
+              <% let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' }; %>
+              <p><strong>Born:</strong><br>
+                <% if(data.deathday) { %>
+                  <%= new Date(data.birthday).toLocaleDateString("en-US", dateOptions) %>
+                  <% if(data.place_of_birth) { %> in
+                    <%= data.place_of_birth %>
+                  <% } %>
+                  </p>
+                  <p><strong>Died:</strong><br>
+                  <%= new Date(data.deathday).toLocaleDateString("en-US", dateOptions) %>(age
+                  <%= calculate_age(new Date(data.birthday), new Date(data.deathday)) %>)</p>
+                <% } else if(data.birthday) { %>
+                  <%= new Date(data.birthday).toLocaleDateString("en-US", dateOptions) %>(age
+                  <%= calculate_age(new Date(data.birthday)) %>)
+                  <% if(data.place_of_birth) { %> in
+                    <%= data.place_of_birth %>
+                  <% } %>
+                  </p>
+                <% } else { %>
+                  <p>No info...</p>
+                <% } %>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <p><strong>About:</strong><br>
+          <%- data.biography %>
+        </p>
+
+        <div class="links">
+          <a href="https://www.imdb.com/name/<%= data.imdb_id %>">
+              <img src="/IMDB_Logo_2016.svg">
+            </a>
+          <!-- IMDB id -->
+          <a href="https://www.themoviedb.org/person/<%= data.id %>">
+              <img src="/primary-green.svg">
+            </a>
+          <!-- The Movie DB id -->
+          <a href="https://hdbits.org/film/person?id=<%= parseInt(data.imdb_id.slice(2)) %>">
+              <img src="/HDBits_logo_small.png">
+            </a>
+          <!-- IMDB id -->
+          <a href="https://www.google.se/search?q=<%= data.name %>">
+              <img src="/Google_2015_logo.svg">
+            </a>
+          <!-- Movie title -->
+        </div>
+      </div>
+      <div class="col">
+        <ul class="list-group">
+          <li class="list-group-item">
+            <strong>Known For</strong>
+          </li>
+          <% for (let i = 0; i < data.combined_credits.cast.length; i++) { %>
+            <% if(i >= 5) { break; } %>
+              <li class="list-group-item">
+                <a href="/movies/<%= data.combined_credits.cast[i].media_type %>/<%= data.combined_credits.cast[i].id %>" class="profile-image-container">
+                  <% if (data.combined_credits.cast[i].poster_path) { %>
+                    <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/original<%= data.combined_credits.cast[i].poster_path %>" alt="">
+                  <% } else { %>
+                    <img class="profile-photo rounded-5" src="/unknown.png" alt="">
+                  <% } %>
+                </a>
+                <div class="profile-name-container">
+                <span class="profile-name-text">
+                  <% if(data.combined_credits.cast[i].media_type == "movie") { %>
+                    <strong><%= data.combined_credits.cast[i].title %></strong>
+                  <% } else if(data.combined_credits.cast[i].media_type == "tv") { %>
+                    <strong><%= data.combined_credits.cast[i].name %></strong>
+                  <% } %>
+                  <% if (data.combined_credits.cast[i].character) { %>
+                    <br>
+                    <small>as<br><%= data.combined_credits.cast[i].character %>
+                    <% if(data.combined_credits.cast[i].media_type == "tv") { %>
+                      (<%= data.combined_credits.cast[i].episode_count %>
+                      <%= data.combined_credits.cast[i].episode_count > 1 ? "episodes" : "episode" %>)
+                    <% } %>
+                    </small>
+                  <% } %>
+
+                </span>
+                </div>
+              </li>
+              <% } %>
+        </ul>
+      </div>
+      <!-- <div class="col"></div> -->
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+
+</html>

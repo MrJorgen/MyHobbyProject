@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Solar System</title>
+        <style>
+            body {
+                margin: 0;
+                overflow: hidden;
+            }
+
+            #slider {
+                position: absolute;
+                top: 250px;
+                left: 100px;
+                width: 25%;
+            }
+        </style>
+    </head>
+
+    <body>
+        <canvas id="canvas"></canvas>
+        <input id="slider" type="range" id="myRange" value="5" min="0.5" max="60" step="0.5">
+        <script src="particle.js"></script>
+        <script src="utils.js"></script>
+        <script src="main.js"></script>
+    </body>
+
+</html>

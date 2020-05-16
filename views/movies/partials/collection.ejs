@@ -1,0 +1,44 @@
+<style>
+  .carousel {
+    padding-top: 10px;
+  }
+
+  .carousel-caption {
+    font-size: 50%;
+    padding-bottom: 0px;
+  }
+</style>
+
+<div class="container-fluid">
+  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" data-interval="false">
+    <div class="carousel-inner">
+      <% data.collection.parts.forEach((part, index) => { %>
+
+        <!-- A carousel item -->
+        <div class="carousel-item<% if (index == 0){ %> active<% }; %>">
+          <a title="<%= part.title %>" href="/movies/movie/<%= part.id %>">
+            <img class="d-block w-50 m-auto" style="width: 100px;" src="https://image.tmdb.org/t/p/w370_and_h556_bestv2/<%= part.poster_path %>"
+              alt="First slide">
+          </a>
+          <!--
+            <div class="carousel-caption">
+            <h4>{{ title }}</h4>
+            <p>This is the second slide</p>
+          </div>
+          -->
+        </div>
+        <% });  %>
+    </div>
+
+    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+
+    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+
+  </div>
+</div>

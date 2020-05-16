@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 212.16 211.28" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="g" x1=".47059" x2=".48529" y1=".92958" y2=".007042">
+   <stop stop-color="#fff" stop-opacity="0" offset="0"/>
+   <stop stop-color="#fff" stop-opacity=".85" offset="1"/>
+  </linearGradient>
+  <linearGradient id="f" x1=".49306" x2=".49306" y1=".6831">
+   <stop stop-color="#fff" stop-opacity="0" offset="0"/>
+   <stop stop-color="#fff" stop-opacity=".573" offset="1"/>
+  </linearGradient>
+  <linearGradient id="e" x1=".47917" x2=".48611" y1=".014085" y2=".99296">
+   <stop stop-color="#ddd" offset="0"/>
+   <stop stop-color="#f5f5f5" offset="1"/>
+  </linearGradient>
+  <radialGradient id="h">
+   <stop offset="0"/>
+   <stop stop-opacity=".766" offset=".87947"/>
+   <stop stop-opacity="0" offset="1"/>
+  </radialGradient>
+ </defs>
+ <g fill-rule="evenodd">
+  <g stroke-width="1.25">
+   <path d="m212.16 107.63a103.65 103.65 0 1 0 -207.3 0 103.65 103.65 0 1 0 207.3 0z" fill="url(#h)"/>
+   <path d="m207.3 103.65a103.65 103.65 0 1 0 -207.3 0 103.65 103.65 0 1 0 207.3 0z"/>
+  </g>
+  <path d="m202.32 103.86a97.117 100.48 0 1 0 -194.23 -2.9958 97.117 100.48 0 1 0 194.23 2.9958z" fill="url(#f)" stroke-width="1.254"/>
+  <path d="m191.91 111.99a88.295 95.537 0 1 0 -176.59 0 88.295 95.537 0 1 0 176.59 0z" stroke-width="1.25"/>
+  <path d="m186.31 102.91a82.601 82.601 0 1 0 -165.2 0 82.601 82.601 0 1 0 165.2 0z" fill="url(#e)" stroke-width="3.75"/>
+  <path d="m173.59 96.655a69.827 68.607 0 1 0 -139.65 0 69.827 68.607 0 1 0 139.65 0z" fill="url(#g)" stroke-width="1.25"/>
+  <g fill="none" stroke="#000">
+   <path d="m109.48 113.06l-30.72-47.786" stroke-width="3.75"/>
+   <path d="m97.828 113.85l36.968-67.113" stroke-width="3.454"/>
+  </g>
+  <g stroke-width="1.25">
+   <rect x="101.88" y="26.224" width="3.7731" height="9.0606"/>
+   <rect x="101.88" y="170.2" width="3.7731" height="9.0606"/>
+   <rect transform="rotate(90)" x="100.63" y="-36.99" width="3.7731" height="9.0606"/>
+   <rect transform="rotate(90)" x="100.63" y="-179.36" width="3.7731" height="9.0606"/>
+  </g>
+ </g>
+</svg>
