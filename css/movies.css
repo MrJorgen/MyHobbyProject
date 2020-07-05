@@ -152,14 +152,10 @@ body {
 }
 
 #filtersubmit {
-  position: relative;
+  position: absolute;
   z-index: 1;
-  left: -25px;
+  right: 73px;
   top: 7px;
   color: rgba(123, 123, 123 , .5);
   font-size: 1.4em;
-}
-
-.input-group-append {
-  margin-left: -20px;
 }
