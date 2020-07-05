@@ -6,6 +6,8 @@ export class Player {
     this.sum = 0;
     this.aces = 0;
     this.blackJack = false;
+    this.animating = false;
+    this.revealNextCard = true;
   }
 
   calcSum() {
@@ -24,16 +26,15 @@ export class Player {
     }
   }
 
-  dealCard(deck, revealed) {
-    this.cards.push(deck.deal(revealed));
+  dealCard(deck) {
+    this.cards.push(deck.deal(this.revealNextCard));
     this.calcSum();
   }
 
   drawCards(ctx, deck) {
     for (let i = 0; i < this.cards.length; i++) {
-      if (!this.cards[i].animating) {
-        this.cards[i].draw(ctx, this.x + ((this.cards[i].width * 1.15) * i), this.y);
-      }
+      // this.cards[i].draw(ctx, this.x + ((this.cards[i].width * 1.15) * i), this.y);
+      this.cards[i].draw(ctx);
     }
   }
 
@@ -50,7 +51,8 @@ export class Player {
   }
 
   animate(game, deck) {
+    this.animating = true;
     game.animatingCards.push(deck.cards[0]);
-    deck.cards[0].animate(deck, this);
+    deck.cards[0].startAnimation(deck, this);
   }
 }

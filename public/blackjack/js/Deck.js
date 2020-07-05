@@ -53,6 +53,8 @@ export class Deck {
           let currentCard = new Card(color, rank, tmpImage, cards.ranks[rank].value, backImage);
           currentCard.width = this.width;
           currentCard.height = this.height;
+          currentCard.x = this.x;
+          currentCard.y = this.y;
           this.cards.push(currentCard);
         }
       }

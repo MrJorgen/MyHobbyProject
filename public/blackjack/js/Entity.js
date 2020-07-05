@@ -1,56 +1,69 @@
 import { Player } from "./Player.js";
 
-export class Entity{
+export class Entity {
   constructor() {
     this.x = 0;
     this.y = 0;
     this.animating = false;
     this.duration = 750;
-    this.animatingStartTime = null;
+    this.animationStartTime = null;
     this.start = null;
     this.change = null;
     this.target = null;
   }
-  
+
   animate(start, end) {
     if (!this.animating) {
       this.startAnimation(start, end);
     }
-    let time = new Date() - this.animatingStartTime;
+    let time = new Date() - this.animationStartTime;
     if (time < this.duration) {
       this.x = easeInOutQuad(time, this.start.x, this.change.x, this.duration);
       this.y = easeInOutQuad(time, this.start.y, this.change.y, this.duration);
-      return true;
     }
     else {
+      this.x = this.target.x;
+      this.y = this.target.y;
+      if (this.player) {
+        this.player.dealCard(this.deck);
+        this.player.animating = false;
+        this.player.revealNextCard = true;
+      }
+      this.player = null;
       this.animating = false;
-      this.animatingStartTime = null;
-      ({ x: this.x, y: this.y } = this.target);
+      this.animationStartTime = null;
       this.target = null;
       this.change = null;
+      this.deck = null;
     }
-    return false;
   }
 
   startAnimation(start, end) {
-    this.animating = true;
-    this.animatingStartTime = new Date();
-    this.start = {
-      x: start.x,
-      y: start.y
-    }
-    if (end instanceof Player) {
-      this.target = {
-        x: end.x + ((this.img.width * 1.15) * end.cards.length),
-        y: end.y
+    try {
+      this.animating = true;
+      this.animationStartTime = new Date();
+      this.start = {
+        x: start.x,
+        y: start.y
       }
-    }
-    else {
-      this.target = { x: end.x, y: end.y };
-    }
-    this.change = { x: this.target.x - this.start.x, y: this.target.y - this.start.y };
-  }
+      if (end instanceof Player) {
+        let x = end.x + ((this.width * 1.15) * end.cards.length), y = end.y;
+        this.target = { x, y };
 
+        this.player = end;
+        this.deck = start;
+      }
+      else {
+        this.target = { x: end.x, y: end.y };
+      }
+      this.change = { x: this.target.x - this.start.x, y: this.target.y - this.start.y };
+    }
+    catch (e) {
+      console.log(e);
+      console.log(start, end);
+      
+    }
+  }
 }
 
 // quadratic easing in - accelerating from zero velocity

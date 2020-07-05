@@ -10,7 +10,7 @@ export class Game {
     this.dealerBlackJack = "Dealer has BlackJack!";
     this.dealerWin = "Dealer win";
     this.draw = "Push ";
-    this.duration = 500;
+    this.duration = 750;
     this.HEIGHT = ctx.canvas.height;
     this.maxBet = 3000;
     this.minBet = 1;
