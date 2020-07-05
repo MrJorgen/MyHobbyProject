@@ -73,6 +73,10 @@ h3 {
   margin-top: 10px;
 }
 
+a:hover {
+  text-decoration: none;
+}
+
 .card a {
   position: relative;
   height: 100%;
@@ -118,6 +122,7 @@ h3 {
   transform: rotateY(180deg);
   height: 100%;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .flip-card-back h5 {

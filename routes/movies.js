@@ -6,13 +6,13 @@ const express = require('express'),
   zlib = require("zlib"),
   readline = require("readline");
 
-let titleHeader = "", API_KEY;
+let titleHeader = "", apiKey;
 
 try {
   apiKey = fs.readFileSync("./tmdb_api_key.txt", {
     encoding: "UTF-8"
   });
-} catch {
+} catch(err) {
   apiKey = process.env.API_KEY;
 }
 

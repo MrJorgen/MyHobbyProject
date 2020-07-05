@@ -57,9 +57,9 @@
     <title>My Movies - <%= data.title %></title>
   </head>
   <body>
-  <div class="background-image">
-  <div class="background-color">
-  <% include ./partials/navbar %>
+    <div class="container background-image">
+      <div class="background-color">  
+      <% include ./partials/navbar %>
       <h3 class="border-bottom pb-3"><%= data.title %> (<%= new Date(data.release_date).getFullYear() %>)</h3>
       <div class="row">
         <div class="col">
@@ -190,7 +190,6 @@
             <% } %>
           </ul>
         </div>
-        <!-- <div class="col"></div> -->
       </div>
     <script>
       let scrollTimer = null;
@@ -246,6 +245,6 @@
     </script>
     </div>
     </div>
-    </body>
+  </body>
 
 </html>
