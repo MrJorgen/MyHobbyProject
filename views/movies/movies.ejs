@@ -72,14 +72,14 @@
 								<span class="small-text">(<%= new Date(result.release_date).getFullYear() %>)</span>
 							</p>
             </a>
-            <%#
+            <% /* %>
 						<div class="card-body">
 							<p class="card-text">
 								<% if(result.overview.length > 158) { %> <%= result.overview.replace(/^(.{155}[^\s]*).*/, "$1") + "..."; %> <% } else { %> <%=
 								result.overview %> <% } %>
 							</p>
             </div>
-            %>
+            <% */ %>
           </div>
           <div class="flip-card-back bg-primary">
             <h5><%= result.title %>(<%= new Date(result.release_date).getFullYear() %>)</h5>
