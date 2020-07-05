@@ -121,11 +121,13 @@ h3 {
 }
 
 .flip-card-back {
-  background-color: dodgerblue;
-  color: white;
   position: absolute;
   top: 0px;
   transform: rotateY(180deg);
+}
+
+.flip-card-back h5 {
+  text-align: center;
 }
 
 .card-body {
