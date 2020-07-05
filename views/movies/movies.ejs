@@ -32,7 +32,7 @@
             <div class="flip-card-inner">
               <div class="card flip-card-front">
                 <a href="/movies/movie/<%= result.id %>">
-                  <% if (result.poster_path == "null") { %>
+                  <% if (result.poster_path == null) { %>
                     <img class="card-img-top" src="/img/no_image.svg" alt="No image"/>
                   <% } else { %>
                     <img class="card-img-top" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= result.poster_path %>" alt="<%= result.title %>"/>
