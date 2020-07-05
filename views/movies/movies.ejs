@@ -93,9 +93,8 @@
 						<% } %>
           </div>
           <div class="flip-card-back bg-primary">
-            <h3><%= result.title %>(<%= new Date(result.release_date).getFullYear() %>)</h3>
-            <p>Architect & Engineer</p>
-            <p>We love that guy</p>
+            <h5><%= result.title %>(<%= new Date(result.release_date).getFullYear() %>)</h5>
+            <p><%= result.overview %></p>
           </div>
 				</div>
 			</div>
