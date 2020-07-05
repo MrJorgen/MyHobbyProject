@@ -26,7 +26,7 @@
   font-family: Kanit;
   font-size: 15px;
   text-anchor: middle;
-  alignment-baseline: central;
+  /* alignment-baseline: central; */
 }
 
 .circle-chart__circle {
@@ -73,12 +73,6 @@ h3 {
   margin-top: 10px;
 }
 
-.card {
-  margin-top: 10px;
-  /*width: 18rem;
-   display: inline-grid; */
-}
-
 .card a {
   position: relative;
 }
@@ -104,6 +98,7 @@ h3 {
 
 .flip-card {
   perspective: 1000px;
+  margin-top: 10px;
 }
 
 .flip-card-inner {
