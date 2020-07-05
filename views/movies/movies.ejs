@@ -33,7 +33,7 @@
               <div class="card flip-card-front">
                 <a href="/movies/movie/<%= result.id %>">
 
-                  <img class="card-img-top" src=<%= "https://image.tmdb.org/t/p/w600_and_h900_bestv2" + result.poster_path || "./img/no_image.svg"  %> alt="Card image cap" />
+                  <img class="card-img-top" src="<%= "https://image.tmdb.org/t/p/w600_and_h900_bestv2" + result.poster_path || "../img/no_image.svg"  %>" alt="Card image cap" />
                   
                   <p class="card-title">
                     <%= result.title %>
