@@ -14,52 +14,43 @@
 	</head>
 
 	<body>
-		<% include ./partials/navbar %>
-    <!--
-      <div class="d-flex m-auto d-none">
-        <div class="btn-group m-auto">
-          <a href="../movies/popular" class="btn btn-primary">Popular</a>
-          <a href="../movies/top_rated" class="btn btn-primary">Top Rated</a>
-          <a href="../movies/upcoming" class="btn btn-primary">Upcoming</a>
+    <div class="container">
+      <% include ./partials/navbar %>
+      <!--
+        <div class="d-flex m-auto d-none">
+          <div class="btn-group m-auto">
+            <a href="../movies/popular" class="btn btn-primary">Popular</a>
+            <a href="../movies/top_rated" class="btn btn-primary">Top Rated</a>
+            <a href="../movies/upcoming" class="btn btn-primary">Upcoming</a>
+          </div>
+        </div>
+      -->
+      <h3><%= header %></h3>
+      <div class="grid">
+        <% for(let result of data.results) { %>
+          <div class="flip-card">
+            <div class="flip-card-inner">
+              <div class="card flip-card-front">
+                <a href="/movies/movie/<%= result.id %>">
+                  <img class="card-img-top" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= result.poster_path  %>" alt="Card image cap" />
+                  <p class="card-title">
+                    <%= result.title %>
+                    <span class="small-text">(<%= new Date(result.release_date).getFullYear() %>)</span>
+                  </p>
+                </a>
+              </div>
+              <div class="flip-card-back bg-primary">
+                <h5><%= result.title %>(<%= new Date(result.release_date).getFullYear() %>)</h5>
+                <p><%= result.overview %></p>
+              </div>
+            </div>
+          </div>
+          <% } %>
         </div>
       </div>
-    -->
-		<h3><%= header %></h3>
-		<div class="grid">
-			<% for(let result of data.results) { %>
-			<div class="flip-card">
-				<div class="flip-card-inner">
-					<div class="card flip-card-front">
-						<a href="/movies/movie/<%= result.id %>">
-							<img class="card-img-top" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= result.poster_path  %>" alt="Card image cap" />
-							<p class="card-title">
-								<%= result.title %>
-								<span class="small-text">(<%= new Date(result.release_date).getFullYear() %>)</span>
-							</p>
-						</a>
-          </div>
-          <div class="flip-card-back bg-primary">
-            <h5><%= result.title %>(<%= new Date(result.release_date).getFullYear() %>)</h5>
-            <p><%= result.overview %></p>
-          </div>
-				</div>
-			</div>
-			<% } %>
-		</div>
-		<script
-			src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-			integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-			crossorigin="anonymous"
-		></script>
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-			integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-			crossorigin="anonymous"
-		></script>
-		<script
-			src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-			crossorigin="anonymous"
-		></script>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 	</body>
 </html>
