@@ -116,6 +116,8 @@ h3 {
   top: 0px;
   padding: 0.5em;
   transform: rotateY(180deg);
+  height: 100%;
+  overflow: hidden;
 }
 
 .flip-card-back h5 {
