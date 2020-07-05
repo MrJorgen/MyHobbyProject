@@ -71,21 +71,15 @@
 								<%= result.title %>
 								<span class="small-text">(<%= new Date(result.release_date).getFullYear() %>)</span>
 							</p>
-						</a>
-
-						<% if (result.vote_average) { %>
-						<!-- <svg class="circle-chart" viewbox="0 0 40 40" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-              <circle class="circle-chart__background" stroke="#efefef" stroke-width="4" fill="rgba(0, 0, 0, 0.5)" cx="20" cy="20" r="16"
-              />
-              <circle class="circle-chart__circle" stroke-width="4" stroke="hsl({{multiply vote_average 12}}, 91%, 37%)" stroke-dasharray="{{multiply vote_average 10}},100"
-              stroke-linecap="round" fill="none" cx="20" cy="20" r="16" />
-              <g class="circle-chart__info">
-                <text class="circle-chart__percent" x="20" y="24.5" fill="#fff">
-                  <tspan id="percent">{{multiply vote_average 10}}</tspan><tspan style="font-size: 60%" dy="-3">%</tspan>
-                </text>
-              </g>
-            </svg> -->
-						<% } %>
+            </a>
+            <%#
+						<div class="card-body">
+							<p class="card-text">
+								<% if(result.overview.length > 158) { %> <%= result.overview.replace(/^(.{155}[^\s]*).*/, "$1") + "..."; %> <% } else { %> <%=
+								result.overview %> <% } %>
+							</p>
+            </div>
+            %>
           </div>
           <div class="flip-card-back bg-primary">
             <h5><%= result.title %>(<%= new Date(result.release_date).getFullYear() %>)</h5>
