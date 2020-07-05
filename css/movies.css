@@ -157,6 +157,12 @@ body {
       padding: .375rem .75rem;
 }
 
+img.img-missing {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 #filtersubmit {
   position: absolute;
   z-index: 1;
