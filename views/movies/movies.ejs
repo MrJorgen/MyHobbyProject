@@ -1,18 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="icon" href="/favicon/favicon-32x32.png" type="image/png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.1.1/slate/bootstrap.css">
-  <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
-  <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="/movies.css">
-  <link href="https://fonts.googleapis.com/css?family=Acme|Arima+Madurai:400,700|Asul|Averia+Sans+Libre|Averia+Serif+Libre|Baloo|Bowlby+One+SC|Bubblegum+Sans|Coiny|Concert+One|Corben|Crushed|Days+One|Doppio+One|Federo|Fredericka+the+Great|Fredoka+One|Gruppo|Kanit|Lemonada|Lobster|Mada:500|Mirza|Oleo+Script+Swash+Caps|Passion+One|Patua+One|Shanti"
-    rel="stylesheet">
-  <!--
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<link rel="icon" href="/favicon/favicon-32x32.png" type="image/png" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.1.1/slate/bootstrap.css" />
+		<script
+			defer
+			src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js"
+			integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l"
+			crossorigin="anonymous"
+		></script>
+		<script
+			defer
+			src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js"
+			integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c"
+			crossorigin="anonymous"
+		></script>
+		<link rel="stylesheet" href="/movies.css" />
+		<link
+			href="https://fonts.googleapis.com/css?family=Acme|Arima+Madurai:400,700|Asul|Averia+Sans+Libre|Averia+Serif+Libre|Baloo|Bowlby+One+SC|Bubblegum+Sans|Coiny|Concert+One|Corben|Crushed|Days+One|Doppio+One|Federo|Fredericka+the+Great|Fredoka+One|Gruppo|Kanit|Lemonada|Lobster|Mada:500|Mirza|Oleo+Script+Swash+Caps|Passion+One|Patua+One|Shanti"
+			rel="stylesheet"
+		/>
+		<!--
          font-family: 'Acme',sans-serif;
          font-family: 'Patua One', cursive;
          font-family: 'Kanit', sans-serif;
@@ -34,63 +45,72 @@
          font-family: 'Asul', sans-serif;
       -->
 
-  <title>My Movies App</title>
-</head>
+		<title>My Movies App</title>
+	</head>
 
-<body>
-  <% include ./partials/navbar %>
-    <!-- <div class="container mt-2"> -->
-    <div class="d-flex m-auto d-none">
-      <!--
+	<body>
+		<% include ./partials/navbar %>
+		<!-- <div class="container mt-2"> -->
+		<div class="d-flex m-auto d-none">
+			<!--
       <div class="btn-group m-auto">
         <a href="../movies/popular" class="btn btn-primary">Popular</a>
         <a href="../movies/top_rated" class="btn btn-primary">Top Rated</a>
         <a href="../movies/upcoming" class="btn btn-primary">Upcoming</a>
       </div>
-    -->
-    </div>
-    <h3><%= header %></h3>
-    <div class="grid">
-      <% for(let result of data.results) { %>
-        <div class="card">
-          <a href="/movies/movie/<%= result.id %>">
-            <img class="card-img-top" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= result.poster_path  %>" alt="Card image cap">
-            <p class="card-title">
-              <%= result.title %>
-                <span class="small-text">(<%= new Date(result.release_date).getFullYear() %>)</span>
-            </p>
-          </a>
-          <div class="card-body">
-            <p class="card-text">
-              <% if(result.overview.length > 158) { %>
-                <%= result.overview.replace(/^(.{155}[^\s]*).*/, "$1") + "..."; %>
-              <% } else { %>
-                <%= result.overview %>
-              <% } %>
-            </p>
-          </div>
-          <% if (result.vote_average) { %>
-            <!-- <svg class="circle-chart" viewbox="0 0 40 40" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-            <circle class="circle-chart__background" stroke="#efefef" stroke-width="4" fill="rgba(0, 0, 0, 0.5)" cx="20" cy="20" r="16"
-            />
-            <circle class="circle-chart__circle" stroke-width="4" stroke="hsl({{multiply vote_average 12}}, 91%, 37%)" stroke-dasharray="{{multiply vote_average 10}},100"
+    --></div>
+		<h3><%= header %></h3>
+		<div class="grid">
+			<% for(let result of data.results) { %>
+			<div class="flip-card">
+				<div class="flip-card-inner">
+					<div class="card flip-card-front">
+						<a href="/movies/movie/<%= result.id %>">
+							<img class="card-img-top" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= result.poster_path  %>" alt="Card image cap" />
+							<p class="card-title">
+								<%= result.title %>
+								<span class="small-text">(<%= new Date(result.release_date).getFullYear() %>)</span>
+							</p>
+						</a>
+						<div class="card-body">
+							<p class="card-text">
+								<% if(result.overview.length > 158) { %> <%= result.overview.replace(/^(.{155}[^\s]*).*/, "$1") + "..."; %> <% } else { %> <%=
+								result.overview %> <% } %>
+							</p>
+						</div>
+						<% if (result.vote_average) { %>
+						<!-- <svg class="circle-chart" viewbox="0 0 40 40" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+              <circle class="circle-chart__background" stroke="#efefef" stroke-width="4" fill="rgba(0, 0, 0, 0.5)" cx="20" cy="20" r="16"
+              />
+              <circle class="circle-chart__circle" stroke-width="4" stroke="hsl({{multiply vote_average 12}}, 91%, 37%)" stroke-dasharray="{{multiply vote_average 10}},100"
               stroke-linecap="round" fill="none" cx="20" cy="20" r="16" />
-            <g class="circle-chart__info">
-              <text class="circle-chart__percent" x="20" y="24.5" fill="#fff">
-                <tspan id="percent">{{multiply vote_average 10}}</tspan><tspan style="font-size: 60%" dy="-3">%</tspan>
-              </text>
-            </g>
-          </svg> -->
-            <% } %>
-        </div>
-        <% } %>
-    </div>
-    <!-- </div> -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-      crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-      crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-      crossorigin="anonymous"></script>
-</body>
+              <g class="circle-chart__info">
+                <text class="circle-chart__percent" x="20" y="24.5" fill="#fff">
+                  <tspan id="percent">{{multiply vote_average 10}}</tspan><tspan style="font-size: 60%" dy="-3">%</tspan>
+                </text>
+              </g>
+            </svg> -->
+						<% } %>
+					</div>
+				</div>
+			</div>
+			<% } %>
+		</div>
+		<!-- </div> -->
+		<script
+			src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+			integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+			integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+			crossorigin="anonymous"
+		></script>
+	</body>
 </html>
