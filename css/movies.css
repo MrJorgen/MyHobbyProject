@@ -129,6 +129,7 @@ h3 {
   background-color: dodgerblue;
   color: white;
   position: absolute;
+  top: 0px;
   transform: rotateY(180deg);
 }
 
