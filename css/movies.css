@@ -125,6 +125,10 @@ h3 {
   border-bottom: 1px solid #272B30;
 }
 
+.flip-card-back p {
+  font-size: 0.9rem;
+}
+
 .card-body {
   padding: 0.5em;
 }
@@ -157,7 +161,7 @@ body {
   position: absolute;
   z-index: 1;
   right: 73px;
-  top: 7px;
+  top: 8px;
   color: rgba(123, 123, 123 , .5);
-  font-size: 1.4em;
+  font-size: 1.3em;
 }
