@@ -72,9 +72,9 @@ let tmdb_config = "",
 tmdb_config_filePath = "./views/movies/tmdb_config.json";
 
 if (fs.existsSync(tmdb_config_filePath)) {
-  console.log("File exists!");
+  console.log("TMDB Config File exists!");
   fs.stat(tmdb_config_filePath, (err, stats) => {
-    console.log(stats);
+    // console.log(stats);
     // Check if file is older than 3 days
     let now = new Date(),
     fileDate = new Date(stats.mtime);
@@ -123,7 +123,7 @@ function getAndSaveConfig() {
 
 router.get("/person/:id?", (req, res) => {
   let personId = req.params.id;
-  let personUrl = `https://api.themoviedb.org/3/person/${personId}?api_key=${apiKey}&append_to_response=credits,combined_credits,images,tagged_image,keywords,videos,similar,recommendations`;
+  let personUrl = `https://api.themoviedb.org/3/person/${personId}?api_key=${apiKey}&append_to_response=credits,combined_credits,images,tagged_image,keywords,videos,similar,recommendations&include_image_language=en,null`;
   renderPage(personUrl, res, "./movies/person");
 });
 
@@ -137,7 +137,7 @@ router.get("/person/:id?", (req, res) => {
     }
     let id = req.params.id;
     if (parseInt(id) !== NaN) {
-      url = `https://api.themoviedb.org/3/${media}/${id}?api_key=${apiKey}&append_to_response=credits,images,tagged_image,keywords,videos,similar,recommendations`;
+      url = `https://api.themoviedb.org/3/${media}/${id}?api_key=${apiKey}&append_to_response=credits,images,tagged_image,keywords,videos,similar,recommendations&include_image_language=en,null`;
       renderPage(url, res, './movies/single_movie');
     }
   });
@@ -255,12 +255,12 @@ function readCsvFile(imdbId) {
     workerNum: 4,
   })
     .fromFile(csvFilePath, (err, result) => {
-      console.log(result);
+      // console.log(result);
     })
     .on('json', (jsonObj, rowIndex) => {
       // combine csv header row and csv line to a json object
       // jsonObj.a ==> 1 or 4
-      console.log(rowIndex);
+      // console.log(rowIndex);
     })
     .on('data', data => {
       //data is a buffer object
@@ -272,7 +272,7 @@ function readCsvFile(imdbId) {
         console.log(error);
       } else {
         console.log('end');
-        console.log(jsonObj);
+        // console.log(jsonObj);
       }
     });
 }

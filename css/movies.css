@@ -93,7 +93,6 @@ a:hover {
 
 .flip-card {
   perspective: 1000px;
-  margin-top: 10px;
 }
 
 .flip-card-inner {
@@ -127,7 +126,6 @@ a:hover {
 
 .flip-card-back h5 {
   text-align: center;
-  /* padding-top: 1em; */
   padding-bottom: 0.5em;
   border-bottom: 1px solid #272B30;
 }
@@ -144,8 +142,9 @@ a:hover {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   grid-column-gap: 1em;
+  grid-row-gap: 1em;
   justify-content: space-evenly;
-  /* padding: 0px 15px; */
+  padding-bottom: 1em;
 }
 
 .small-text {

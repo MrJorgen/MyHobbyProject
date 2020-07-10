@@ -114,19 +114,18 @@ h3 {
 }
 
 .profile-photo {
-  max-width: 100%;
+  max-height: 90px;
   box-shadow: 4px 4px 10px 0px rgba(0, 0, 0, 0.25);
   margin-left: -8px;
 }
 
 .profile-image-container {
-  max-width: 80px;
   float: left;
 }
 
 .profile-name-container {
   text-align: center;
-  line-height: 120px;
+  line-height: 90px;
   display: flow-root;
 }
 
@@ -206,10 +205,6 @@ body {
   padding: .375rem .75rem;
 }
 
-.navbar {
-  padding: 0 10px 0 0;
-}
-
 .imdbRating {
   font-size: 1.1em;
 }
@@ -228,4 +223,17 @@ a:hover {
 
 .votes::after {
   content: ")";
+}
+
+#filtersubmit {
+  position: absolute;
+  z-index: 1;
+  right: 73px;
+  top: 8px;
+  color: rgba(123, 123, 123 , .5);
+  font-size: 1.3em;
+}
+
+input#searchInput {
+    height: 36px;
 }

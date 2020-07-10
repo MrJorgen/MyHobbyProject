@@ -4,9 +4,7 @@ const
   http = require('http').Server(app), // Server http
   fs = require("fs"), // Fs = filesystem, not sure if I really need this
   mongoose = require('mongoose'), // module for talking to MongoDB
-  faker = require('faker'), // Don't think this is needed anymore, but keeping it for now
   forceSsl = require('express-force-ssl'), // This force non-secure connections to use secure connection(ssl)
-  moment = require("moment"), // Time & date formatter
   session = require("client-sessions"), // Cookie middleware
   bodyParser = require('body-parser'), // For reading form inputs, not needed right now
   path = require('path'); // path middleware
@@ -15,7 +13,6 @@ let port, sslPort, options = {}, heroku = false;
 
 app.locals.moment = require("moment");
 
-console.log(__dirname);
 if (__dirname == "/home/pi/web") {
   port = 3000; // Set port variable
   sslPort = 3001; // Set secure port variable
@@ -135,91 +132,6 @@ app.get("/projects", (req, res) => {
     mainPage: "projects"
   });
 });
-
-// todo page
-app.get("/ToDo", (req, res) => {
-  res.render("home", {
-    title: "My ToDo list",
-    mainPage: "ToDo"
-  });
-});
-
-if (!heroku) {
-  // Bring in Mongoose model and open connection
-  mongoose.connect('mongodb://127.0.0.1/livechat', (err) => {
-    if (err) {
-      console.log("Error connecting to db: " + err);
-    }
-  });
-  let db = mongoose.connection;
-  db.on("errror", (err) => console.log("Error opening connection to db: " + err));
-  db.once("open", () => console.log("Connected to MongoDB!"));
-  let Message = require("./models/messages");
-
-  // Chat page
-  app.get("/chat", (req, res) => {
-
-    if (!req.mySession.username) {
-      req.mySession.username = "John Doe";
-    };
-    // socket.username = req.mySession.username;
-
-    // 1000 milli, 60 seconds, 60 minutes = 1 hour
-    Message.find({
-      timestamp: {
-        $gte: new Date().getTime() - 1000 * 60 * 60
-      }
-    }, (err, messages) => {
-      if (err) {
-        console.log("Error retrieving data from db: " + err);
-      } else {
-        res.render("home", {
-          title: "Live Chat",
-          messages: messages,
-          username: req.mySession.username,
-          mainPage: "chat"
-        });
-      }
-    });
-
-  });
-
-  // Insert chat messages to database and check everytime a new chat message
-  // is inserted for messages older than 1 hour (and remove them)
-
-  io.on('connection', (socket) => {
-    console.log("A user connected!");
-    users++;
-    console.log("Current users: " + users);
-    socket.on('chat message', (msg) => {
-      let message = new Message();
-
-      // message.user = msg.user;
-      message.user = socket.username;
-      message.message = msg.message;
-      message.timestamp = msg.timestamp;
-      message.save((err, msg) => {
-        if (err) {
-          console.log("Error inserting data to db: " + err);
-        } else {
-          console.log(msg.user + " says " + msg.message);
-          io.emit('chat message', msg);
-        }
-      });
-    });
-
-    socket.on("add user", (username) => {
-      socket.username = username;
-      console.log(username + " connected to chat");
-    });
-
-    socket.on('disconnect', () => {
-      console.log("User disconnected.");
-      users--;
-      console.log("Current users: " + users);
-    });
-  });
-}
 
 // This server is for forwarding to SSL only
 http.listen(port, () => {
