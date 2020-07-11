@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="/movie.css">
   <link href="https://fonts.googleapis.com/css?family=Acme|Arima+Madurai:400,700|Asul|Averia+Sans+Libre|Averia+Serif+Libre|Baloo|Bowlby+One+SC|Bubblegum+Sans|Coiny|Concert+One|Corben|Crushed|Days+One|Doppio+One|Federo|Fredericka+the+Great|Fredoka+One|Gruppo|Kanit|Lemonada|Lobster|Mada:500|Mirza|Oleo+Script+Swash+Caps|Passion+One|Patua+One|Shanti"
     rel="stylesheet">
+  <script src="/utils.js"></script>
+
   <!--
          font-family: 'Acme',sans-serif;
          font-family: 'Patua One', cursive;
@@ -128,42 +130,47 @@
         </div>
       </div>
       <div class="col">
-        <ul class="list-group">
-          <li class="list-group-item">
+        <div id="scroll-list" class="list-group">
+          <div class="list-group-item text-center">
             <strong>Known For</strong>
-          </li>
+          </div>
+          <a href="javascript:void(0)" class="list-group-item text-center disabled" id="scroll-up">
+            <i class="fa fa-chevron-up" style="font-size: 1.5em;"></i>
+          </a>
           <% for (let i = 0; i < data.combined_credits.cast.length; i++) { %>
-            <% if(i >= 5) { break; } %>
-              <li class="list-group-item">
-                <a href="/movies/<%= data.combined_credits.cast[i].media_type %>/<%= data.combined_credits.cast[i].id %>" class="profile-image-container">
+              <a href="/movies/<%= data.combined_credits.cast[i].media_type %>/<%= data.combined_credits.cast[i].id %>" class="list-group-item scroll-list" <% if(i >= 5) { %><%= "hidden"%><% } %>>
+                <div class="profile-image-container">
                   <% if (data.combined_credits.cast[i].poster_path) { %>
                     <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/original<%= data.combined_credits.cast[i].poster_path %>" alt="">
                   <% } else { %>
                     <img class="profile-photo rounded-5" src="/unknown.png" alt="">
                   <% } %>
-                </a>
+                  </div>
                 <div class="profile-name-container">
-                <span class="profile-name-text">
-                  <% if(data.combined_credits.cast[i].media_type == "movie") { %>
-                    <strong><%= data.combined_credits.cast[i].title %></strong>
-                  <% } else if(data.combined_credits.cast[i].media_type == "tv") { %>
-                    <strong><%= data.combined_credits.cast[i].name %></strong>
-                  <% } %>
-                  <% if (data.combined_credits.cast[i].character) { %>
-                    <br>
-                    <small>as<br><%= data.combined_credits.cast[i].character %>
-                    <% if(data.combined_credits.cast[i].media_type == "tv") { %>
-                      (<%= data.combined_credits.cast[i].episode_count %>
-                      <%= data.combined_credits.cast[i].episode_count > 1 ? "episodes" : "episode" %>)
+                  <span class="profile-name-text">
+                    <% if(data.combined_credits.cast[i].media_type == "movie") { %>
+                      <strong><%= data.combined_credits.cast[i].title %></strong>
+                    <% } else if(data.combined_credits.cast[i].media_type == "tv") { %>
+                      <strong><%= data.combined_credits.cast[i].name %></strong>
                     <% } %>
-                    </small>
-                  <% } %>
+                    <% if (data.combined_credits.cast[i].character) { %>
+                      <br>
+                      <small>as<br><%= data.combined_credits.cast[i].character %>
+                      <% if(data.combined_credits.cast[i].media_type == "tv") { %>
+                        (<%= data.combined_credits.cast[i].episode_count %>
+                        <%= data.combined_credits.cast[i].episode_count > 1 ? "episodes" : "episode" %>)
+                      <% } %>
+                      </small>
+                    <% } %>
 
-                </span>
+                  </span>
                 </div>
-              </li>
+              </a>
               <% } %>
-        </ul>
+              <a href="javascript:void(0)" id="scroll-down" class="list-group-item text-center">
+                <i class="fa fa-chevron-down" style="font-size: 1.5em;"></i>
+              </a>
+        </div>
       </div>
       <!-- <div class="col"></div> -->
     </div>

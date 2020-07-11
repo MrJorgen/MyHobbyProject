@@ -33,7 +33,6 @@
 
 
     </style>
-    <script src="/utils.js"></script>
     <title>My Movies - <%= data.title %></title>
   </head>
   <body>
@@ -141,38 +140,34 @@
           <% } %>  
           </div>
         <div class="col">
-          <div id="cast-list" class="list-group">
-            <div class="list-group-item text-center">
+          <ul class="list-group">
+            <li class="list-group-item text-center">
               <strong>Cast</strong>
-            </div>
-            <a href="javascript:void(0)" class="list-group-item text-center disabled" id="scroll-up">
-              <i class="fa fa-chevron-up" style="font-size: 1.5em;"></i>
-            </a>
+            </li>
             <% 
               for (let i = 0; i < data.credits.cast.length; i++) {
+              if(i >= 7) break;
             %>
-            <a href="/movies/person/<%= data.credits.cast[i].id %>"  id="cast<%= i %>" class="list-group-item scroll-list" <% if(i >= 5) { %><%= "hidden" %><% } %>>
-              <div class="profile-image-container">
-                <% if (data.credits.cast[i].profile_path) { %>
-                  <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/original<%= data.credits.cast[i].profile_path %>" alt="">
-                <% } else { %>
-                  <img class="profile-photo rounded-5" src="/unknown.png" alt="">
-                <% } %>
-              </div>
+            <li class="list-group-item">
+              <a href="/movies/person/<%= data.credits.cast[i].id %>"  class="profile-image-container">
+              <% if (data.credits.cast[i].profile_path) { %>
+                <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/original<%= data.credits.cast[i].profile_path %>" alt="">
+              <% } else { %>
+                <img class="profile-photo rounded-5" src="/unknown.png" alt="">
+              <% } %>
+              </a>
               <div class="profile-name-container">
                 <span class="profile-name-text">
                   <strong><%= data.credits.cast[i].name %></strong>
                   <% if (data.credits.cast[i].character) { %>
-                    <br><small>as<br><%= data.credits.cast[i].character %></small>
+                    <br>
+                    <small>as<br><%= data.credits.cast[i].character %></small>
                   <% } %>
                 </span>
               </div>
-            </a>
+            </li>
             <% } %>
-            <a href="javascript:void(0)" id="scroll-down" class="list-group-item text-center">
-              <i class="fa fa-chevron-down" style="font-size: 1.5em;"></i>
-            </a>
-          </div>
+          </ul>
         </div>
       </div>
     <script>
