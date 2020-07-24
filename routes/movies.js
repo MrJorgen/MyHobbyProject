@@ -70,8 +70,10 @@ function refreshImdbData(url, path) {
 // --------------------------------------------------------------------------------
 let tmdb_config = "",
 tmdb_config_filePath = "./views/movies/tmdb_config.json";
+init();
 
-if (fs.existsSync(tmdb_config_filePath)) {
+function init() {
+  if (fs.existsSync(tmdb_config_filePath)) {
   console.log("TMDB Config File exists!");
   fs.stat(tmdb_config_filePath, (err, stats) => {
     // console.log(stats);
@@ -97,7 +99,7 @@ if (fs.existsSync(tmdb_config_filePath)) {
 } else {
   console.log("File does not exist!");
   getAndSaveConfig();
-}
+}}
 
 function getAndSaveConfig() {
   request({
@@ -176,7 +178,7 @@ router.get("/:id?", function (req, res) {
 });
 
 function renderPage(url, res, page, oldData) {
-
+  init();
   let header = titleHeader;
   // header = header.substring (header.lastIndexOf ('/'), header.length);
 
@@ -224,9 +226,6 @@ function renderPage(url, res, page, oldData) {
 
 
 }
-
-// https://hdbits.org/browse.php?&imdb=tt2948356&org1=1&search=1080p
-// https://hdbits.org/browse.php?org1=1&search=1080p&sort=seeders&h=10&d=DESC&imdb=tt2948356
 
 /*
 IMDB Datasets
