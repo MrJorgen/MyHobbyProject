@@ -47,7 +47,7 @@
               <% if (data.images.posters.length > 0) { %>
                 <img id="getColorFrom" class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.images.posters[0].file_path %>" alt="">
               <% } else { %>
-                <img id="getColorFrom" class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.poster_path %>" alt="">
+                <div id="getColorFrom" class="no_image"></div>
               <% } %>
             </div>
             <% if (data.belongs_to_collection){ %>
@@ -125,7 +125,7 @@
               if(data.videos){
                 let videos = data.videos.results;
                 videos = videos.filter((video) => {
-                  return (video.name == "Official Trailer" && video.site == "YouTube");
+                  return (video.type == "Trailer" && video.site == "YouTube");
                 });
                 if(videos.length != 0){
                   return videos[0].key;
@@ -142,7 +142,7 @@
         <div class="col">
           <div id="cast-list" class="list-group">
             <div class="list-group-item text-center">
-              <strong>Cast</strong>
+              <strong>Top Billed Cast</strong>
             </div>
             <a href="javascript:void(0)" class="list-group-item text-center disabled" id="scroll-up">
               <i class="fa fa-chevron-up" style="font-size: 1.5em;"></i>
@@ -153,10 +153,14 @@
             <a href="/movies/person/<%= data.credits.cast[i].id %>"  id="cast<%= i %>" class="list-group-item scroll-list" <% if(i >= 5) { %><%= "hidden" %><% } %>>
               <div class="profile-image-container">
                 <% if (data.credits.cast[i].profile_path) { %>
-                  <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/original<%= data.credits.cast[i].profile_path %>" alt="">
+                  <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/w132_and_h132_face<%= data.credits.cast[i].profile_path %>" alt="">
                 <% } else { %>
-                  <img class="profile-photo rounded-5" src="/unknown.png" alt="">
-                <% } %>
+                  <% if(data.credits.cast[i].gender === 1) { %>
+                    <img class="profile-photo rounded-5 unknown" src="/unknown-user-female.svg" alt="">
+                  <% }else { %>
+                    <img class="profile-photo rounded-5 unknown" src="/unknown-user.svg" alt="">
+                  <% } %>
+              <% } %>
               </div>
               <div class="profile-name-container">
                 <span class="profile-name-text">

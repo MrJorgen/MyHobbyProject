@@ -115,10 +115,37 @@ h3 {
 
 .profile-photo {
   max-height: 80px;
-  /* box-shadow: 4px 4px 10px 0px rgba(0, 0, 0, 0.25); */
   box-shadow: 6px 6px 12px 1px rgba(0, 0, 0, 0.65);
   margin-left: -8px;
 }
+
+img.unknown {
+  width: 80px;
+  height: 80px;
+}
+
+.no_image {
+  background-color: #dbdbdb;
+  background-image: url("./no_image.svg");
+  width: 330px;
+  height: 495px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 75%;
+  border-radius: 0.25rem;
+}
+
+.scroll-list {
+  padding: 8px 0px 8px 14px;
+}
+
+/* Trying rounded photos */ 
+/* .profile-photo {
+  max-width: 80px;
+  clip-path: circle(40px at 50% 40px);
+  margin-left: -8px;
+  margin-bottom: -30px;
+} */
 
 .profile-image-container {
   float: left;
