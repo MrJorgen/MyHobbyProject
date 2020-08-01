@@ -16,10 +16,6 @@ try {
   apiKey = process.env.API_KEY;
 }
 
-const dbuser = { name: "nodeuser", password: "ENcNDecdEFgPmugv" };
-
-const dbconn = `mongodb+srv://${dbuser.name}:${dbuser.password}@cluster0.1y1aj.mongodb.net/<dbname>?retryWrites=true&w=majority`;
-
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 
