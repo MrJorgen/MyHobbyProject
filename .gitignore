@@ -9,3 +9,4 @@
 /cert_old
 .env
 *.log
+*.config
