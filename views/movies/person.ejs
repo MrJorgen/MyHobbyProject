@@ -137,7 +137,12 @@
           <a href="javascript:void(0)" class="list-group-item text-center disabled" id="scroll-up">
             <i class="fa fa-chevron-up" style="font-size: 1.5em;"></i>
           </a>
-          <% for (let i = 0; i < data.combined_credits.cast.length; i++) { %>
+            <%
+              data.combined_credits.cast.sort((a, b) => {
+                return Date.parse(b.release_date || b.first_air_date) - Date.parse(a.release_date || a.first_air_date);
+              });
+              for (let i = 0; i < data.combined_credits.cast.length; i++) {
+            %>
               <a href="/movies/<%= data.combined_credits.cast[i].media_type %>/<%= data.combined_credits.cast[i].id %>" class="list-group-item scroll-list" <% if(i >= 5) { %><%= "hidden"%><% } %>>
                 <div class="profile-image-container">
                   <% if (data.combined_credits.cast[i].poster_path) { %>
