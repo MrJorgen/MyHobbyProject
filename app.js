@@ -111,9 +111,6 @@ app.set('view engine', 'ejs');
 
 // Home page
 app.get('/', (req, res) => {
-  let options = {
-    title: 'My First Node.js App',
-  };
 
   res.render('home', {
     layout: false,
