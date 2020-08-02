@@ -16,39 +16,84 @@
 	<body>
     <div class="container">
       <% include ./partials/navbar %>
-      <!--
-        <div class="d-flex m-auto d-none">
-          <div class="btn-group m-auto">
-            <a href="../movies/popular" class="btn btn-primary">Popular</a>
-            <a href="../movies/top_rated" class="btn btn-primary">Top Rated</a>
-            <a href="../movies/upcoming" class="btn btn-primary">Upcoming</a>
-          </div>
-        </div>
-      -->
       <h3><%= header %></h3>
       <div class="grid">
         <% for(let result of data.results) { %>
-          <div class="flip-card">
-            <div class="flip-card-inner">
-              <div class="card flip-card-front">
-                <a href="/movies/movie/<%= result.id %>">
-                  <% if (result.poster_path == null) { %>
-                    <img class="card-img-top img-missing" src="/no_image.svg" alt="No image"/>
-                  <% } else { %>
-                    <img class="card-img-top" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= result.poster_path %>" alt="<%= result.title %>"/>
-                  <% } %>
-                  <p class="card-title">
-                    <%= result.title %>
-                    <span class="small-text">(<%= new Date(result.release_date).getFullYear() %>)</span>
-                  </p>
-                </a>
-              </div>
-              <div class="flip-card-back bg-primary" onclick="location.href='/movies/movie/<%= result.id %>'">
-                <h5><%= result.title %>(<%= new Date(result.release_date).getFullYear() %>)</h5>
-                <p><%= result.overview %></p>
+          <% if(result.media_type === "movie" || (data.media_type === "movie" && result.media_type === undefined)) { %>
+            <div class="flip-card">
+              <div class="flip-card-inner">
+                <div class="card flip-card-front">
+                  <a href="/movies/movie/<%= result.id %>">
+                    <% if (result.poster_path == null) { %>
+                      <img class="card-img-top img-missing" src="/no_image.svg" alt="No image"/>
+                    <% } else { %>
+                      <img class="card-img-top" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= result.poster_path %>" alt="<%= result.title %>"/>
+                    <% } %>
+                    <p class="card-type">Movie</p>
+                    <p class="card-title">
+                      <%= result.title %>
+                      <span class="small-text">(<%= new Date(result.release_date).getFullYear() %>)</span>
+                    </p>
+                  </a>
+                </div>
+                <div class="flip-card-back bg-primary" onclick="location.href='/movies/movie/<%= result.id %>'">
+                  <h5><%= result.title %>(<%= new Date(result.release_date).getFullYear() %>)</h5>
+                  <p><%= result.overview %></p>
+                </div>
               </div>
             </div>
-          </div>
+          <% } else if(result.media_type === "tv") { %>
+            <div class="flip-card">
+              <div class="flip-card-inner">
+                <div class="card flip-card-front">
+                  <a href="/movies/tv/<%= result.id %>">
+                    <% if (result.poster_path == null) { %>
+                      <img class="card-img-top img-missing" src="/no_image.svg" alt="No image"/>
+                    <% } else { %>
+                      <img class="card-img-top" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= result.poster_path %>" alt="<%= result.original_name %>"/>
+                    <% } %>
+                    <p class="card-type">TV Show</p>
+                    <p class="card-title">
+                      <%= result.original_name %>
+                      <span class="small-text">(<%= new Date(result.first_air_date).getFullYear() %>)</span>
+                    </p>
+                  </a>
+                </div>
+                <div class="flip-card-back bg-primary" onclick="location.href='/movies/tv/<%= result.id %>'">
+                  <h5><%= result.original_name %>(<%= new Date(result.first_air_date).getFullYear() %>)</h5>
+                  <p><%= result.overview %></p>
+                </div>
+              </div>
+            </div>
+          <% } else if(result.media_type === "person") { %>
+            <div class="flip-card">
+              <div class="flip-card-inner">
+                <div class="card flip-card-front">
+                  <a href="/movies/person/<%= result.id %>">
+                    <% if (result.profile_path == null) { %>
+                      <img class="card-img-top img-missing" src="/no_image.svg" alt="No image"/>
+                    <% } else { %>
+                      <img class="card-img-top" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= result.profile_path %>" alt="<%= result.name %>"/>
+                    <% } %>
+                    <p class="card-type">Person</p>
+                    <p class="card-title">
+                      <%= result.name %>
+                      <span class="small-text">(<%= result.known_for_department %>)</span>
+                    </p>
+                  </a>
+                </div>
+                <div class="flip-card-back bg-primary resume" onclick="location.href='/movies/person/<%= result.id %>'">
+                  <h5><%= result.name %></h5>
+                  <% result.known_for.forEach((feature) => { %>
+                    <img class="miniature" src="https://image.tmdb.org/t/p/w150_and_h225_bestv2/<%= feature.poster_path %>" alt="">
+                    <p>
+                      <%= feature.name ||feature.title %>
+                    </p>
+                  <% }); %>
+                </div>
+              </div>
+            </div>
+          <% } %>
         <% } %>
       </div>
     </div>

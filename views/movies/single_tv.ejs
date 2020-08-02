@@ -17,7 +17,6 @@
       .background-color {
         min-height: 100vh;
       }
-      
       .background-image::before {
         content: "";  
         filter: brightness(20%) grayscale(100%) opacity(50%);
@@ -33,13 +32,24 @@
 
 
     </style>
-    <title>My Movies - <%= data.title %></title>
+    <script src="/utils.js"></script>
+    <title><%- data.name %>(TV Series <%- new Date(data.first_air_date).getFullYear() %>)</title>
   </head>
   <body>
     <div class="container background-image">
       <div class="background-color">  
       <% include ./partials/navbar %>
-      <h3 class="border-bottom pb-3"><%= data.title %> (<%= new Date(data.release_date).getFullYear() %>)</h3>
+      <h3 class="border-bottom pb-3">
+        <% if(data.in_production) { %>
+          <%= data.name + " (" + new Date(data.first_air_date).getFullYear() + " - )" %>
+        <% } else { %>
+          <% if(new Date(data.first_air_date).getFullYear() === new Date(data.last_air_date).getFullYear()) { %>
+            <%= data.name + " (" + new Date(data.first_air_date).getFullYear() + ")" %>
+          <% } else { %>
+            <%= data.name + " (" + new Date(data.first_air_date).getFullYear() + " - " + new Date(data.last_air_date).getFullYear()  + ")" %>
+          <% } %>
+        <% } %>
+      </h3>
       <div class="row">
         <div class="col">
           <div class="w-100">
@@ -47,12 +57,9 @@
               <% if (data.images.posters.length > 0) { %>
                 <img id="getColorFrom" class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.images.posters[0].file_path %>" alt="">
               <% } else { %>
-                <img id="getColorFrom" class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.poster_path %>" alt="">
+                <div id="getColorFrom" class="no_image"></div>
               <% } %>
             </div>
-            <% if (data.belongs_to_collection){ %>
-              <% include ./partials/collection %>
-            <% } %>
           </div>
         </div>
         <div class="col">
@@ -84,21 +91,22 @@
             </div>
             <% } %>
 
-          <p><strong>Released:</strong><br> <%= data.release_date %></p>
+          <p><strong>Premiered:</strong><br> <%= data.first_air_date %></p>
           <p><strong>Overview:</strong><br> <%- data.overview %></p>
-          
-          <%# All this to find out id there is more than one director %>
-          <% if (data.credits.crew.filter((e) => { return e.job == "Director" }).map((e) => e.name).length > 1) { %>
-            <p><strong>Directors:</strong>
-          <% } else { %>
-            <p><strong>Director:</strong>
-          <% } %>
-          <br>
-          <%= data.credits.crew.filter((e) => { return e.job == "Director" }).map((e) => e.name).join(", ") %>
-          <%# All this to find out id there is more than one director %>
-
-          <p><strong>Runtime:</strong><br>
-          <%=  Math.floor(data.runtime / 60) + "h " + (data.runtime % 60) + "min" %></p>
+          <p><strong>Created by:</strong>
+            <% data.created_by.forEach((creator) => { %>
+              <br><%= creator.name %>
+            <% }) %>
+          </p>
+          <p><strong>Network(s):</strong><br>
+          <% data.networks.forEach((network) => { %>
+            <img class="mt-2 mr-2" src="<%- "https://image.tmdb.org/t/p/h30" + network.logo_path %>" alt="<%- network.name %>">
+          <% }) %>
+          </p>
+          <p><strong>Seasons:</strong><br> <%- data.number_of_seasons %></p>
+          <p><strong>Total nr of episodes:</strong><br> <%- data.number_of_episodes %></p>
+          <p><strong>Episode runtime:</strong><br>
+          <%=  Math.floor(data.episode_run_time[0] / 60) + "h " + (data.episode_run_time[0] % 60) + "min" %></p>
           <p>
             <strong>Genre: </strong><br>
               <%= data.genres.map((e) => e.name ).join(", "); %>
@@ -112,7 +120,7 @@
               <img src="/HDBits_logo_small.png">
             </a><!-- IMDB id -->
             <% } %>
-            <a href="https://www.themoviedb.org/movie/<%= data.id %>">
+            <a href="https://www.themoviedb.org/tv/<%= data.id %>">
               <img src="/primary-green.svg">
             </a><!-- The Movie DB id -->
             <a href="https://www.google.se/search?q=<%= data.title %>">
@@ -125,7 +133,7 @@
               if(data.videos){
                 let videos = data.videos.results;
                 videos = videos.filter((video) => {
-                  return (video.name == "Official Trailer" && video.site == "YouTube");
+                  return (video.type == "Trailer" && video.site == "YouTube");
                 });
                 if(videos.length != 0){
                   return videos[0].key;
@@ -136,38 +144,46 @@
             }
           %>
           <% if(findOfficialYoutubeVideo()){ %>
-            <iframe style="min-width: 376px; min-height: 212px;" src="https://www.youtube.com/embed/<%= findOfficialYoutubeVideo() %>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/<%= findOfficialYoutubeVideo() %>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
           <% } %>  
           </div>
         <div class="col">
-          <ul class="list-group">
-            <li class="list-group-item text-center">
-              <strong>Cast</strong>
-            </li>
+          <div id="cast-list" class="list-group">
+            <div class="list-group-item text-center">
+              <strong>Top Billed Cast</strong>
+            </div>
+            <a href="javascript:void(0)" class="list-group-item text-center disabled" id="scroll-up">
+              <i class="fa fa-chevron-up" style="font-size: 1.5em;"></i>
+            </a>
             <% 
               for (let i = 0; i < data.credits.cast.length; i++) {
-              if(i >= 7) break;
             %>
-            <li class="list-group-item">
-              <a href="/movies/person/<%= data.credits.cast[i].id %>"  class="profile-image-container">
-              <% if (data.credits.cast[i].profile_path) { %>
-                <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/original<%= data.credits.cast[i].profile_path %>" alt="">
-              <% } else { %>
-                <img class="profile-photo rounded-5" src="/unknown.png" alt="">
+            <a href="/movies/person/<%= data.credits.cast[i].id %>"  id="cast<%= i %>" class="list-group-item scroll-list" <% if(i >= 5) { %><%= "hidden" %><% } %>>
+              <div class="profile-image-container">
+                <% if (data.credits.cast[i].profile_path) { %>
+                  <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/w132_and_h132_face<%= data.credits.cast[i].profile_path %>" alt="">
+                <% } else { %>
+                  <% if(data.credits.cast[i].gender === 1) { %>
+                    <img class="profile-photo rounded-5 unknown" src="/unknown-user-female.svg" alt="">
+                  <% }else { %>
+                    <img class="profile-photo rounded-5 unknown" src="/unknown-user.svg" alt="">
+                  <% } %>
               <% } %>
-              </a>
+              </div>
               <div class="profile-name-container">
                 <span class="profile-name-text">
                   <strong><%= data.credits.cast[i].name %></strong>
                   <% if (data.credits.cast[i].character) { %>
-                    <br>
-                    <small>as<br><%= data.credits.cast[i].character %></small>
+                    <br><small>as<br><%= data.credits.cast[i].character %></small>
                   <% } %>
                 </span>
               </div>
-            </li>
+            </a>
             <% } %>
-          </ul>
+            <a href="javascript:void(0)" id="scroll-down" class="list-group-item text-center">
+              <i class="fa fa-chevron-down" style="font-size: 1.5em;"></i>
+            </a>
+          </div>
         </div>
       </div>
     <script>

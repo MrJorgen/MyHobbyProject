@@ -140,7 +140,7 @@ router.get("/person/:id?", (req, res) => {
     let id = req.params.id;
     if (parseInt(id) !== NaN) {
       url = `https://api.themoviedb.org/3/${media}/${id}?api_key=${apiKey}&append_to_response=credits,images,tagged_image,keywords,videos,similar,recommendations&include_image_language=en,null`;
-      renderPage(url, res, './movies/single_movie');
+      renderPage(url, res, `./movies/single_${media}`);
     }
   });
 });
@@ -149,7 +149,7 @@ router.get("/person/:id?", (req, res) => {
 router.post("/*", (req, res) => {
   let query = encodeURIComponent(req.body.query);
   titleHeader = `Search results for "${decodeURIComponent(query)}"`;
-  let url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${query}&include_adult=true`;
+  let url = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&query=${query}`;
   renderPage(url, res, "./movies/movies");
 });
 
@@ -180,7 +180,6 @@ router.get("/:id?", function (req, res) {
 function renderPage(url, res, page, oldData) {
   init();
   let header = titleHeader;
-  // header = header.substring (header.lastIndexOf ('/'), header.length);
 
   request({
     url: url,
@@ -197,30 +196,29 @@ function renderPage(url, res, page, oldData) {
         let collectionUrl = `https://api.themoviedb.org/3/collection/${data.belongs_to_collection.id}?api_key=${apiKey}`;
         renderPage(collectionUrl, res, page, data);
       } else {
+        let sendData = data;
         if (oldData) {
           oldData.collection = data;
-
-          res.render(page, {
-            layout: false,
-            data: oldData,
-            config: tmdb_config,
-            header: header,
-            imdbRatings: imdbRatings
-          });
-          // res.send(oldData);
+          sendData = oldData;
+          sendData.media_type = "movie";
         } else {
-          res.render(page, {
-            layout: false,
-            data: data,
-            config: tmdb_config,
-            header: header,
-            imdbRatings: imdbRatings
-          });
-          // res.send(data);
+          if (url.includes("tv")) {
+            sendData.media_type = "tv";
+          } else if (url.includes("movie")) {
+            sendData.media_type = "movie";
+          }
         }
+        res.render(page, {
+          layout: false,
+          data: sendData,
+          config: tmdb_config,
+          header: header,
+          imdbRatings: imdbRatings
+        });
       }
     } else {
       console.log('Error retrieving data from TMDB! ' + response.statusCode);
+      res.render("./movies/400", {data: {}});
     }
   });
 

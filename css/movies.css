@@ -91,6 +91,24 @@ a:hover {
   background-color: #00000052;
 }
 
+.card-type {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  max-width: 50%;
+  padding: 7px;
+  color: #fff;
+  background-color: #00000052;
+}
+
+.miniature {
+  max-height: 80px;
+}
+
+.resume {
+   text-align: center;
+}
+
 .flip-card {
   perspective: 1000px;
 }
