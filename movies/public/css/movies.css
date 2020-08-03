@@ -126,6 +126,7 @@ a:hover {
   height: 100%;
   -webkit-backface-visibility: hidden; /* Safari */
   backface-visibility: hidden;
+  min-height: 400px;
 }
 
 .flip-card:hover .flip-card-inner {
