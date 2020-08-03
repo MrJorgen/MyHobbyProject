@@ -136,7 +136,7 @@ a:hover {
 .flip-card-back {
   position: absolute;
   top: 0px;
-  padding: 0.5em;
+  padding: 1rem;
   transform: rotateY(180deg);
   height: 100%;
   overflow: hidden;
@@ -145,8 +145,8 @@ a:hover {
 
 .flip-card-back h5 {
   text-align: center;
-  padding-bottom: 0.5em;
-  border-bottom: 1px solid #272B30;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 .flip-card-back p {

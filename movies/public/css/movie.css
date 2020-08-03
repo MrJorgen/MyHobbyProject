@@ -216,15 +216,7 @@ body {
 .row {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(330px, 1.5fr));
-  grid-column-gap: 1em;
   margin: auto;
-  /*
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-column-gap: 1em;
-  justify-content: space-evenly;
-  padding: 0px 15px;
-  */
 }
 
 .form-control, .btn {

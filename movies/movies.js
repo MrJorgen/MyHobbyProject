@@ -144,7 +144,7 @@ router.get("/person/:id?", (req, res) => {
     }
     let id = req.params.id;
     if (parseInt(id) !== NaN) {
-      url = `https://api.themoviedb.org/3/${media}/${id}?api_key=${apiKey}&append_to_response=credits,images,tagged_image,keywords,videos,similar,recommendations&include_image_language=en,null`;
+      url = `https://api.themoviedb.org/3/${media}/${id}?api_key=${apiKey}&append_to_response=credits,images,videos&include_image_language=en,null`;
       renderPage(url, res, __dirname + `/views/single_${media}`);
     }
   });

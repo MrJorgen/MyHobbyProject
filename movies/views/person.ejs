@@ -54,16 +54,8 @@
       <div class="col">
         <div class="w-100">
           <div class="rounded w-100">
-            <% if(data.images.profiles.length > 0) { %>
-              <%# Sort array by vote_average %>
-              <%
-                data.images.profiles.sort((a, b) => {
-                  return parseFloat(b.vote_average) - parseFloat(a.vote_average);
-                });
-              %>
-              <img class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.images.profiles[0].file_path %>" alt="">
-            <% } else if(data.poster_path) { %>
-              <img class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.poster_path %>" alt="">
+            <% if(data.profile_path) { %>
+              <img class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.profile_path %>" alt="">
             <% } else { %>
                 <img class="w-100 rounded" src="https://via.placeholder.com/600x900/?text=No+Image..." alt="">
             <% } %>

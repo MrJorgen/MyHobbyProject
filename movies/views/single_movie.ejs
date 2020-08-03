@@ -44,10 +44,10 @@
         <div class="col">
           <div class="w-100">
             <div class="rounded w-100">
-              <% if (data.images.posters.length > 0) { %>
-                <img id="getColorFrom" class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.images.posters[0].file_path %>" alt="">
+              <% if (data.poster_path) { %>
+                <img id="getColorFrom" class="w-100 rounded" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= data.poster_path %>" alt="">
               <% } else { %>
-                <div id="getColorFrom" class="no_image"></div>
+                <div class="no_image"></div>
               <% } %>
             </div>
             <% if (data.belongs_to_collection){ %>
@@ -59,10 +59,9 @@
           <div class="w-100" style="display: inline-flex;">
             <div class="">
               <svg class="circle-chart" viewbox="0 0 200 200" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-                <circle class="circle-chart__background" stroke="hsla(<%= data.vote_average * 12 %>, 75%, 80%, 1)" stroke-width="20" fill="rgba(0, 0, 0, 0.5)" cx="100" cy="100" r="80"
-                />
+                <circle class="circle-chart__background" stroke="hsla(<%= data.vote_average * 12 %>, 75%, 80%, 1)" stroke-width="20" fill="rgba(0, 0, 0, 0.5)" cx="100" cy="100" r="80" shape-rendering="geometricPrecision"/>
                 <circle class="circle-chart__circle" stroke-width="20" stroke="hsl(<%= data.vote_average * 12 %>, 75%, 40%)" stroke-dasharray="<%= data.vote_average * 50 %>, 502.4"
-                  stroke-linecap="round" fill="none" cx="100" cy="100" r="80" />
+                  stroke-linecap="round" fill="none" cx="100" cy="100" r="80" shape-rendering="geometricPrecision"/>
                   <!-- <line x1="0" y1="100" x2="200" y2="100" style="stroke:rgb(0,0,0);stroke-width: 1" /> -->
                 <g class="circle-chart__info">
                   <text class="circle-chart__percent" x="100" y="120" fill="#fff">
