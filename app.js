@@ -84,9 +84,6 @@ if (!heroku) {
   app.use(forceSsl);
 }
 app.use(express.static(__dirname + "/public"));
-app.use(express.static(__dirname + "/css"));
-app.use(express.static(__dirname + "/js"));
-app.use(express.static(__dirname + "/img"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false,
@@ -119,7 +116,7 @@ app.get('/', (req, res) => {
   });
 });
 
-let movie = require('./routes/movies')
+let movie = require('./movies/movies')
 app.use('/movies', movie);
 
 // about page

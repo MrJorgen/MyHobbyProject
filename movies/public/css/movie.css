@@ -124,7 +124,7 @@ img.unknown {
 
 .no_image {
   background-color: #dbdbdb;
-  background-image: url("./no_image.svg");
+  background-image: url("/movies/img/no_image.svg");
   width: 330px;
   height: 495px;
   background-repeat: no-repeat;

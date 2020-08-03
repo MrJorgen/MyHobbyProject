@@ -4,12 +4,13 @@ const express = require('express'),
   fs = require("fs"),
   bodyParser = require('body-parser'),
   zlib = require("zlib"),
-  readline = require("readline");
+  readline = require("readline"),
+  path = require("path");
 
 let titleHeader = "", apiKey;
 
 try {
-  apiKey = fs.readFileSync("./tmdb_api_key.txt", {
+  apiKey = fs.readFileSync(__dirname + "/tmdb_api_key.txt", {
     encoding: "UTF-8"
   });
 } catch(err) {
@@ -18,6 +19,10 @@ try {
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
+// router.use(express.static(__dirname + "/public"));
+router.use("/", express.static(path.join(__dirname, 'public')));
+console.log(path.join(__dirname, 'public'));
+
 
 // Read imdb ratings data file
 // --------------------------------------------------------------------------------
@@ -26,7 +31,7 @@ let imdbRatings = {};
 readImdbData();
 
 function readImdbData() {
-  let imdbRatingsFilePath = "./datastore/title.ratings.tsv.gz"
+  let imdbRatingsFilePath = "./datastore/title.ratings.tsv.gz";
   fs.exists(imdbRatingsFilePath, (found) => {
     if (found) {
       console.log("Reading IMDB ratings file!");
@@ -69,7 +74,7 @@ function refreshImdbData(url, path) {
 // Insert config here. Check for new version every 3 days
 // --------------------------------------------------------------------------------
 let tmdb_config = "",
-tmdb_config_filePath = "./views/movies/tmdb_config.json";
+tmdb_config_filePath = __dirname + "/tmdb_config.json";
 init();
 
 function init() {
@@ -126,7 +131,7 @@ function getAndSaveConfig() {
 router.get("/person/:id?", (req, res) => {
   let personId = req.params.id;
   let personUrl = `https://api.themoviedb.org/3/person/${personId}?api_key=${apiKey}&append_to_response=credits,combined_credits,images,tagged_image,keywords,videos,similar,recommendations&include_image_language=en,null`;
-  renderPage(personUrl, res, "./movies/person");
+  renderPage(personUrl, res, __dirname + "/views/person");
 });
 
 ["/movie/:id?", "/tv/:id?",].forEach((path, index) => {
@@ -140,7 +145,7 @@ router.get("/person/:id?", (req, res) => {
     let id = req.params.id;
     if (parseInt(id) !== NaN) {
       url = `https://api.themoviedb.org/3/${media}/${id}?api_key=${apiKey}&append_to_response=credits,images,tagged_image,keywords,videos,similar,recommendations&include_image_language=en,null`;
-      renderPage(url, res, `./movies/single_${media}`);
+      renderPage(url, res, __dirname + `/views/single_${media}`);
     }
   });
 });
@@ -150,7 +155,7 @@ router.post("/*", (req, res) => {
   let query = encodeURIComponent(req.body.query);
   titleHeader = `Search results for "${decodeURIComponent(query)}"`;
   let url = `https://api.themoviedb.org/3/search/multi?api_key=${apiKey}&query=${query}`;
-  renderPage(url, res, "./movies/movies");
+  renderPage(url, res, __dirname + "/views/movies");
 });
 
 
@@ -173,7 +178,7 @@ router.get("/:id?", function (req, res) {
     }
     let option = id || "popular";
     url = `https://api.themoviedb.org/3/movie/${option}?api_key=${apiKey}`;
-    renderPage(url, res, "./movies/movies");
+    renderPage(url, res, __dirname + "/views/movies");
   }
 });
 
@@ -218,7 +223,7 @@ function renderPage(url, res, page, oldData) {
       }
     } else {
       console.log('Error retrieving data from TMDB! ' + response.statusCode);
-      res.render("./movies/400", {data: {}});
+      res.render(__dirname + "/views/400", {data: {}});
     }
   });
 
