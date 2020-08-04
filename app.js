@@ -35,8 +35,7 @@ if (__dirname == "/home/pi/web") {
 }
 
 if (!heroku) {
-  const https = require("https").createServer(options, app),
-    io = require('socket.io')(https);
+  const https = require("https").createServer(options, app);
 }
 
 /*
@@ -105,6 +104,13 @@ app.use(session({
 
 app.set("views", __dirname + "/views");
 app.set('view engine', 'ejs');
+
+app.get('*', function (req, res) {
+  res.redirect('https://' + req.headers.host + req.url);
+
+  // Or, if you don't want to automatically detect the domain name from the request header, you can hard code it:
+  // res.redirect('https://example.com' + req.url);
+})
 
 // Home page
 app.get('/', (req, res) => {
