@@ -105,12 +105,13 @@ app.use(session({
 app.set("views", __dirname + "/views");
 app.set('view engine', 'ejs');
 
-app.get('*', function (req, res) {
-  res.redirect('https://' + req.headers.host + req.url);
-
-  // Or, if you don't want to automatically detect the domain name from the request header, you can hard code it:
-  // res.redirect('https://example.com' + req.url);
-})
+/* Redirect http to https */
+app.get('*', function (req, res, next) {
+  if (req.headers['x-forwarded-proto'] != 'https' && process.env.NODE_ENV === 'production')
+    res.redirect('https://' + req.hostname + req.url)
+  else
+    next() /* Continue to other routes if we're not redirecting */
+});
 
 // Home page
 app.get('/', (req, res) => {
