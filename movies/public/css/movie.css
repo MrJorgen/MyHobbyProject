@@ -264,3 +264,7 @@ a#scroll-up, a#scroll-down {
 .disabled {
   background-color: transparent !important;
 }
+
+#searchInput {
+  width: 220px;
+}

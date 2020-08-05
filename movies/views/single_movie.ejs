@@ -1,16 +1,31 @@
+<% 
+  function findOfficialYoutubeVideo(){
+    if(data.videos){
+      let videos = data.videos.results;
+      videos = videos.filter((video) => {
+        return (video.type == "Trailer" && video.site == "YouTube");
+      });
+      if(videos.length != 0){
+        return videos[0];
+      } else {
+        return false;
+      }
+  }
+  }
+%>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="/movies/img/favicon/favicon-32x32.png" type="image/png">
+    <link rel="icon" href="/img/favicon/favicon-32x32.png" type="image/png">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
       crossorigin="anonymous">
     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
 		<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://bootswatch.com/4/slate/bootstrap.css">
-    <link rel="stylesheet" href="/movies/css/movie.css">
+    <link rel="stylesheet" href="/css/movie.css">
     <link href="https://fonts.googleapis.com/css?family=Acme|Arima+Madurai:400,700|Asul|Averia+Sans+Libre|Averia+Serif+Libre|Baloo|Bowlby+One+SC|Bubblegum+Sans|Coiny|Concert+One|Corben|Crushed|Days+One|Doppio+One|Federo|Fredericka+the+Great|Fredoka+One|Gruppo|Kanit|Lemonada|Lobster|Mada:500|Mirza|Oleo+Script+Swash+Caps|Passion+One|Patua+One|Shanti"
       rel="stylesheet">
     <style>
@@ -29,10 +44,42 @@
         top: 0;
         z-index: -100;
       }
-
-
+      .modal-header .close, .modal-content{
+        color: white;        
+      }
+      .modal-body {
+        padding: 0;
+        height: calc(1140px / 16 * 9);
+      }
+      #trailer {
+        position: relative;
+        left: 0;
+        bottom: 0;
+      }
     </style>
-    <script src="/movies/js/utils.js"></script>
+    <script src="/js/utils.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => { 
+          /* Get iframe src attribute value i.e. YouTube video url
+          and store it in a variable */
+          var url = $("#trailer").attr('src');
+          
+          /* Assign empty url value to the iframe src attribute when
+          modal hide, which stop the video playing */
+          $("#trailerModal").on('hide.bs.modal', function(){
+              $("#trailer").attr('src', '');
+          });
+          
+          /* Assign the initially stored url back to the iframe src
+          attribute when modal is displayed again */
+          $("#trailerModal").on('show.bs.modal', function(){
+              $("#trailer").attr('src', url + "?autoplay=1");
+              let modalWidth = parseInt(window.getComputedStyle(document.querySelector(".modal-dialog"), null).getPropertyValue("width"));
+              document.querySelector(".modal-body").style.height = (modalWidth / 16 * 9) + "px";
+              console.log(modalWidth);
+          });
+      });
+    </script>
     <title>My Movies - <%= data.title %></title>
   </head>
   <body>
@@ -49,6 +96,9 @@
               <% } else { %>
                 <div class="no_image"></div>
               <% } %>
+            </div>
+            <div type="button" data-toggle="modal" data-target="#trailerModal" class="pt-3 text-center">
+              <i class="fa fa-play"></i> Play trailer
             </div>
             <% if (data.belongs_to_collection){ %>
               <% include ./partials/collection %>
@@ -105,39 +155,38 @@
           <div class="links">
             <% if(data.imdb_id) { %>
             <a href="https://www.imdb.com/title/<%= data.imdb_id %>">
-              <img src="/movies/img/IMDB_Logo_2016.svg">
+              <img src="/img/IMDB_Logo_2016.svg">
             </a><!-- IMDB id -->
             <a href="https://hdbits.org/browse.php?imdb=<%= data.imdb_id %>">
-              <img src="/movies/img/HDBits_logo_small.png">
+              <img src="/img/HDBits_logo_small.png">
             </a><!-- IMDB id -->
             <% } %>
             <a href="https://www.themoviedb.org/movie/<%= data.id %>">
-              <img src="/movies/img/primary-green.svg">
+              <img src="/img/primary-green.svg">
             </a><!-- The Movie DB id -->
             <a href="https://www.google.se/search?q=<%= data.title %>">
-              <img src="/movies/img/Google_2015_logo.svg">
+              <img src="/img/Google_2015_logo.svg">
             </a><!-- Movie title -->
           </div>
           <!-- Embed official trailer(if there is one) -->
-          <% 
-            function findOfficialYoutubeVideo(){
-              if(data.videos){
-                let videos = data.videos.results;
-                videos = videos.filter((video) => {
-                  return (video.type == "Trailer" && video.site == "YouTube");
-                });
-                if(videos.length != 0){
-                  return videos[0].key;
-                } else {
-                  return false;
-                }
-            }
-            }
-          %>
-          <% if(findOfficialYoutubeVideo()){ %>
-            <iframe src="https://www.youtube.com/embed/<%= findOfficialYoutubeVideo() %>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-          <% } %>  
+
+        <!-- Modal -->
+        <div class="modal fade" id="trailerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><%= `Trailer - ${data.title}` %></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <iframe id="trailer" src="https://www.youtube.com/embed/<%- findOfficialYoutubeVideo().key %>" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+              </div>
+            </div>
           </div>
+        </div>
+      </div>
         <div class="col">
           <div id="cast-list" class="list-group">
             <div class="list-group-item text-center">
@@ -155,9 +204,9 @@
                   <img class="profile-photo rounded-5" src="https://image.tmdb.org/t/p/w132_and_h132_face<%= data.credits.cast[i].profile_path %>" alt="">
                 <% } else { %>
                   <% if(data.credits.cast[i].gender === 1) { %>
-                    <img class="profile-photo rounded-5 unknown" src="/movies/img/unknown-user-female.svg" alt="">
+                    <img class="profile-photo rounded-5 unknown" src="/img/unknown-user-female.svg" alt="">
                   <% }else { %>
-                    <img class="profile-photo rounded-5 unknown" src="/movies/img/unknown-user.svg" alt="">
+                    <img class="profile-photo rounded-5 unknown" src="/img/unknown-user.svg" alt="">
                   <% } %>
               <% } %>
               </div>
@@ -215,7 +264,7 @@
       crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"></script>
-    <script src="/movies/js/vibrant.js"></script>
+    <script src="/js/vibrant.js"></script>
     <script>
       // let imgPath = "<%= config.images.secure_base_url + config.images.backdrop_sizes[3] + data.backdrop_path %>";
       let imgPath = document.querySelector("#getColorFrom").src;

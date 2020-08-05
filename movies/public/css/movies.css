@@ -196,3 +196,7 @@ img.img-missing {
   color: rgba(123, 123, 123 , .5);
   font-size: 1.3em;
 }
+
+#searchInput {
+  width: 220px;
+}

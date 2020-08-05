@@ -4,11 +4,11 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-		<link rel="icon" href="/movies/img/favicon/favicon-32x32.png" type="image/png" />
+		<link rel="icon" href="/img/favicon/favicon-32x32.png" type="image/png" />
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.1.1/slate/bootstrap.css" />
 		<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
 		<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
-		<link rel="stylesheet" href="/movies/css/movies.css" />
+		<link rel="stylesheet" href="/css/movies.css" />
 		<link href="https://fonts.googleapis.com/css?family=Acme|Arima+Madurai:400,700|Asul|Averia+Sans+Libre|Averia+Serif+Libre|Baloo|Bowlby+One+SC|Bubblegum+Sans|Coiny|Concert+One|Corben|Crushed|Days+One|Doppio+One|Federo|Fredericka+the+Great|Fredoka+One|Gruppo|Kanit|Lemonada|Lobster|Mada:500|Mirza|Oleo+Script+Swash+Caps|Passion+One|Patua+One|Shanti" rel="stylesheet"/>
 		<title>My Movies App</title>
 	</head>
@@ -48,7 +48,7 @@
                 <div class="card flip-card-front">
                   <a href="/movies/tv/<%= result.id %>">
                     <% if (result.poster_path == null) { %>
-                      <img class="card-img-top img-missing" src="/movies/img/no_image.svg" alt="No image"/>
+                      <img class="card-img-top img-missing" src="/img/no_image.svg" alt="No image"/>
                     <% } else { %>
                       <img class="card-img-top" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= result.poster_path %>" alt="<%= result.original_name %>"/>
                     <% } %>
@@ -71,7 +71,7 @@
                 <div class="card flip-card-front">
                   <a href="/movies/person/<%= result.id %>">
                     <% if (result.profile_path == null) { %>
-                      <img class="card-img-top img-missing" src="/movies/img/no_image.svg" alt="No image"/>
+                      <img class="card-img-top img-missing" src="/img/no_image.svg" alt="No image"/>
                     <% } else { %>
                       <img class="card-img-top" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2<%= result.profile_path %>" alt="<%= result.name %>"/>
                     <% } %>

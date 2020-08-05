@@ -19,10 +19,7 @@ try {
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
-// router.use(express.static(__dirname + "/public"));
 router.use("/", express.static(path.join(__dirname, 'public')));
-console.log(path.join(__dirname, 'public'));
-
 
 // Read imdb ratings data file
 // --------------------------------------------------------------------------------

@@ -35,7 +35,7 @@ if (__dirname == "/home/pi/web") {
 }
 
 if (!heroku) {
-  const https = require("https").createServer(options, app);
+  var https = require("https").createServer(options, app);
 }
 
 /*
@@ -83,34 +83,24 @@ if (!heroku) {
   app.use(forceSsl);
 }
 app.use(express.static(__dirname + "/public"));
+app.use("/", express.static( __dirname + "/movies/public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false,
 }));
-/*
-app.use(session({
-  cookieName: 'mySession', // cookie name dictates the key name added to the request object
-  secret: '8Xe3bNj3_-h39p-rGMW-hMRMVh6cbu_w', // should be a large unguessable string
-  duration: 24 * 60 * 60 * 1000, // how long the session will stay valid in ms
-  cookie: {
-    path: '/chat', // cookie will only be sent to requests under '/chat'
-    maxAge: 60000, // duration of the cookie in milliseconds, defaults to duration above
-    ephemeral: false, // when true, cookie expires when the browser closes
-    httpOnly: true, // when true, cookie is not accessible from javascript
-    secure: true // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
-  }
-}));
-*/
+
 
 app.set("views", __dirname + "/views");
 app.set('view engine', 'ejs');
 
 /* Redirect http to https */
-app.get('*', function (req, res, next) {
-  if (req.headers['x-forwarded-proto'] != 'https' && process.env.NODE_ENV === 'production')
-    res.redirect('https://' + req.hostname + req.url)
-  else
-    next() /* Continue to other routes if we're not redirecting */
+app.get('*', (req, res, next) => {
+  console.log(req.secure);
+  if (req.headers['x-forwarded-proto'] != "https" && process.env.NODE_ENV === "production") {
+    res.redirect('https://' + req.hostname + req.url);
+  } else {
+    next(); /* Continue to other routes if we're not redirecting */
+  }
 });
 
 // Home page
