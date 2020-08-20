@@ -1,26 +1,39 @@
+:root {
+  /* --bg-color: #c7d3dd;
+  --alt-color: #92C0E6; */
+  --bg-color: white;
+  --alt-color: #c7d3dd;
+  --active-border: 2px solid rgba(255, 0, 0, 0.5);
+}
+
 body {
-    margin: 0px;
+    margin: 0;
+    padding: 0;
     font-size: 1em;
-    font-family: Titillium Web, Verdana, Geneva, Tahoma, sans-serif;
+    font-family: "Barlow Semi Condensed", "Roboto Condensed", "Saira Condensed", "Ubuntu Condensed", "Titillium Web", Verdana, Geneva, Tahoma, sans-serif;
     user-select: none;
-    /* overflow-x: hidden; */
-    /* max-width: 768px; */
-    width: 100%;
+    width: 100vw;
+    background-color: var(--bg-color);
 }
 
 table {
-    font-size: 0.9em;
-    font-family: Titillium Web, Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 15px;
     width: 100%;
-    max-width: 500px;
     padding: 4px;
     border-collapse: collapse;
 }
 
-table td,
-table th {
+table td, table th {
     text-align: left;
-    padding-left: 5px;
+    padding-left: 3px;
+}
+
+table th {
+  font-weight: bold;
+}
+
+table td {
+  font-weight: normal;
 }
 
 table tr.week {
@@ -29,11 +42,12 @@ table tr.week {
 }
 
 table tr:nth-child(odd) {
-    background-color: #fff;
+    background-color: transparent;
 }
 
 table tr:nth-child(even) {
-    background-color: #d5d5d5;
+    /* background-color: rgba(0, 0, 0, 0.25); */
+    background-color: var(--alt-color);
 }
 
 table th.weeknr {
@@ -75,18 +89,17 @@ table th.weeknr {
 }
 
 .active {
-    /* background-color: rgba(255, 0, 0, 0.05); */
-    border-left: 2px solid rgba(255, 0, 0, 0.5);
-    border-right: 2px solid rgba(255, 0, 0, 0.5);
+    border-left: var(--active-border);
+    border-right: var(--active-border);
     border-radius: 1%;
 }
 
 .active-top {
-    border-top: 2px solid rgba(255, 0, 0, 0.5);
+    border-top: var(--active-border);
 }
 
 .active-bottom {
-    border-bottom: 2px solid rgba(255, 0, 0, 0.5);
+    border-bottom: var(--active-border);
 }
 
 .nobold {
@@ -94,7 +107,7 @@ table th.weeknr {
 }
 
 .small {
-    font-size: 0.7em;
+    font-size: 0.8rem;
 }
 
 .border-bottom {

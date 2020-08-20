@@ -17,6 +17,27 @@
     <div class="container">
       <% include ./partials/navbar %>
       <h3><%= header %></h3>
+
+    <div class="d-flex m-auto d-none">
+      
+      <!-- <div class="btn-group m-auto">
+        <a href="../movies/popular" class="btn btn-primary">Popular</a>
+        <a href="../movies/top_rated" class="btn btn-primary">Top Rated</a>
+        <a href="../movies/upcoming" class="btn btn-primary">Upcoming</a>
+      </div> -->
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Dropdown button
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </div>  
+    </div>
+
+    
       <div class="grid">
         <% for(let result of data.results) { %>
           <% if(result.media_type === "movie" || (data.media_type === "movie" && result.media_type === undefined)) { %>

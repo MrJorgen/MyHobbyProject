@@ -67,9 +67,10 @@ function makeTable(id, currentDay, leftMargin) {
     for (let i = -1; i < dayNames.length; i++) {
       let tmpCell = document.createElement('th');
       if (i < 0) {
-        tmpCell.innerText = 'Pass';
+        // tmpCell.innerText = 'Pass';
+        tmpCell.innerText = "";
       } else {
-        tmpCell.innerHTML = dayNames[i] + `<span class=\"nobold small\"> ${dateToString(startOfWeek, i)}</span>`;
+        tmpCell.innerHTML = dayNames[i] + `<span class="nobold small"> ${dateToString(startOfWeek, i)}</span>`;
         if (i == today.getDay() - 1 && startOfWeek.getWeek() == today.getWeek()) {
           tmpCell.classList.add('active', 'active-top');
         }
@@ -116,9 +117,6 @@ function makeTable(id, currentDay, leftMargin) {
     startOfWeek.setDate(startOfWeek.getDate() + 7);
     //currentWeek = startOfWeek.getWeek();
   }
-  schemaTable.style.position = 'absolute';
-  schemaTable.style.width = width + 'px';
-  schemaTable.style.top = '0px';
   document.querySelector('#container').appendChild(schemaTable);
 }
 
@@ -161,7 +159,7 @@ Date.prototype.getWeek = function () {
   );
 };
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('#dateInput').setAttribute('min', new Date().toISOString().split('T')[0]);
   for (let driver of drivers){
     document.querySelector('#nameInput').add(new Option(driver, driver));
@@ -170,18 +168,18 @@ document.addEventListener('DOMContentLoaded', function () {
   // outOfOrder();
 });
 
-document.querySelector('#dateInput').addEventListener('change', function () {
+document.querySelector('#dateInput').addEventListener("change", () => {
   today = new Date(this.value);
   makeScedule(document.querySelector('#nameInput').value);
 });
 
-document.querySelector('#nameInput').addEventListener('change', function () {
+document.querySelector('#nameInput').addEventListener("change", () => {
   // today = new Date(this.value);
   makeScedule(this.value);
 });
 
 let start = null;
-window.addEventListener('touchstart', function (event) {
+window.addEventListener('touchstart', (event) => {
   if (event.touches.length === 1) {
     //just one finger touched
     start = event.touches.item(0).clientX;
@@ -191,11 +189,11 @@ window.addEventListener('touchstart', function (event) {
   }
 });
 
-window.addEventListener('touchmove', function () {
+window.addEventListener('touchmove', () => {
   document.body.style.marginLeft = Math.floor(event.touches.item(0).clientX - start) + 'px';
 });
 
-window.addEventListener('touchend', function (event) {
+window.addEventListener('touchend', (event) => {
   // Reset drag
   document.body.style.marginLeft = '0px';
   window.scrollTo(0, 0);
@@ -224,10 +222,6 @@ window.addEventListener('touchend', function (event) {
       makeScedule();
     }
   }
-});
-
-document.body.addEventListener('drag', function () {
-  console.log('Scrolling...');
 });
 
 function clearTables() {

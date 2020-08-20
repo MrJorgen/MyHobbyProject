@@ -1,5 +1,7 @@
 export { craeateSceduleByPerson, dateToString };
 import { schemaStartDate } from './schema.js';
+
+
 function craeateSceduleByPerson(name, scedule, today) {
   let schemaLength = scedule.length,
     personalScedule = JSON.parse(JSON.stringify(scedule)), individualWeeksToDisplay = 8;
@@ -33,13 +35,13 @@ function craeateSceduleByPerson(name, scedule, today) {
 
   // From here on make the output
   let template = `
-    <table id="current" style="position: absolute; top: 0px;">
+    <table id="current">
       <thead>
         <tr class="week">
           <th class="weeknr" colspan="7">Schema för ${name}</th>
         </tr>
         <tr>
-          <th>Vecka</th>
+          <th>V</th>
           <th>Mån<span class=\"nobold small\"> ${dateToString(startOfWeek, 0)}</span></th>
           <th>Tis<span class=\"nobold small\"> ${dateToString(startOfWeek, 1)}</span></th>
           <th>Ons<span class=\"nobold small\"> ${dateToString(startOfWeek, 2)}</span></th>
