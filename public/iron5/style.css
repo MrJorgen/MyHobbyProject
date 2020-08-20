@@ -36,7 +36,8 @@ table {
   font-size: 24px;
   text-align: center;
   color: #004b98;
-  padding-top: 0.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.25rem;
   text-transform: uppercase;
 }
 
@@ -75,7 +76,6 @@ table th.weeknr {
 #container {
     margin: 0px auto;
     width: 100vw;
-    height: 100vh;
     border: 0.5px solid black;
 }
 
@@ -151,5 +151,5 @@ label {
 }
 
 .animate {
-  transition: all 0.3s;
+  transition: all 0.2s;
 }
