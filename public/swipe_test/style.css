@@ -1,0 +1,51 @@
+*, html {
+  margin: 0;
+  padding: 0;
+  border-collapse: collapse;
+  box-sizing: border-box;
+}
+
+.page0, .page1, .page2 {
+  border: 1px dotted rgba(0, 0, 0, 0.5);
+}
+
+.page0 {
+  position: absolute;
+  display: none;
+  left: -100%;
+  width: 100vw;
+  height: 100vh;
+  background-color: red;
+  
+}
+
+.page1 {
+  position: absolute;
+  display: block;
+  left: 0%;
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+}
+
+.page2 {
+  display: none;
+  position: absolute;
+  left: 100%;
+  width: 100vw;
+  height: 100vh;
+  background-color: green;
+}
+
+.center {
+  position: absolute;
+  width: 100%;
+  font-size: 4rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.animate {
+  transition: left 0.5s;
+}

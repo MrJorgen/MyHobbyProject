@@ -1,8 +1,16 @@
+@font-face {
+  font-family: Revue;
+  src: url("./font/revuen.ttf");
+}
+
 :root {
   /* --bg-color: #c7d3dd;
   --alt-color: #92C0E6; */
   --bg-color: white;
   --alt-color: #c7d3dd;
+  --iron-blue: #004b98;
+  --grey: #58585a;
+  --grey50: rgba(0, 0, 0, 0.25);
   --active-border: 2px solid rgba(255, 0, 0, 0.5);
 }
 
@@ -21,6 +29,15 @@ table {
     width: 100%;
     padding: 4px;
     border-collapse: collapse;
+}
+
+.title {
+  font-family: Revue;
+  font-size: 24px;
+  text-align: center;
+  color: #004b98;
+  padding-top: 0.5rem;
+  text-transform: uppercase;
 }
 
 table td, table th {
@@ -47,7 +64,7 @@ table tr:nth-child(odd) {
 
 table tr:nth-child(even) {
     /* background-color: rgba(0, 0, 0, 0.25); */
-    background-color: var(--alt-color);
+    background-color: var(--grey50);
 }
 
 table th.weeknr {
@@ -57,7 +74,9 @@ table th.weeknr {
 
 #container {
     margin: 0px auto;
-    max-width: 500px;
+    width: 100vw;
+    height: 100vh;
+    border: 0.5px solid black;
 }
 
 #inputContainer {
@@ -129,4 +148,8 @@ label {
 .form-control {
   height: auto;
   padding: 0;
+}
+
+.animate {
+  transition: all 0.3s;
 }

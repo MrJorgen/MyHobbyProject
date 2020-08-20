@@ -1,7 +1,7 @@
-import {drivers, schemaStartDate, schema} from './schema.js';
-import {craeateSceduleByPerson, dateToString} from './functions.js';
+import {drivers, schemaStartDate, schema} from "./schema.js";
+import {craeateSceduleByPerson, dateToString} from "./functions.js";
 
-const dayNames = ['Mån', 'Tis', 'Ons', 'Tors', 'Fre', "Lör"],
+const dayNames = ["Mån", "Tis", "Ons", "Tors", "Fre", "Lör"],
   weeksToDisplay = 5,
   width = window.innerWidth,
   schemaLength = schema.length;
@@ -9,15 +9,15 @@ const dayNames = ['Mån', 'Tis', 'Ons', 'Tors', 'Fre', "Lör"],
   let urlParams = new URLSearchParams(window.location.search);
 
 function makeScedule(person) {
-  if (urlParams.has('person') || person) {
+  if (urlParams.has("person") || person) {
     // Set selected index in nameSelect
-    for (let i = 0; i < document.querySelector('#nameInput').options.length; i++) {
-      if (document.querySelector('#nameInput').options[i].text == urlParams.get('person')) {
-        document.querySelector('#nameInput').selectedIndex = i;
+    for (let i = 0; i < document.querySelector("#nameInput").options.length; i++) {
+      if (document.querySelector("#nameInput").options[i].text == urlParams.get("person")) {
+        document.querySelector("#nameInput").selectedIndex = i;
         break;
       }
     }
-    makePersonalScedule(urlParams.get('person') || person);
+    makePersonalScedule(urlParams.get("person") || person);
     return;
   }
 
@@ -27,7 +27,7 @@ function makeScedule(person) {
   next.setDate(next.getDate() + 21);
 
   clearTables();
-  makeTable('current', today, width);
+  makeTable("current", today, width);
 }
 
 function makeTable(id, currentDay, leftMargin) {
@@ -42,55 +42,55 @@ function makeTable(id, currentDay, leftMargin) {
   } else if (startOfWeek.getDay() > 1 && startOfWeek.getDay() < 6) {
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
   }
-  let schemaTable = document.createElement('table');
+  let schemaTable = document.createElement("table");
   schemaTable.id = id;
 
   // Start weeks to show loop here
   // ----------------------------------------------------------
   for (let k = 0; k < weeksToDisplay; k++) {
-    let tableHeader = document.createElement('thead');
-    let weekHeader = document.createElement('tr');
-    weekHeader.classList.add('week');
+    let tableHeader = document.createElement("thead");
+    let weekHeader = document.createElement("tr");
+    weekHeader.classList.add("week");
 
-    let weekRow = document.createElement('th');
-    weekRow.classList.add('weeknr');
+    let weekRow = document.createElement("th");
+    weekRow.classList.add("weeknr");
     weekRow.colSpan = dayNames.length + 1;
-    weekRow.innerHTML = 'Vecka ' + startOfWeek.getWeek();
+    weekRow.innerHTML = "Vecka " + startOfWeek.getWeek();
 
     weekHeader.appendChild(weekRow);
     tableHeader.appendChild(weekHeader);
 
-    let daysRow = document.createElement('tr');
+    let daysRow = document.createElement("tr");
     tableHeader.appendChild(daysRow);
 
     // Create header for table
     for (let i = -1; i < dayNames.length; i++) {
-      let tmpCell = document.createElement('th');
+      let tmpCell = document.createElement("th");
       if (i < 0) {
-        // tmpCell.innerText = 'Pass';
+        // tmpCell.innerText = "Pass";
         tmpCell.innerText = "";
       } else {
         tmpCell.innerHTML = dayNames[i] + `<span class="nobold small"> ${dateToString(startOfWeek, i)}</span>`;
         if (i == today.getDay() - 1 && startOfWeek.getWeek() == today.getWeek()) {
-          tmpCell.classList.add('active', 'active-top');
+          tmpCell.classList.add("active", "active-top");
         }
       }
       daysRow.appendChild(tmpCell);
     }
     schemaTable.appendChild(tableHeader);
-    let tableBody = document.createElement('tbody');
+    let tableBody = document.createElement("tbody");
 
     // First, iterate through nr of trucks
     for (let i = 0; i < Object.keys(schema[0][0]).length; i++) {
       // Create a new row
-      let tmpRow = document.createElement('tr');
+      let tmpRow = document.createElement("tr");
       if (i == Object.keys(schema[0][0]).length - 1) {
-        tmpRow.classList.add('border-bottom');
+        tmpRow.classList.add("border-bottom");
       }
 
       // Loop through each day of the week
       // Add header to row
-      let tmpCell = document.createElement('th');
+      let tmpCell = document.createElement("th");
       tmpCell.innerText = Object.keys(schema[0][0])[i];
       tmpRow.appendChild(tmpCell);
 
@@ -100,12 +100,12 @@ function makeTable(id, currentDay, leftMargin) {
       let weekDiff = Math.floor((startOfWeek - schemaStartDate) / weekMillis);
 
       for (let j = 0; j < schema[0].length; j++) {
-        tmpCell = document.createElement('td');
+        tmpCell = document.createElement("td");
         tmpCell.innerText = schema[(weekDiff) % schemaLength][j][Object.keys(schema[0][0])[i]] || "";
         if (j == today.getDay() - 1 && startOfWeek.getWeek() == today.getWeek()) {
-          tmpCell.classList.add('active');
+          tmpCell.classList.add("active");
           if (i == Object.keys(schema[0][0]).length - 1) {
-            tmpCell.classList.add('active-bottom');
+            tmpCell.classList.add("active-bottom");
           }
         }
         tmpRow.appendChild(tmpCell);
@@ -117,7 +117,7 @@ function makeTable(id, currentDay, leftMargin) {
     startOfWeek.setDate(startOfWeek.getDate() + 7);
     //currentWeek = startOfWeek.getWeek();
   }
-  document.querySelector('#container').appendChild(schemaTable);
+  document.querySelector("#container").appendChild(schemaTable);
 }
 
 function makePersonalScedule(person) {
@@ -137,11 +137,11 @@ function makePersonalScedule(person) {
 
   // Person found in scedule, good to go
   if (persons.includes(person.toLowerCase())) {
-    document.querySelector('#container').innerText = 'Visa schema för: "' + person + '"';
     craeateSceduleByPerson(person, schema, today);
-  } else {
-    // Person not found in scedule, aborting
-    document.querySelector('#innerContainer').innerText = 'Person not found: "' + person + '"';
+  }
+  // Person not found in scedule, aborting
+  else {
+    console.log(`Couldn"t find ${person}!`);
   }
 }
 
@@ -159,27 +159,27 @@ Date.prototype.getWeek = function () {
   );
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelector('#dateInput').setAttribute('min', new Date().toISOString().split('T')[0]);
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelector("#dateInput").setAttribute("min", new Date().toISOString().split("T")[0]);
   for (let driver of drivers){
-    document.querySelector('#nameInput').add(new Option(driver, driver));
+    document.querySelector("#nameInput").add(new Option(driver, driver));
   }
   makeScedule();
   // outOfOrder();
 });
 
-document.querySelector('#dateInput').addEventListener("change", () => {
+document.querySelector("#dateInput").addEventListener("change", function() {
   today = new Date(this.value);
-  makeScedule(document.querySelector('#nameInput').value);
+  makeScedule(document.querySelector("#nameInput").value);
 });
 
-document.querySelector('#nameInput').addEventListener("change", () => {
+document.querySelector("#nameInput").addEventListener("change", function() {
   // today = new Date(this.value);
   makeScedule(this.value);
 });
 
 let start = null;
-window.addEventListener('touchstart', (event) => {
+window.addEventListener("touchstart", (event) => {
   if (event.touches.length === 1) {
     //just one finger touched
     start = event.touches.item(0).clientX;
@@ -189,15 +189,19 @@ window.addEventListener('touchstart', (event) => {
   }
 });
 
-window.addEventListener('touchmove', () => {
-  document.body.style.marginLeft = Math.floor(event.touches.item(0).clientX - start) + 'px';
+window.addEventListener("touchmove", () => {
+  document.querySelector("#container").style.marginLeft = Math.floor(event.touches.item(0).clientX - start) + "px";
+  // document.body.style.marginLeft = Math.floor(event.touches.item(0).clientX - start) + "px";
 });
 
-window.addEventListener('touchend', (event) => {
+window.addEventListener("touchend", (event) => {
   // Reset drag
-  document.body.style.marginLeft = '0px';
-  window.scrollTo(0, 0);
-  console.log(document.body.scrollLeft);
+  // document.body.style.marginLeft = "0px";
+  document.querySelector("#container").classList.add("animate");
+  document.querySelector("#container").style.marginLeft = "0px";
+  setTimeout(() => {
+    document.querySelector("#container").classList.remove("animate");
+  }, 300);
 
   //at least 80px are a swipe
   let offset = 80;
@@ -205,7 +209,7 @@ window.addEventListener('touchend', (event) => {
     //the only finger that hit the screen left it
     let end = event.changedTouches.item(0).clientX;
 
-    //a left -> right swipe
+    // a right swipe
     if (end > start + offset) {
       let tempDate = new Date(today);
       tempDate.setDate(today.getDate() - 7);
@@ -215,7 +219,7 @@ window.addEventListener('touchend', (event) => {
         makeScedule();
       }
     } else if (end < start - offset) {
-      //a left <- right swipe
+      // a left swipe
       let tempDate = new Date(today);
       tempDate.setDate(today.getDate() + 7);
       today = new Date(tempDate);
@@ -225,13 +229,13 @@ window.addEventListener('touchend', (event) => {
 });
 
 function clearTables() {
-  if (document.querySelector('#current')) {
-    document.querySelector('#current').outerHTML = '';
+  if (document.querySelector("#current")) {
+    document.querySelector("#current").outerHTML = "";
   }
-  if (document.querySelector('#previous')) {
-    document.querySelector('#previous').outerHTML = '';
+  if (document.querySelector("#previous")) {
+    document.querySelector("#previous").outerHTML = "";
   }
-  if (document.querySelector('#next')) {
-    document.querySelector('#next').outerHTML = '';
+  if (document.querySelector("#next")) {
+    document.querySelector("#next").outerHTML = "";
   }
 }
