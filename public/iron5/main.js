@@ -224,7 +224,7 @@ c1.addEventListener("touchstart", (e) => {
 // Swipe active
 c1.addEventListener("touchmove", (e) => {
   
-  c1.style.left = Math.floor(e.touches.item(0).clientX - start) + "px";
+  // c1.style.left = Math.floor(e.touches.item(0).clientX - start) + "px";
   let end = e.touches.item(0).clientX;
   
   if (end > start) {            // a right swipe
