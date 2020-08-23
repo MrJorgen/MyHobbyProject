@@ -23,7 +23,8 @@ body {
     font-family: Exo, Tahoma, sans-serif, Verdana, Helvetica, sans-serif;
     user-select: none;
     width: 100vw;
-    max-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     background-color: var(--bg-color);
 }
 
@@ -94,19 +95,15 @@ table th.weeknr {
 }
 
 #container0 {
-  z-index: 100;
+  z-index: 2;
 }
 
 #container1 {
-  z-index: -100;
+  z-index: 1;
 }
 
 #container2 {
-  z-index: 100;
-}
-
-#main-container {
-  width: 300vw;
+  z-index: 2;
 }
 
 #inputContainer {
@@ -190,22 +187,20 @@ table th.weeknr {
 }
 
 .fade-shadow {
-  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
-  transition: box-shadow 1s;
+  /* box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3); */
+  box-shadow: none;
+  transition: all 0.4s;
 }
 
 .shadow {
-  box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.3);
-}
-
-.shadow-left {
-  box-shadow: -5px 0px 10px 10px rgba(0, 0, 0, 0.2);
-}
-
-.shadow-rightt {
-  box-shadow: 5px 0px 10px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.25);
+  transform: scale(1.02);
 }
 
 .align-left {
   text-align: left;
+}
+
+.shrink {
+  zoom: 0%;
 }

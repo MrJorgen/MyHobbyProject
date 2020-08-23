@@ -256,7 +256,7 @@ c1.addEventListener("touchend", (e) => {
   //at least 80px are a swipe
   // const offset = 80;
   // or 1/3 of screenwidth
-  const offset = WIDTH / 4;
+  const offset = WIDTH / 5;
   if (start) {
     // The only finger that hit the screen left it
     let end = e.changedTouches.item(0).clientX;
@@ -266,8 +266,8 @@ c1.addEventListener("touchend", (e) => {
     setTimeout(() => {
       c0.classList.remove("shadow");
       c2.classList.remove("shadow");
-      c2.style.display = "none";
       c0.style.display = "none";
+      c2.style.display = "none";
     }, 300);
     
     // Reset drag
