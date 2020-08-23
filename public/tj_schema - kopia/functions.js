@@ -1,15 +1,9 @@
 export { craeateSceduleByPerson, dateToString };
 import { schemaStartDate } from './schema.js';
-import { individualWeeksToDisplay } from './main.js';
-
-
-function craeateSceduleByPerson(name, scedule, today, timePeriod = 0) {
+function craeateSceduleByPerson(name, scedule, today) {
   let schemaLength = scedule.length,
-    personalScedule = JSON.parse(JSON.stringify(scedule));
-  console.log(today);
-  today.setDate(today.getDate() + (individualWeeksToDisplay * 7) * timePeriod);
-  console.log(today);
-  
+    personalScedule = JSON.parse(JSON.stringify(scedule)), individualWeeksToDisplay = 8;
+
   // Loop weeks
   for(let i = 0; i < scedule.length; i++) {
     // Loop days
@@ -39,19 +33,18 @@ function craeateSceduleByPerson(name, scedule, today, timePeriod = 0) {
 
   // From here on make the output
   let template = `
-    <table id="current">
+    <table id="current" style="position: absolute; top: 0px;">
       <thead>
         <tr class="week">
-          <th class="weeknr" colspan="7">Schema för ${name}</th>
+          <th class="weeknr" colspan="6">Schema för ${name}</th>
         </tr>
         <tr>
-          <th>V</th>
+          <th>Vecka</th>
           <th>Mån<span class=\"nobold small\"> ${dateToString(startOfWeek, 0)}</span></th>
           <th>Tis<span class=\"nobold small\"> ${dateToString(startOfWeek, 1)}</span></th>
           <th>Ons<span class=\"nobold small\"> ${dateToString(startOfWeek, 2)}</span></th>
           <th>Tors<span class=\"nobold small\"> ${dateToString(startOfWeek, 3)}</span></th>
           <th>Fre<span class=\"nobold small\"> ${dateToString(startOfWeek, 4)}</span></th>
-          <th>Lör<span class=\"nobold small\"> ${dateToString(startOfWeek, 5)}</span></th>
         </tr>
       </thead>
       <tbody>`;
@@ -66,7 +59,6 @@ function craeateSceduleByPerson(name, scedule, today, timePeriod = 0) {
             <th>Ons<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 2)}</span></th>
             <th>Tors<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 3)}</span></th>
             <th>Fre<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 4)}</span></th>
-            <th>Lör<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 5)}</span></th>
           </tr>
         `;
     }
@@ -90,7 +82,7 @@ function craeateSceduleByPerson(name, scedule, today, timePeriod = 0) {
   }
 
   template += '</tbody ></table>';
-  return template;
+  document.querySelector('#container').innerHTML = template;
 }
 
 function dateToString(currentDate, offSet = 0) {

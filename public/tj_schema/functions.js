@@ -1,9 +1,15 @@
 export { craeateSceduleByPerson, dateToString };
 import { schemaStartDate } from './schema.js';
-function craeateSceduleByPerson(name, scedule, today) {
-  let schemaLength = scedule.length,
-    personalScedule = JSON.parse(JSON.stringify(scedule)), individualWeeksToDisplay = 8;
+import { individualWeeksToDisplay } from './main.js';
 
+function craeateSceduleByPerson(name, scedule, tmpDate, timePeriod = 0) {
+  let schemaLength = scedule.length,
+    personalScedule = JSON.parse(JSON.stringify(scedule));
+  
+  let today = new Date(tmpDate);
+  today.setDate(today.getDate() + (individualWeeksToDisplay * 7) * timePeriod);
+  
+  
   // Loop weeks
   for(let i = 0; i < scedule.length; i++) {
     // Loop days
@@ -33,18 +39,18 @@ function craeateSceduleByPerson(name, scedule, today) {
 
   // From here on make the output
   let template = `
-    <table id="current" style="position: absolute; top: 0px;">
+    <table id="current">
       <thead>
         <tr class="week">
-          <th class="weeknr" colspan="6">Schema för ${name}</th>
+          <th class="weeknr" colspan="7">Schema för ${name}</th>
         </tr>
         <tr>
-          <th>Vecka</th>
-          <th>Mån<span class=\"nobold small\"> ${dateToString(startOfWeek, 0)}</span></th>
-          <th>Tis<span class=\"nobold small\"> ${dateToString(startOfWeek, 1)}</span></th>
-          <th>Ons<span class=\"nobold small\"> ${dateToString(startOfWeek, 2)}</span></th>
-          <th>Tors<span class=\"nobold small\"> ${dateToString(startOfWeek, 3)}</span></th>
-          <th>Fre<span class=\"nobold small\"> ${dateToString(startOfWeek, 4)}</span></th>
+          <th>V</th>
+          <th>Mån<p class=\"nobold small\"> ${dateToString(startOfWeek, 0)}</p></th>
+          <th>Tis<p class=\"nobold small\"> ${dateToString(startOfWeek, 1)}</p></th>
+          <th>Ons<p class=\"nobold small\"> ${dateToString(startOfWeek, 2)}</p></th>
+          <th>Tors<p class=\"nobold small\"> ${dateToString(startOfWeek, 3)}</p></th>
+          <th>Fre<p class=\"nobold small\"> ${dateToString(startOfWeek, 4)}</p></th>
         </tr>
       </thead>
       <tbody>`;
@@ -54,17 +60,17 @@ function craeateSceduleByPerson(name, scedule, today) {
       template += `
           <tr class="border-top">
             <th></th>
-            <th>Mån<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7)}</span></th>
-            <th>Tis<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 1)}</span></th>
-            <th>Ons<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 2)}</span></th>
-            <th>Tors<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 3)}</span></th>
-            <th>Fre<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 4)}</span></th>
+            <th>Mån<p class=\"nobold small\"> ${dateToString(startOfWeek, i * 7)}</p></th>
+            <th>Tis<p class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 1)}</p></th>
+            <th>Ons<p class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 2)}</p></th>
+            <th>Tors<p class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 3)}</p></th>
+            <th>Fre<p class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 4)}</p></th>
           </tr>
         `;
     }
 
     template += `
-        <tr class="border-bottom"><th>${currentDay.getWeek()}</th>`;
+        <tr class="border-bottom"><th class="align-left">${currentDay.getWeek()}</th>`;
     
     let weekMillis = 1000 * 60 * 60 * 24 * 7;
     let weekDiff = Math.floor((currentDay - schemaStartDate) / weekMillis);
@@ -82,7 +88,7 @@ function craeateSceduleByPerson(name, scedule, today) {
   }
 
   template += '</tbody ></table>';
-  document.querySelector('#container').innerHTML = template;
+  return template;
 }
 
 function dateToString(currentDate, offSet = 0) {
