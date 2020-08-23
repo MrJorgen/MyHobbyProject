@@ -7,7 +7,8 @@ import {craeateSceduleByPerson, dateToString} from "./functions.js";
 const dayNames = ["Mån", "Tis", "Ons", "Tors", "Fre"],
   HEIGHT = window.innerHeight,
   WIDTH = window.innerWidth,
-  schemaLength = schema.length;
+  schemaLength = schema.length,
+  swipeDist = WIDTH / 4;
 export let individualWeeksToDisplay = Math.floor((HEIGHT - 80) / 60);
 let today = new Date(),
   weeksToDisplay = Math.floor((HEIGHT - 80) / 139);
@@ -250,8 +251,6 @@ c1.addEventListener("touchmove", (e) => {
 // Swipe end
 c1.addEventListener("touchend", (e) => {
   
-  // At least 1/5 of screenwidth are a swipe
-  const offset = WIDTH / 5;
   if (start) {
     // The only finger that hit the screen left it
     let end = e.changedTouches.item(0).clientX;
@@ -265,7 +264,7 @@ c1.addEventListener("touchend", (e) => {
     c2.style.left = "100%";
     
     // A full right swipe
-    if (end > start + offset) {
+    if (end > start + swipeDist) {
       c0.style.left = "0px";
       setTimeout(() => {
           c1.classList.add("fade-shadow");
@@ -280,7 +279,7 @@ c1.addEventListener("touchend", (e) => {
       }
       
       today = new Date(tempDate);
-    } else if (end < start - offset) { // A full left swipe
+    } else if (end < start - swipeDist) { // A full left swipe
       c2.style.left = "0px";
       setTimeout(() => {
         c1.classList.add("fade-shadow");
