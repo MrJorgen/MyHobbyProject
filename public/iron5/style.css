@@ -19,7 +19,8 @@ body {
     margin: 0;
     padding: 0;
     font-size: 1em;
-    font-family: "Barlow Semi Condensed", "Roboto Condensed", "Saira Condensed", "Ubuntu Condensed", Verdana, Geneva, Tahoma, sans-serif;
+    /* font-family: "Barlow Semi Condensed", "Roboto Condensed", "Saira Condensed", "Ubuntu Condensed", Verdana, Geneva, Tahoma, sans-serif; */
+    font-family: Exo, Tahoma, sans-serif, Verdana, Helvetica, sans-serif;
     user-select: none;
     width: 100vw;
     max-height: 100vh;
@@ -39,11 +40,11 @@ table {
 
 .title {
   font-family: Revue;
-  font-size: 24px;
+  font-size: 22px;
   text-align: center;
   color: #004b98;
-  padding-top: 0.75rem;
-  padding-bottom: 0.25rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.1rem;
   text-transform: uppercase;
 }
 
@@ -55,10 +56,13 @@ table td, table th {
 
 table th {
   font-weight: bold;
+  text-align: center;
 }
 
 table td {
   font-weight: normal;
+  text-align: center;
+  font-size: 14px;
 }
 
 table tr.week {
@@ -152,7 +156,9 @@ table th.weeknr {
 }
 
 .small {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+    margin: 0;
+    margin-top: -2px;
 }
 
 .border-bottom {
@@ -167,8 +173,11 @@ table th.weeknr {
     color: red;
 }
 
-label {
+.label, label {
   margin: 0;
+  width: 100%;
+  text-align: center;
+  margin-bottom: -4px;
 }
 
 .form-control {
@@ -177,7 +186,12 @@ label {
 }
 
 .animate {
-  transition: all 0.3s;
+  transition: left 0.3s;
+}
+
+.fade-shadow {
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
+  transition: box-shadow 1s;
 }
 
 .shadow {
@@ -190,4 +204,8 @@ label {
 
 .shadow-rightt {
   box-shadow: 5px 0px 10px 10px rgba(0, 0, 0, 0.2);
+}
+
+.align-left {
+  text-align: left;
 }

@@ -1,15 +1,19 @@
 import {drivers, schemaStartDate, schema} from "./schema.js";
 import {craeateSceduleByPerson, dateToString} from "./functions.js";
-export const individualWeeksToDisplay = 8;
 
+// header + table + inputFields
+// 36.5 + (80 * weeksToDisplay) + 43 = totalHeight
+// 36.5 + (43.5 * weeksToDisplay) + 43 = totalHeight
 const dayNames = ["Mån", "Tis", "Ons", "Tors", "Fre", "Lör"],
-  weeksToDisplay = 5,
-  width = window.innerWidth,
-  schemaLength = schema.length,
-  WIDTH = window.innerWidth;
-let today = new Date();
+  HEIGHT = window.innerHeight,
+  WIDTH = window.innerWidth,
+  schemaLength = schema.length;
+export let individualWeeksToDisplay = Math.floor((HEIGHT - 80) / 60);
+let today = new Date(),
+  weeksToDisplay = Math.floor((HEIGHT - 80) / 100);
 let urlParams = new URLSearchParams(window.location.search);
-  
+
+// document.querySelector(".title").textContent = window.innerHeight;
 
 function makeScedule(person) {
   urlParams = new URLSearchParams(window.location.search);
@@ -35,9 +39,9 @@ function makeScedule(person) {
   next.setDate(next.getDate() + (weeksToDisplay * 7));
 
   clearTables();
-  const prevTable = makeTable("prev", previous, width);
-  const currentTable = makeTable("current", today, width);
-  const nextTable = makeTable("next", next, width);
+  const prevTable = makeTable("prev", previous, WIDTH);
+  const currentTable = makeTable("current", today, WIDTH);
+  const nextTable = makeTable("next", next, WIDTH);
   document.querySelector("#container0").innerHTML = "";
   document.querySelector("#container1").innerHTML = "";
   document.querySelector("#container2").innerHTML = "";
@@ -86,7 +90,7 @@ function makeTable(id, currentDay, leftMargin) {
         // tmpCell.innerText = "Pass";
         tmpCell.innerText = "";
       } else {
-        tmpCell.innerHTML = dayNames[i] + `<span class="nobold small"> ${dateToString(startOfWeek, i)}</span>`;
+        tmpCell.innerHTML = dayNames[i] + `<p class="nobold small"> ${dateToString(startOfWeek, i)}</p>`;
         if (i == today.getDay() - 1 && startOfWeek.getWeek() == today.getWeek()) {
           tmpCell.classList.add("active", "active-top");
         }
@@ -107,6 +111,7 @@ function makeTable(id, currentDay, leftMargin) {
       // Loop through each day of the week
       // Add header to row
       let tmpCell = document.createElement("th");
+      tmpCell.classList.add("align-left");
       tmpCell.innerText = Object.keys(schema[0][0])[i];
       tmpRow.appendChild(tmpCell);
 
@@ -223,7 +228,11 @@ c1.addEventListener("touchstart", (e) => {
 
 // Swipe active
 c1.addEventListener("touchmove", (e) => {
-  
+
+  c0.classList.remove("animate");
+  c1.classList.remove("animate");
+  c2.classList.remove("animate");
+  c1.classList.remove("fade-shadow");
   // c1.style.left = Math.floor(e.touches.item(0).clientX - start) + "px";
   let end = e.touches.item(0).clientX;
   
@@ -253,25 +262,30 @@ c1.addEventListener("touchend", (e) => {
     let end = e.changedTouches.item(0).clientX;
 
     c0.classList.add("animate");
-    c1.classList.add("animate");
     c2.classList.add("animate");
     setTimeout(() => {
-      c0.classList.remove("animate");
-      c1.classList.remove("animate");
-      c2.classList.remove("animate");
+      c0.classList.remove("shadow");
+      c2.classList.remove("shadow");
       c2.style.display = "none";
       c0.style.display = "none";
     }, 300);
-    
     
     // Reset drag
     c0.style.left = "-100%";
     c1.style.left = "0px";
     c2.style.left = "100%";
-
+    
     // a right swipe
     if (end > start + offset) {
       c0.style.left = "0px";
+      setTimeout(() => {
+        c1.classList.add("shadow");
+        setTimeout(() => {
+          c1.classList.add("fade-shadow");
+          c1.classList.remove("shadow");
+        }, 1);
+      }, 300);  
+
       let tempDate = new Date(today);
       if (urlParams.has("person")){
         tempDate.setDate(today.getDate() - (individualWeeksToDisplay * 7));
@@ -282,9 +296,16 @@ c1.addEventListener("touchend", (e) => {
       // if (tempDate.getWeek() >= new Date().getWeek()) {
         today = new Date(tempDate);
         setTimeout(makeScedule, 300);
-      // }
-    } else if (end < start - offset) { // a left swipe
-      c2.style.left = "0px";
+        // }
+      } else if (end < start - offset) { // a left swipe
+        c2.style.left = "0px";
+      setTimeout(() => {
+        c1.classList.add("shadow");
+        setTimeout(() => {
+          c1.classList.add("fade-shadow");
+          c1.classList.remove("shadow");
+        }, 1);
+      }, 300);  
       let tempDate = new Date(today);
 
       if (urlParams.has("person")) {

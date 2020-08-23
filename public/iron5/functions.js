@@ -2,7 +2,6 @@ export { craeateSceduleByPerson, dateToString };
 import { schemaStartDate } from './schema.js';
 import { individualWeeksToDisplay } from './main.js';
 
-
 function craeateSceduleByPerson(name, scedule, today, timePeriod = 0) {
   let schemaLength = scedule.length,
     personalScedule = JSON.parse(JSON.stringify(scedule));
@@ -46,12 +45,12 @@ function craeateSceduleByPerson(name, scedule, today, timePeriod = 0) {
         </tr>
         <tr>
           <th>V</th>
-          <th>Mån<span class=\"nobold small\"> ${dateToString(startOfWeek, 0)}</span></th>
-          <th>Tis<span class=\"nobold small\"> ${dateToString(startOfWeek, 1)}</span></th>
-          <th>Ons<span class=\"nobold small\"> ${dateToString(startOfWeek, 2)}</span></th>
-          <th>Tors<span class=\"nobold small\"> ${dateToString(startOfWeek, 3)}</span></th>
-          <th>Fre<span class=\"nobold small\"> ${dateToString(startOfWeek, 4)}</span></th>
-          <th>Lör<span class=\"nobold small\"> ${dateToString(startOfWeek, 5)}</span></th>
+          <th>Mån<p class=\"nobold small\"> ${dateToString(startOfWeek, 0)}</p></th>
+          <th>Tis<p class=\"nobold small\"> ${dateToString(startOfWeek, 1)}</p></th>
+          <th>Ons<p class=\"nobold small\"> ${dateToString(startOfWeek, 2)}</p></th>
+          <th>Tors<p class=\"nobold small\"> ${dateToString(startOfWeek, 3)}</p></th>
+          <th>Fre<p class=\"nobold small\"> ${dateToString(startOfWeek, 4)}</p></th>
+          <th>Lör<p class=\"nobold small\"> ${dateToString(startOfWeek, 5)}</p></th>
         </tr>
       </thead>
       <tbody>`;
@@ -61,18 +60,18 @@ function craeateSceduleByPerson(name, scedule, today, timePeriod = 0) {
       template += `
           <tr class="border-top">
             <th></th>
-            <th>Mån<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7)}</span></th>
-            <th>Tis<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 1)}</span></th>
-            <th>Ons<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 2)}</span></th>
-            <th>Tors<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 3)}</span></th>
-            <th>Fre<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 4)}</span></th>
-            <th>Lör<span class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 5)}</span></th>
+            <th>Mån<p class=\"nobold small\"> ${dateToString(startOfWeek, i * 7)}</p></th>
+            <th>Tis<p class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 1)}</p></th>
+            <th>Ons<p class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 2)}</p></th>
+            <th>Tors<p class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 3)}</p></th>
+            <th>Fre<p class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 4)}</p></th>
+            <th>Lör<p class=\"nobold small\"> ${dateToString(startOfWeek, i * 7 + 5)}</p></th>
           </tr>
         `;
     }
 
     template += `
-        <tr class="border-bottom"><th>${currentDay.getWeek()}</th>`;
+        <tr class="border-bottom"><th class="align-left">${currentDay.getWeek()}</th>`;
     
     let weekMillis = 1000 * 60 * 60 * 24 * 7;
     let weekDiff = Math.floor((currentDay - schemaStartDate) / weekMillis);
