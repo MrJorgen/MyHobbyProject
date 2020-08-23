@@ -255,7 +255,7 @@ c1.addEventListener("touchend", (e) => {
   
   //at least 80px are a swipe
   // const offset = 80;
-  // or 1/3 of screenwidth
+  // or 1/5 of screenwidth
   const offset = WIDTH / 5;
   if (start) {
     // The only finger that hit the screen left it
@@ -263,12 +263,6 @@ c1.addEventListener("touchend", (e) => {
 
     c0.classList.add("animate");
     c2.classList.add("animate");
-    setTimeout(() => {
-      c0.classList.remove("shadow");
-      c2.classList.remove("shadow");
-      c0.style.display = "none";
-      c2.style.display = "none";
-    }, 300);
     
     // Reset drag
     c0.style.left = "-100%";
@@ -279,12 +273,9 @@ c1.addEventListener("touchend", (e) => {
     if (end > start + offset) {
       c0.style.left = "0px";
       setTimeout(() => {
-        c1.classList.add("shadow");
-        setTimeout(() => {
           c1.classList.add("fade-shadow");
           c1.classList.remove("shadow");
-        }, 1);
-      }, 300);  
+      }, 350);  
 
       let tempDate = new Date(today);
       if (urlParams.has("person")){
@@ -295,17 +286,13 @@ c1.addEventListener("touchend", (e) => {
       
       // if (tempDate.getWeek() >= new Date().getWeek()) {
         today = new Date(tempDate);
-        setTimeout(makeScedule, 300);
-        // }
-      } else if (end < start - offset) { // a left swipe
-        c2.style.left = "0px";
+      // }
+    } else if (end < start - offset) { // a left swipe
+      c2.style.left = "0px";
       setTimeout(() => {
-        c1.classList.add("shadow");
-        setTimeout(() => {
-          c1.classList.add("fade-shadow");
-          c1.classList.remove("shadow");
-        }, 1);
-      }, 300);  
+        c1.classList.add("fade-shadow");
+        c1.classList.remove("shadow");
+      }, 350);  
       let tempDate = new Date(today);
 
       if (urlParams.has("person")) {
@@ -314,9 +301,20 @@ c1.addEventListener("touchend", (e) => {
         tempDate.setDate(today.getDate() + (weeksToDisplay * 7));
       }
       today = new Date(tempDate);
-      setTimeout(makeScedule, 300);
     }
   }
+});
+
+[c0, c2].forEach((ele) => {
+  ele.addEventListener("transitionend", () => {
+    ele.style.display = "none";
+    ele.classList.remove("shadow");
+    if (ele.style.left === "0px") {
+      c1.classList.add("shadow");
+      makeScedule();
+    }
+    console.log('Transition ended...');
+  });
 });
 
 function clearTables() {
