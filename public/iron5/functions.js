@@ -2,12 +2,13 @@ export { craeateSceduleByPerson, dateToString };
 import { schemaStartDate } from './schema.js';
 import { individualWeeksToDisplay } from './main.js';
 
-function craeateSceduleByPerson(name, scedule, today, timePeriod = 0) {
+function craeateSceduleByPerson(name, scedule, tmpDate, timePeriod = 0) {
   let schemaLength = scedule.length,
     personalScedule = JSON.parse(JSON.stringify(scedule));
-  console.log(today);
+  
+  let today = new Date(tmpDate);
   today.setDate(today.getDate() + (individualWeeksToDisplay * 7) * timePeriod);
-  console.log(today);
+  
   
   // Loop weeks
   for(let i = 0; i < scedule.length; i++) {

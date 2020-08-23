@@ -13,7 +13,8 @@ let today = new Date(),
   weeksToDisplay = Math.floor((HEIGHT - 80) / 100);
 let urlParams = new URLSearchParams(window.location.search);
 
-// document.querySelector(".title").textContent = window.innerHeight;
+let start = null;
+const c0 = document.querySelector("#container0"), c1 = document.querySelector("#container1"), c2 = document.querySelector("#container2");
 
 function makeScedule(person) {
   urlParams = new URLSearchParams(window.location.search);
@@ -201,7 +202,6 @@ document.querySelector("#dateInput").addEventListener("change", function() {
 });
 
 document.querySelector("#nameInput").addEventListener("change", function() {
-  // today = new Date(this.value);
   if (this.selectedIndex === 0) {
     history.pushState("", "", location.pathname);
   }
@@ -210,9 +210,6 @@ document.querySelector("#nameInput").addEventListener("change", function() {
   }
   makeScedule(this.value);
 });
-
-let start = null;
-const c0 = document.querySelector("#container0"), c1 = document.querySelector("#container1"), c2 = document.querySelector("#container2");
 
 // Adding eventlistener for touchevents --------------------------------------------------------------------------------------------------
 // Swipe start
@@ -253,9 +250,7 @@ c1.addEventListener("touchmove", (e) => {
 // Swipe end
 c1.addEventListener("touchend", (e) => {
   
-  //at least 80px are a swipe
-  // const offset = 80;
-  // or 1/5 of screenwidth
+  // At least 1/5 of screenwidth are a swipe
   const offset = WIDTH / 5;
   if (start) {
     // The only finger that hit the screen left it
@@ -269,7 +264,7 @@ c1.addEventListener("touchend", (e) => {
     c1.style.left = "0px";
     c2.style.left = "100%";
     
-    // a right swipe
+    // A full right swipe
     if (end > start + offset) {
       c0.style.left = "0px";
       setTimeout(() => {
@@ -284,10 +279,8 @@ c1.addEventListener("touchend", (e) => {
         tempDate.setDate(today.getDate() - (weeksToDisplay * 7));
       }
       
-      // if (tempDate.getWeek() >= new Date().getWeek()) {
-        today = new Date(tempDate);
-      // }
-    } else if (end < start - offset) { // a left swipe
+      today = new Date(tempDate);
+    } else if (end < start - offset) { // A full left swipe
       c2.style.left = "0px";
       setTimeout(() => {
         c1.classList.add("fade-shadow");
@@ -313,7 +306,6 @@ c1.addEventListener("touchend", (e) => {
       c1.classList.add("shadow");
       makeScedule();
     }
-    console.log('Transition ended...');
   });
 });
 
