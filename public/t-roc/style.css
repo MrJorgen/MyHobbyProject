@@ -1,3 +1,9 @@
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -81,6 +87,30 @@ img.thumb {
   max-height: 100%;
 }
 
+#specs {
+  background: rgb(32, 32, 32);
+  position: relative;
+  padding: 20px;
+  width: 80%;
+  margin: 10px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(50%, 1fr));
+}
+
+#specs ul li {
+  color:  #6091c3;
+}
+
+#specs .replaced {
+  text-decoration: line-through;
+}
+
+#specs small {
+  margin-left: 1rem;
+  font-size: 0.8rem;
+  display: block;
+}
+
 @media screen and (max-width: 420px) {
   body {
     height: auto;
@@ -119,5 +149,22 @@ img.thumb {
 
   #countDown {
     margin-bottom: 8px;
+  }
+
+  #specs {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+  }
+
+  #specs h4 {
+    padding-left: 0px;
+  }
+  #specs ul {
+    padding-left: 15px;
+  }
+
+  #specs ul li {
+    font-size: 0.9rem;
   }
 }
