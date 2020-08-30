@@ -254,6 +254,7 @@ c1.addEventListener("touchend", (e) => {
   if (start) {
     // The only finger that hit the screen left it
     let end = e.changedTouches.item(0).clientX;
+    let tempDate = new Date(today);
 
     c0.classList.add("animate");
     c2.classList.add("animate");
@@ -266,12 +267,6 @@ c1.addEventListener("touchend", (e) => {
     // A full right swipe
     if (end > start + swipeDist) {
       c0.style.left = "0px";
-      setTimeout(() => {
-          c1.classList.add("fade-shadow");
-          c1.classList.remove("shadow");
-      }, 350);  
-
-      let tempDate = new Date(today);
       if (urlParams.has("person")){
         tempDate.setDate(today.getDate() - (individualWeeksToDisplay * 7));
       } else {
@@ -281,11 +276,6 @@ c1.addEventListener("touchend", (e) => {
       today = new Date(tempDate);
     } else if (end < start - swipeDist) { // A full left swipe
       c2.style.left = "0px";
-      setTimeout(() => {
-        c1.classList.add("fade-shadow");
-        c1.classList.remove("shadow");
-      }, 350);  
-      let tempDate = new Date(today);
 
       if (urlParams.has("person")) {
         tempDate.setDate(today.getDate() + (individualWeeksToDisplay * 7));
@@ -304,6 +294,11 @@ c1.addEventListener("touchend", (e) => {
     if (ele.style.left === "0px") {
       c1.classList.add("shadow");
       makeScedule();
+      setTimeout(() => {
+        c1.classList.add("fade-shadow");
+        c1.classList.remove("shadow");
+      }, 1);  
+
     }
   });
 });
