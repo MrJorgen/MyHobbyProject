@@ -4,7 +4,7 @@ body {
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
-  background: rgba(64, 64, 64, 1);
+  background: rgb(64, 64, 64);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   overflow-x: hidden;
   color: white !important;
@@ -15,8 +15,44 @@ body {
   text-align: center;
   padding-top: 10px;
 }
+
+.header h2 {
+  margin: 0;
+}
+
+#countDown {
+  margin-top: 8px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+#countDown div {
+  display: inline;
+  margin-right: 10px;
+  background: rgb(32, 32, 32);
+  padding: 5px 10px;
+  font-size: 1.8rem;
+  border-radius: 4px;
+}
+
+#countDown p {
+  margin-bottom: -16px;
+  margin-top: 0px;
+}
+
+#countDown span {
+  /* margin-right: 5px; */
+  padding-top: -5px;
+  font-size: 0.8rem;
+}
+
+.card {
+  text-align: center;
+}
+
 .container {
-  background: rgba(32, 32, 32, 1);
+  background: rgb(32, 32, 32);
   position: relative;
   padding: 20px;
   width: 80%;
@@ -67,5 +103,21 @@ img.thumb {
 
   img.thumb {
     margin-top: 10px;
+  }
+
+  .header {
+    font-size: 1.2rem;
+  }
+
+  .header h2 {
+    font-size: 2rem;
+  }
+
+  #deliveryDate {
+    display: block;
+  }
+
+  #countDown {
+    margin-bottom: 8px;
   }
 }
