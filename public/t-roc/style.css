@@ -99,6 +99,18 @@ img.thumb {
 
 #specs ul li {
   color:  #6091c3;
+  list-style-type: none;
+}
+
+#specs li:before {
+  content: "•";
+  font-size: 150%;
+  line-height: 0;
+  margin: 0 0.5rem 0 -1.1rem;
+  position: relative;
+  top: 0.1rem;
+  color: rgb(192, 192, 192);
+  /* color: rgb(128, 128, 128); */
 }
 
 #specs .replaced {
@@ -109,6 +121,11 @@ img.thumb {
   margin-left: 1rem;
   font-size: 0.8rem;
   display: block;
+}
+
+#specs h4 {
+  text-align: center;
+  color: rgb(192, 192, 192);
 }
 
 @media screen and (max-width: 420px) {
