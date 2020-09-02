@@ -234,7 +234,7 @@ c1.addEventListener("touchmove", (e) => {
   // c1.style.left = Math.floor(e.touches.item(0).clientX - start) + "px";
   let end = e.touches.item(0).clientX;
   
-  if (end > start) {            // a right swipe
+  if (end > start && start != null) {            // a right swipe
     e.preventDefault();
     c0.style.display = "inline-block";
     c0.style.left = "calc(-100% + " + Math.abs(Math.floor(event.touches.item(0).clientX - start)) + "px)";
