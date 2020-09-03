@@ -188,7 +188,7 @@ table th.weeknr {
 
 .fade-shadow {
   box-shadow: none;
-  transition: all 0.35s;
+  transition: all 0.2s;
 }
 
 .shadow {
