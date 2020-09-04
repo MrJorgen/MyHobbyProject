@@ -1,64 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./style.css" />
     <script src="./main.js"></script>
     <title>Min nya T-Roc 😀</title>
-</head>
-<body>
+  </head>
+  <body>
     <header class="header">
       <h2>
         Min nya
-          <svg style="vertical-align: bottom; color: #6091c3;" width="44" height="44" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" role="img"><path d="M12 22.586c-5.786 0-10.543-4.8-10.543-10.586 0-1.2.214-2.357.6-3.471l6.172 12c.085.171.171.3.385.3.215 0 .3-.129.386-.3l2.871-6.386c.043-.086.086-.129.129-.129.086 0 .086.086.129.129l2.914 6.386c.086.171.171.3.386.3.214 0 .3-.129.385-.3l6.172-12c.385 1.071.6 2.228.6 3.471-.043 5.786-4.8 10.586-10.586 10.586zm0-13.329c-.086 0-.086-.086-.129-.128l-3.3-7.115a10.117 10.117 0 016.858 0l-3.3 7.115c-.043.042-.043.128-.129.128zm-3.471 7.714c-.086 0-.086-.085-.129-.128L3 6.47c.943-1.542 2.314-2.828 3.9-3.728l3.814 8.228c.086.172.172.215.3.215h1.972c.128 0 .214-.043.3-.215l3.771-8.228c1.586.9 2.957 2.186 3.9 3.728L15.6 16.843c-.043.086-.086.128-.129.128-.085 0-.085-.085-.128-.128L13.286 12.3c-.086-.171-.172-.214-.3-.214h-1.972c-.128 0-.214.043-.3.214l-2.057 4.543c-.043.043-.043.128-.128.128zM12 24c6.643 0 12-5.357 12-12S18.643 0 12 0 0 5.357 0 12s5.357 12 12 12z"></path></svg>
-          <b>T-Roc</b>
-          <!-- VRQMBO3A -->
-          <!-- https://userguide.volkswagen.de/legacy/w/en_GB/show/a23fdaaaee830e2d0a0100dc2fb17ad8_1_en_GB?ct=a23fdaaaee830e2d0a0100dc2fb17ad8_1_en_GB -->
-      </h2>  
+        <svg style="vertical-align: bottom; color: #6091c3" width="44" height="44" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" role="img"><path d="M12 22.586c-5.786 0-10.543-4.8-10.543-10.586 0-1.2.214-2.357.6-3.471l6.172 12c.085.171.171.3.385.3.215 0 .3-.129.386-.3l2.871-6.386c.043-.086.086-.129.129-.129.086 0 .086.086.129.129l2.914 6.386c.086.171.171.3.386.3.214 0 .3-.129.385-.3l6.172-12c.385 1.071.6 2.228.6 3.471-.043 5.786-4.8 10.586-10.586 10.586zm0-13.329c-.086 0-.086-.086-.129-.128l-3.3-7.115a10.117 10.117 0 016.858 0l-3.3 7.115c-.043.042-.043.128-.129.128zm-3.471 7.714c-.086 0-.086-.085-.129-.128L3 6.47c.943-1.542 2.314-2.828 3.9-3.728l3.814 8.228c.086.172.172.215.3.215h1.972c.128 0 .214-.043.3-.215l3.771-8.228c1.586.9 2.957 2.186 3.9 3.728L15.6 16.843c-.043.086-.086.128-.129.128-.085 0-.085-.085-.128-.128L13.286 12.3c-.086-.171-.172-.214-.3-.214h-1.972c-.128 0-.214.043-.3.214l-2.057 4.543c-.043.043-.043.128-.128.128zM12 24c6.643 0 12-5.357 12-12S18.643 0 12 0 0 5.357 0 12s5.357 12 12 12z"></path></svg>
+        <b>T-Roc</b>
+        <!-- V9W4BAFR Svart -->
+        <!-- VKIFBN3Z Blå -->
+        <!-- https://userguide.volkswagen.de/legacy/w/en_GB/show/a23fdaaaee830e2d0a0100dc2fb17ad8_1_en_GB?ct=a23fdaaaee830e2d0a0100dc2fb17ad8_1_en_GB -->
+      </h2>
     </header>
     <div class="header">Beräknad leverans <span id="deliveryDate"></span></div>
     <div id="countDown">
-        <div class="card">
-          <p id="days">
-          </p>
-          <span>dagar</span>
-        </div>
-        <div class="card">
-          <p id="hours">
-          </p>
-          <span>timmar</span>
-        </div>
-        <div class="card">
-          <p id="minutes">
-          </p>
-          <span>minuter</span>
-        </div>
-        <div class="card">
-          <p id="seconds">
-          </p>
-          <span>sekunder</span>
-        </div>
+      <div class="card">
+        <p id="days"></p>
+        <span>dagar</span>
+      </div>
+      <div class="card">
+        <p id="hours"></p>
+        <span>timmar</span>
+      </div>
+      <div class="card">
+        <p id="minutes"></p>
+        <span>minuter</span>
+      </div>
+      <div class="card">
+        <p id="seconds"></p>
+        <span>sekunder</span>
+      </div>
     </div>
-    <div class="container">
-        <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Front Left" href="./img/Exterior1.jpg"><img class="thumb" src="./img/Exterior1.jpg"></a>
-        <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Left" href="./img/Exterior2.jpg"><img class="thumb" src="./img/Exterior2.jpg"></a>
-        <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Back Left" href="./img/Exterior3.jpg"><img class="thumb" src="./img/Exterior3.jpg"></a>
-        <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Back" href="./img/Exterior4.jpg"><img class="thumb" src="./img/Exterior4.jpg"></a>
-        <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Back Right" href="./img/Exterior6.jpg"><img class="thumb" src="./img/Exterior6.jpg"></a>
-        <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Right" href="./img/Exterior7.jpg"><img class="thumb" src="./img/Exterior7.jpg"></a>
-        <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Front Left Zoomed" href="./img/Exterior5.jpg"><img class="thumb" src="./img/Exterior5.jpg"></a>
-        <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="From Driver Pos" href="./img/Interior1.jpg"><img class="thumb" src="./img/Interior1.jpg"></a>
-        <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Right Door View" href="./img/Interior2.jpg"><img class="thumb" src="./img/Interior2.jpg"></a>
+    <nav>
+      <li class="active" data-target="images_black">Bilder(Svart)</li>
+      <li data-target="images_blue">Bilder(Blå)</li>
+      <li data-target="specs">Utrusting</li>
+      <li data-target="drive-train">Motor & drivlina</li>
+    </nav>
+    <div id="images_black" class="container">
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Front Left" href="./img/black/Exterior1.jpg"><img class="thumb" src="./img/black/Exterior1.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Left" href="./img/black/Exterior2.jpg"><img class="thumb" src="./img/black/Exterior2.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Back Left" href="./img/black/Exterior3.jpg"><img class="thumb" src="./img/black/Exterior3.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Back" href="./img/black/Exterior4.jpg"><img class="thumb" src="./img/black/Exterior4.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Back Right" href="./img/black/Exterior6.jpg"><img class="thumb" src="./img/black/Exterior5.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Right" href="./img/black/Exterior7.jpg"><img class="thumb" src="./img/black/Exterior6.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Front Left Zoomed" href="./img/black/Exterior5.jpg"><img class="thumb" src="./img/black/Exterior7.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="From Driver Pos" href="./img/black/Interior1.jpg"><img class="thumb" src="./img/black/Interior1.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Right Door View" href="./img/black/Interior2.jpg"><img class="thumb" src="./img/black/Interior2.jpg" /></a>
     </div>
-    <div id="specs">
+    <div id="images_blue" class="container hidden">
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Front Left" href="./img/blue/Exterior1.jpg"><img class="thumb" src="./img/blue/Exterior1.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Left" href="./img/blue/Exterior2.jpg"><img class="thumb" src="./img/blue/Exterior2.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Back Left" href="./img/blue/Exterior3.jpg"><img class="thumb" src="./img/blue/Exterior3.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Back" href="./img/blue/Exterior4.jpg"><img class="thumb" src="./img/blue/Exterior4.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Back Right" href="./img/blue/Exterior6.jpg"><img class="thumb" src="./img/blue/Exterior5.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Right" href="./img/blue/Exterior7.jpg"><img class="thumb" src="./img/blue/Exterior6.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Front Left Zoomed" href="./img/blue/Exterior5.jpg"><img class="thumb" src="./img/blue/Exterior7.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="From Driver Pos" href="./img/blue/Interior1.jpg"><img class="thumb" src="./img/blue/Interior1.jpg" /></a>
+      <a class="img-link" data-width="1920" data-height="1080" data-fancybox="gallery" data-caption="Right Door View" href="./img/blue/Interior2.jpg"><img class="thumb" src="./img/blue/Interior2.jpg" /></a>
+    </div>
+    <div class="hidden" id="specs">
       <div id="default">
-        <h4>
-          Standardutrustning
-        </h4>
+        <h4>Standardutrustning</h4>
         <ul>
           <li>3 nackstöd bak</li>
           <li>6 högtalare</li>
@@ -78,18 +90,18 @@
           <li>Elektronisk startspärr</li>
           <li>Elektroniskt stabiliseringsprogram med motstyrningshjälp, ABS, ASR, EDS, MSR och släpstabilisering</li>
           <li>Elfönsterhissar</li>
-          <li>Eluttag, 12-volt, i mittkonsolen </li>
+          <li>Eluttag, 12-volt, i mittkonsolen</li>
           <li>Extern, USB typ C uttag och ladduttag</li>
           <li>Farthållare, adaptiv (ACC)</li>
           <li>Fordonsverktyg och domkraft</li>
           <li>Framstol, höger, fällbar "fold Flat"</li>
           <li>Framsäten med höjdinställning</li>
           <li>Framsäten uppvärmbara</li>
-          <li>Förvaringslåda under höger framstol </li>
+          <li>Förvaringslåda under höger framstol</li>
           <li><span class="replaced">Halogen-huvudstrålkastare och blinkers under gemensamt klarglas</span><small>Ersatt av tillval</small></li>
           <li>Hjulbultar, låsbara</li>
           <li>Huvudkrockkuddesystem för fram- och bakpassagerare inkl. sidokrockkuddar fram</li>
-          <li>Innerbackspegel automatiskt avbländande </li>
+          <li>Innerbackspegel automatiskt avbländande</li>
           <li>ISOFIX-fästen enligt i-Size standard på ytterplatserna i baksätet</li>
           <li><span class="replaced">J84</span><small>Ersatt av tillval</small></li>
           <li>Kamera för förarassistanssystem ovanför innerbackspegeln</li>
@@ -143,9 +155,7 @@
         </ul>
       </div>
       <div id="optionals">
-        <h4>
-          Tillval
-        </h4>
+        <h4>Tillval</h4>
         <ul class="tillval">
           <li>Backkamera Rear Assist</li>
           <li>Bluetooth handsfree "Comfort", induktiv extern antenn, induktiv laddning av telefonen</li>
@@ -169,5 +179,57 @@
         </ul>
       </div>
     </div>
-</body>
+    <div class="hidden" id="drive-train">
+      <div>
+        <h3>Motor</h3>
+      </div>
+      <div>
+        <dl>
+          <dt>
+            <div>Cylindervolym</div>
+          </dt>
+          <dd>
+            <div>1.498 cm³</div>
+          </dd>
+          <dt>
+            <div>Max vridmoment vid r/min</div>
+          </dt>
+          <dd>
+            <div>250 Nm / 1500 - 3500 1/min</div>
+          </dd>
+          <dt>
+            <div>Effekt vid</div>
+          </dt>
+          <dd>
+            <div>110 kW (150 hk)</div>
+          </dd>
+        </dl>
+        <div>
+          <div>
+            <div>
+              <div>
+                <h3>Drivlina</h3>
+              </div>
+              <div>
+                <dl>
+                  <dt>
+                    <div>Växellåda</div>
+                  </dt>
+                  <dduu cEChIk">
+                    <div>7 vxl DSG</div>
+                  </dd>
+                  <dt>
+                    <div>Drivsystem</div>
+                  </dt>
+                  <dduu cEChIk">
+                    <div>Framhjulsdrift</div>
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

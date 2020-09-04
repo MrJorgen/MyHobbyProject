@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const images = [
+  const imagesArray = [
     { src: ".img/Exterior1.jpg", desc: "Front Left", id: 1 },
     { src: ".img/Exterior2.jpg", desc: "Left", id: 2 },
     { src: ".img/Exterior3.jpg", desc: "Back Left", id: 3 },
@@ -45,4 +45,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let countDown = setInterval(getRemainingTime, 1000);
   getRemainingTime();
+
+  const imagesBlack = document.querySelector("#images_black"),
+    imagesBlue = document.querySelector("#images_blue"),
+    specs = document.querySelector("#specs"),
+    driveTrain = document.querySelector("#drive-train");
+
+    const nav = document.querySelectorAll("nav li");
+
+    nav.forEach((ele) => {
+      ele.addEventListener("click", menuToggle);
+    });
+
+  function menuToggle(ele) {
+    [imagesBlack, imagesBlue, specs, driveTrain].forEach((e) => {
+      e.classList.add("hidden");
+    });
+    nav.forEach((e) => {
+      e.classList.remove("active");
+    })
+    ele.target.classList.add("active");
+    document.querySelector(`#${ele.target.dataset.target}`).classList.remove("hidden");
+  }
 });

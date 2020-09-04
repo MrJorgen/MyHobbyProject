@@ -303,6 +303,11 @@ c1.addEventListener("touchend", (e) => {
   });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  document.body.style.height = window.innerHeight + "px";
+  document.body.style.overflow = "hidden";
+})
+
 function clearTables() {
   if (document.querySelector("#current")) {
     document.querySelector("#current").outerHTML = "";

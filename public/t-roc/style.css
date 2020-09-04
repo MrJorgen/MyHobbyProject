@@ -1,3 +1,8 @@
+:root {
+  --vw-blue: #6091c3;
+}
+
+
 html {
   margin: 0;
   padding: 0;
@@ -31,6 +36,7 @@ body {
   text-align: center;
   display: flex;
   justify-content: center;
+  margin-bottom: 10px;
 }
 
 #countDown div {
@@ -127,6 +133,53 @@ img.thumb {
   text-align: center;
   color: rgb(192, 192, 192);
 }
+
+#drive-train {
+  color: var(--vw-blue);
+  background: rgb(32, 32, 32);
+  position: relative;
+  padding: 20px;
+  width: 80%;
+  margin: 10px auto;
+}
+
+.active {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-bottom: 2px solid var(--vw-blue);
+}
+
+nav {
+  position: relative;
+  width: calc(80% + 40px);
+  left: calc(10% - 20px);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+  font-size: 1.2rem;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+nav li {
+  display: inline-block;
+  list-style: none;
+  cursor: pointer;
+  width: calc(100% / 6);
+  line-height: 2.7rem;
+  text-align: center;
+  height: 2.7rem;
+  box-sizing: border-box;
+}
+
+nav li:hover {
+  background-color: var(--vw-blue);
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+
+
+
 
 @media screen and (max-width: 420px) {
   body {
