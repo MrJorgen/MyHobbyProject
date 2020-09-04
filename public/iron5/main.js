@@ -11,7 +11,8 @@ const dayNames = ["Mån", "Tis", "Ons", "Tors", "Fre", "Lör"],
   swipeDist = WIDTH / 4;
 export let individualWeeksToDisplay = Math.floor((HEIGHT - 80) / 60);
 let today = new Date(),
-  weeksToDisplay = Math.floor((HEIGHT - 80) / 100);
+  weeksToDisplay = Math.floor((HEIGHT - 80) / 100),
+  specificDate = true;
 let urlParams = new URLSearchParams(window.location.search);
 
 let start = null;
@@ -93,7 +94,7 @@ function makeTable(id, currentDay, leftMargin) {
         tmpCell.innerText = "";
       } else {
         tmpCell.innerHTML = dayNames[i] + `<p class="nobold small"> ${dateToString(startOfWeek, i)}</p>`;
-        if (i == today.getDay() - 1 && startOfWeek.getWeek() == today.getWeek()) {
+        if (i == today.getDay() - 1 && startOfWeek.getWeek() == today.getWeek() && specificDate) {
           tmpCell.classList.add("active", "active-top");
         }
       }
@@ -125,7 +126,7 @@ function makeTable(id, currentDay, leftMargin) {
       for (let j = 0; j < schema[0].length; j++) {
         tmpCell = document.createElement("td");
         tmpCell.innerText = schema[(weekDiff) % schemaLength][j][Object.keys(schema[0][0])[i]] || "";
-        if (j == today.getDay() - 1 && startOfWeek.getWeek() == today.getWeek()) {
+        if (j == today.getDay() - 1 && startOfWeek.getWeek() == today.getWeek() && specificDate) {
           tmpCell.classList.add("active");
           if (i == Object.keys(schema[0][0]).length - 1) {
             tmpCell.classList.add("active-bottom");
@@ -198,7 +199,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.querySelector("#dateInput").addEventListener("change", function() {
-  today = new Date(this.value);
+  today = new Date(this.value) || new Date();
+  specificDate = true;
   makeScedule(document.querySelector("#nameInput").value);
 });
 
@@ -267,6 +269,7 @@ c1.addEventListener("touchend", (e) => {
     // A full right swipe
     if (end > start + swipeDist) {
       c0.style.left = "0px";
+      specificDate = false;
       if (urlParams.has("person")){
         tempDate.setDate(today.getDate() - (individualWeeksToDisplay * 7));
       } else {
@@ -275,6 +278,7 @@ c1.addEventListener("touchend", (e) => {
       
       today = new Date(tempDate);
     } else if (end < start - swipeDist) { // A full left swipe
+      specificDate = false;
       c2.style.left = "0px";
 
       if (urlParams.has("person")) {
@@ -306,7 +310,20 @@ c1.addEventListener("touchend", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
   document.body.style.height = window.innerHeight + "px";
   document.body.style.overflow = "hidden";
-})
+  $('[data-fancybox="gallery_black"]').fancybox({
+    afterShow(instance, slide){
+      console.log(instance, slide);
+    },  
+    width: "100%",
+    height: "100%",
+    loop: true,
+    });
+    // width : 'auto',
+  // $().fancybox({
+  // fullScreen: {
+  //   autoStart: false
+  // }});
+});
 
 function clearTables() {
   if (document.querySelector("#current")) {
@@ -317,5 +334,14 @@ function clearTables() {
   }
   if (document.querySelector("#next")) {
     document.querySelector("#next").outerHTML = "";
+  }
+}
+
+class Test{
+  constructor() {
+
+  }
+  doSomething() {
+
   }
 }

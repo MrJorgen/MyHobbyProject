@@ -4,9 +4,9 @@
 }
 
 :root {
-  /* --bg-color: #c7d3dd;
-  --alt-color: #92C0E6; */
-  --bg-color: white;
+  /* --bg-color: #c7d3dd; */
+  /* --alt-color: #92C0E6; */
+  --bg-color: rgba(255, 255, 255, 1);
   --alt-color: #c7d3dd;
   --iron-blue: rgb(0, 77, 153);
   --iron-blue-light: rgba(0, 77, 153, 0.3);
