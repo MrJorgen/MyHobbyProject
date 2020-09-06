@@ -15,7 +15,7 @@ body {
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
-  background: rgb(64, 64, 64);
+  background: rgb(126, 126, 126);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   overflow-x: hidden;
   color: white !important;
@@ -31,14 +31,12 @@ body {
   margin: 0;
 }
 
-#countDown {
-  margin-top: 8px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 10px;
+div#countDown {
+  width: calc(100% / 3);
+  margin: 10px auto;
+  display: block;
 }
-
+/*
 #countDown div {
   display: inline;
   margin-right: 10px;
@@ -54,11 +52,10 @@ body {
 }
 
 #countDown span {
-  /* margin-right: 5px; */
   padding-top: -5px;
   font-size: 0.8rem;
 }
-
+*/
 .card {
   text-align: center;
 }
@@ -161,7 +158,8 @@ nav li {
   display: inline-block;
   list-style: none;
   cursor: pointer;
-  width: calc(100% / 6);
+  /* width: calc(100% / 6); */
+  padding: 0 10px;
   line-height: 2.7rem;
   text-align: center;
   height: 2.7rem;
@@ -177,7 +175,51 @@ nav li:hover {
 }
 
 
+@media screen and (max-width: 600px) {
+  nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 35%;
+    height: 100%;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+    font-size: 1.2rem;
+    background-color: rgba(32, 32, 32, 1);
+    z-index: 2;
+  }
 
+  nav::after {
+    content: " ";
+    display: block;
+    color: white;
+    background-image: url("./img/times-circle-solid.svg");
+    background-color: #fff;
+    background-size: cover;
+    border-radius: 50%;;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+
+  nav li {
+    display: block;
+    list-style: none;
+    cursor: pointer;
+    padding: 10px 10px;
+    line-height: 2.7rem;
+    text-align: left;
+    height: 2.7rem;
+    box-sizing: border-box;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+  }
+
+  nav li:first-child {
+    margin-top: 50px;
+  }
+}
 
 
 
@@ -237,4 +279,21 @@ nav li:hover {
   #specs ul li {
     font-size: 0.9rem;
   }
+}
+
+.tick {
+  font-size: 1rem;
+  font-family: "Exo 2" , sans-serif;
+}
+
+.tick-label {
+  font-size: calc(1em / 3);
+  text-align: center;
+  display: block !important;
+  padding-top: 0.5rem;
+}
+
+.tick-group {
+  margin: 0 0.25em;
+  text-align: center;
 }

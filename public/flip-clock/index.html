@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link href="https://fonts.googleapis.com/css2?family=Electrolize&family=Exo+2&family=Jura&family=Play&family=Poppins&family=Sora&family=Ubuntu&display=swap" rel="stylesheet" />
+    <title>Flip Example Preset</title>
+    <link rel="stylesheet" href="flip/flip.min.css" />
+  </head>
+  <body>
+    <!-- START OF FLIP EXAMPLE PRESET -->
+
+    <style>
+      .tick {
+        font-size: 1rem;
+        font-family: "Exo 2" , sans-serif;
+      }
+
+      .tick-label {
+        font-size: 0.375em;
+        text-align: center;
+      }
+
+      .tick-group {
+        margin: 0 0.25em;
+        text-align: center;
+      }
+    </style>
+
+    <div class="tick" data-did-init="handleTickInit">
+      <div data-repeat="true" data-layout="horizontal center fit" data-transform="preset(d, h, m, s) -> delay">
+        <div class="tick-group">
+          <div data-key="value" data-repeat="true" data-transform="pad(00) -> split -> delay">
+            <span data-view="flip"></span>
+          </div>
+
+          <span data-key="label" data-view="text" class="tick-label"></span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function handleTickInit(tick) {
+        // Uncomment to set labels to different language ( in this case Dutch )
+
+        const locale = {
+          YEAR_PLURAL: "År",
+          YEAR_SINGULAR: "År",
+          MONTH_PLURAL: "Månader",
+          MONTH_SINGULAR: "Månad",
+          WEEK_PLURAL: "Veckor",
+          WEEK_SINGULAR: "Vecka",
+          DAY_PLURAL: "Dagar",
+          DAY_SINGULAR: "Dag",
+          HOUR_PLURAL: "Timmar",
+          HOUR_SINGULAR: "Timme",
+          MINUTE_PLURAL: "Minuter",
+          MINUTE_SINGULAR: "Minut",
+          SECOND_PLURAL: "Sekunder",
+          SECOND_SINGULAR: "Sekund",
+          MILLISECOND_PLURAL: "Millisekunder",
+          MILLISECOND_SINGULAR: "Millisekund",
+        };
+
+        for (var key in locale) {
+          if (!locale.hasOwnProperty(key)) {
+            continue;
+          }
+          tick.setConstant(key, locale[key]);
+        }
+
+        const deliveryDate = new Date("2020-12-15 12:00:00");
+
+        Tick.count.down(deliveryDate + "-01-01").onupdate = function (value) {
+          tick.value = value;
+        };
+      }
+    </script>
+
+    <!-- END OF FLIP EXAMPLE PRESET -->
+
+    <script src="flip/flip.min.js"></script>
+  </body>
+</html>

@@ -3,9 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Electrolize&family=Exo+2&family=Jura&family=Play&family=Poppins&family=Sora&family=Ubuntu&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+    <link rel="stylesheet" href="./flip/flip.min.css" />
     <link rel="stylesheet" href="./style.css" />
     <script src="./main.js"></script>
     <title>Min nya T-Roc 😀</title>
@@ -23,8 +25,8 @@
         <!-- https://userguide.volkswagen.de/legacy/w/en_GB/show/a23fdaaaee830e2d0a0100dc2fb17ad8_1_en_GB?ct=a23fdaaaee830e2d0a0100dc2fb17ad8_1_en_GB -->
       </h2>
     </header>
-    <div class="header">Beräknad leverans <span id="deliveryDate"></span></div>
-    <div id="countDown">
+    <div class="header">Beräknad leverans <span id="deliveryDate">2020-12-15 12:00</span></div>
+    <!-- <div id="countDown">
       <div class="card">
         <p id="days"></p>
         <span>dagar</span>
@@ -40,6 +42,18 @@
       <div class="card">
         <p id="seconds"></p>
         <span>sekunder</span>
+      </div>
+    </div> -->
+    <div id="countDown">
+      <div class="tick" data-did-init="handleTickInit">
+        <div data-repeat="true" data-layout="horizontal center fit" data-transform="preset(d, h, m, s) -> delay">
+          <div class="tick-group">
+            <div data-key="value" data-repeat="true" data-transform="pad(00) -> split -> delay">
+              <span data-view="flip"></span>
+            </div>
+            <span data-key="label" data-view="text" class="tick-label"></span>
+          </div>
+        </div>
       </div>
     </div>
     <nav>
@@ -254,6 +268,43 @@
         aspectRatio: true,
         scrolling: 'no'
       });
+      function handleTickInit(tick) {
+        // Uncomment to set labels to different language ( in this case Dutch )
+
+        const locale = {
+          YEAR_PLURAL: "År",
+          YEAR_SINGULAR: "År",
+          MONTH_PLURAL: "Månader",
+          MONTH_SINGULAR: "Månad",
+          WEEK_PLURAL: "Veckor",
+          WEEK_SINGULAR: "Vecka",
+          DAY_PLURAL: "Dagar",
+          DAY_SINGULAR: "Dag",
+          HOUR_PLURAL: "Timmar",
+          HOUR_SINGULAR: "Timme",
+          MINUTE_PLURAL: "Minuter",
+          MINUTE_SINGULAR: "Minut",
+          SECOND_PLURAL: "Sekunder",
+          SECOND_SINGULAR: "Sekund",
+          MILLISECOND_PLURAL: "Millisekunder",
+          MILLISECOND_SINGULAR: "Millisekund",
+        };
+
+        for (var key in locale) {
+          if (!locale.hasOwnProperty(key)) {
+            continue;
+          }
+          tick.setConstant(key, locale[key]);
+        }
+
+        const deliveryDate = new Date("2020-12-15 12:00:00");
+
+        Tick.count.down(deliveryDate + "-01-01").onupdate = function (value) {
+          tick.value = value;
+        };
+      }
+
     </script>
+    <script src="./flip/flip.min.js"></script>
   </body>
 </html>
