@@ -15,10 +15,10 @@ body {
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
-  background: rgb(126, 126, 126);
+  background: white;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   overflow-x: hidden;
-  color: white !important;
+  color: black;
 }
 
 .header {
@@ -141,8 +141,12 @@ img.thumb {
 }
 
 .active {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-bottom: 2px solid red;
+}
+
+nav li:hover {
   background-color: rgba(0, 0, 0, 0.5);
-  border-bottom: 2px solid var(--vw-blue);
 }
 
 nav {
@@ -151,7 +155,8 @@ nav {
   left: calc(10% - 20px);
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
   font-size: 1.2rem;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: var(--vw-blue);
+  color: ghostwhite;
 }
 
 nav li {
@@ -159,15 +164,11 @@ nav li {
   list-style: none;
   cursor: pointer;
   /* width: calc(100% / 6); */
-  padding: 0 10px;
+  padding: 0 15px;
   line-height: 2.7rem;
   text-align: center;
   height: 2.7rem;
   box-sizing: border-box;
-}
-
-nav li:hover {
-  background-color: var(--vw-blue);
 }
 
 .hidden {
