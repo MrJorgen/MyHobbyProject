@@ -191,6 +191,10 @@ nav li {
 
 
 @media screen and (max-width: 600px) {
+  div#countDown {
+    width: 85%;
+  }
+
   nav {
     position: absolute;
     top: 0;
@@ -241,6 +245,22 @@ nav li {
   }
 }
 
+.tick {
+  font-size: 1rem;
+  font-family: "Exo 2" , sans-serif;
+}
+
+.tick-label {
+  font-size: 0.65em;
+  text-align: center;
+  display: block !important;
+  padding-top: 0.5rem;
+}
+
+.tick-group {
+  margin: 0 0.25em;
+  text-align: center;
+}
 
 
 @media screen and (max-width: 420px) {
@@ -299,21 +319,8 @@ nav li {
   #specs ul li {
     font-size: 0.9rem;
   }
-}
 
-.tick {
-  font-size: 1rem;
-  font-family: "Exo 2" , sans-serif;
-}
-
-.tick-label {
-  font-size: calc(1em / 3);
-  text-align: center;
-  display: block !important;
-  padding-top: 0.5rem;
-}
-
-.tick-group {
-  margin: 0 0.25em;
-  text-align: center;
+  .tick-label {
+    font-size: 0.65em;
+  }
 }
