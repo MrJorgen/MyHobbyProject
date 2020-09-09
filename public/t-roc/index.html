@@ -242,16 +242,6 @@
       </div>
     </div>
     <script>
-      $('[data-fancybox="gallery_black"]').fancybox({
-        afterShow(instance, slide){
-          console.log(instance, slide);
-        },  
-        width: "100%",
-        height: "100%",
-        loop: true,
-        aspectRatio: true,
-        scrolling: 'no'
-      });
       $('[data-fancybox="gallery_blue"]').fancybox({
         afterShow(instance, slide){
           console.log(instance, slide);
@@ -291,9 +281,9 @@
           tick.setConstant(key, locale[key]);
         }
 
-        const deliveryDate = new Date("2020-12-15 12:00:00");
+        const deliveryDate = new Date("2020-12-15T12:00:00+01:00");
 
-        Tick.count.down(deliveryDate + "-01-01").onupdate = function (value) {
+        Tick.count.down(deliveryDate).onupdate = function (value) {
           tick.value = value;
         };
       }
