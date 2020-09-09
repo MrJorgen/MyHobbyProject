@@ -46,25 +46,35 @@ document.addEventListener("DOMContentLoaded", () => {
   // let countDown = setInterval(getRemainingTime, 1000);
   // getRemainingTime();
 
-  const imagesBlack = document.querySelector("#images_black"),
-    imagesBlue = document.querySelector("#images_blue"),
+  const imagesBlue = document.querySelector("#images_blue"),
     specs = document.querySelector("#specs"),
-    driveTrain = document.querySelector("#drive-train");
+    driveTrain = document.querySelector("#drive-train"),
+    list = document.querySelectorAll("nav li"),
+    closeButton = document.querySelector("#closeButton"),
+    nav = document.querySelector("#nav"), 
+    hamburger = document.querySelector("#hamburger");
 
-    const nav = document.querySelectorAll("nav li");
+    closeButton.addEventListener("click", () => {
+      nav.classList.remove("nav-show");
+    });
 
-    nav.forEach((ele) => {
+    hamburger.addEventListener("click", () => {
+      nav.classList.add("nav-show");
+    });
+
+    list.forEach((ele) => {
       ele.addEventListener("click", menuToggle);
     });
 
   function menuToggle(ele) {
-    [imagesBlack, imagesBlue, specs, driveTrain].forEach((e) => {
+    [imagesBlue, specs, driveTrain].forEach((e) => {
       e.classList.add("hidden");
     });
-    nav.forEach((e) => {
+    list.forEach((e) => {
       e.classList.remove("active");
     })
     ele.target.classList.add("active");
     document.querySelector(`#${ele.target.dataset.target}`).classList.remove("hidden");
+    nav.classList.remove("nav-show");
   }
 });
