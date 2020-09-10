@@ -148,6 +148,9 @@ img.thumb {
   padding: 20px;
   width: 80%;
   margin: 10px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(425px , 1fr));
+  gap: 20px;
 }
 
 .active {
@@ -181,6 +184,11 @@ nav li {
   box-sizing: border-box;
 }
 
+#drive-train .row {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+}
+
 .hidden {
   display: none !important;
 }
@@ -189,6 +197,30 @@ nav li {
   margin-left: 0px;
 }
 
+.section {
+  /* display: grid; 
+  grid-template-columns: repeat(2, 1fr);
+  justify-content: space-between;
+  gap: 10px; */
+}
+
+.section h3, .section h4 {
+  /* grid-column-start: 1;
+  grid-column-end: 3; */
+}
+
+.spec {
+  text-align: left;
+}
+
+.value {
+  text-align: right;
+}
+
+.weight {
+  grid-row-start: 3;
+  grid-row-end: 6;
+}
 
 @media screen and (max-width: 600px) {
   div#countDown {
@@ -199,14 +231,27 @@ nav li {
     position: absolute;
     top: 0;
     left: 0;
-    width: 35%;
+    width: 50%;
     height: 100%;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
     font-size: 1.3rem;
     background-color: rgba(32, 32, 32, 1);
-    z-index: 2;
+    z-index: 3;
     transition: margin 0.5s;
-    margin-left: -35%;
+    margin-left: -50%;
+    opacity: 0.9;
+  }
+
+  #overlay {
+    position: absolute;
+    display: none;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+    background-color: black;
+    opacity: 0.25;
   }
 
   #hamburger {
@@ -231,13 +276,11 @@ nav li {
     display: block;
     list-style: none;
     cursor: pointer;
-    padding: 10px 10px;
     line-height: 2.7rem;
     text-align: left;
     height: 2.7rem;
     box-sizing: border-box;
-    margin-bottom: 5px;
-    padding-bottom: 5px;
+    margin-bottom: 0px;
   }
 
   nav li:first-child {
@@ -261,7 +304,6 @@ nav li {
   margin: 0 0.25em;
   text-align: center;
 }
-
 
 @media screen and (max-width: 420px) {
   body {

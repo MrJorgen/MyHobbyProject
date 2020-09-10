@@ -55,11 +55,15 @@ document.addEventListener("DOMContentLoaded", () => {
     hamburger = document.querySelector("#hamburger");
 
     closeButton.addEventListener("click", () => {
-      nav.classList.remove("nav-show");
+      closeNav();
     });
 
     hamburger.addEventListener("click", () => {
       nav.classList.add("nav-show");
+      document.querySelector("#overlay").style.display = "block";
+      document.querySelector("#overlay").addEventListener("click", () =>{
+        closeNav();
+      });
     });
 
     list.forEach((ele) => {
@@ -75,6 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     ele.target.classList.add("active");
     document.querySelector(`#${ele.target.dataset.target}`).classList.remove("hidden");
+    closeNav();
+  }
+  
+  function closeNav() {
     nav.classList.remove("nav-show");
+    document.querySelector("#overlay").removeAttribute("style");
   }
 });
