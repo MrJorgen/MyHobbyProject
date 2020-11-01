@@ -23,7 +23,7 @@
         <!-- https://userguide.volkswagen.de/legacy/w/en_GB/show/a23fdaaaee830e2d0a0100dc2fb17ad8_1_en_GB?ct=a23fdaaaee830e2d0a0100dc2fb17ad8_1_en_GB -->
       </h2>
     </header>
-    <div class="header">Preliminär leverans <span id="deliveryDate">den 15:e december kl 12:00.</span></div>
+    <div class="header">Preliminär leverans <span id="deliveryDate">den 1:a december kl 12:00.</span></div>
     <!-- <div id="countDown">
       <div class="card">
         <p id="days"></p>
@@ -420,7 +420,7 @@
           tick.setConstant(key, locale[key]);
         }
 
-        const deliveryDate = new Date("2020-12-15T12:00:00+01:00");
+        const deliveryDate = new Date("2020-12-01T12:00:00+01:00");
 
         Tick.count.down(deliveryDate).onupdate = function (value) {
           tick.value = value;
