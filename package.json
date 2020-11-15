@@ -14,6 +14,7 @@
     "moment": "^2.24.0",
     "mongoose": "^5.5.11",
     "node-tsv-json": "^0.2.1",
+    "react-native": "^0.63.3",
     "request": "^2.88.0",
     "socket.io": "^1.7.3"
   },
