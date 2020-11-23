@@ -422,7 +422,7 @@
 
         const deliveryDate = new Date("2020-11-27 13:00:00");
 
-        Tick.count.down(deliveryDate).onupdate =  (value) {
+        Tick.count.down(deliveryDate).onupdate = function (value) {
           tick.value = value;
         };
       }
