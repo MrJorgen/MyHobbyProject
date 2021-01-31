@@ -20,23 +20,23 @@ navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
 
 function onSuccess(pos) {
     console.log(pos);
-    console.log(pos.coords.accuracy);
     let error = "";
     speedEle.style.fontSize = "50px";
-    if(pos.coords.speed <= 0) {
-        error += "<li>No speed</li>";
+    if(pos.coords.speed === null) {
+        error += "<li>No speed data</li>";
     }
-    if(pos.coords.accuracy > 20) {
+
+    if(pos.coords.accuracy > 50) {
         error += "<li>Low accuracy</li>";
     }
     else {
         error += `<li>Accuracy: ${pos.coords.accuracy.toFixed(1)} m</li>`;
+        let kmH = pos.coords.speed * 1000 / 3600;
+        speedEle.textContent = Math.round(kmH) + " km/h";
     }
+
     if(error.length > 0) {
         lowAccuracy(error);
-    }
-    else {
-        speedEle.textContent = pos.coords.speed;
     }
 }
 
