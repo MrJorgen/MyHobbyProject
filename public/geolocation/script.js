@@ -23,13 +23,13 @@ speedEle.textContent = "test";
 if(navigator.geolocation) {
     console.log("Geolocation supported");
     speedEle.textContent = "OK";
+    navigator.geolocation.watchPosition(onSuccess, onError, options);
+    // navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
 }
 else {
     console.log("Geolocation NOT supported");
 }
 
-// navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
-navigator.geolocation.watchPosition(onSuccess, onError, options);
 
 function onSuccess(pos) {
     document.querySelector("#error").innerHTM = "";
