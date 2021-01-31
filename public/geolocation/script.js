@@ -15,12 +15,19 @@ navigator.geolocation.getCurrentPosition(onSuccess, onError);
 function onSuccess(pos) {
     console.log(pos);
     console.log(pos.coords.accuracy);
+    let error = "";
     speedEle.style.fontSize = "50px";
-    if(pos.coords.speed > 0) {
-        speedEle.textContent = pos.coords.speed;
+    if(pos.coords.speed <= 0) {
+        error += "<li>No speed</li>";
     }
     if(pos.coords.accuracy > 50) {
-        lowAccuracy();
+        error += "<li>Low accuracy</li>";
+    }
+    if(error.length > 0) {
+        lowAccuracy(error);
+    }
+    else {
+        speedEle.textContent = pos.coords.speed;
     }
 }
 
@@ -31,6 +38,6 @@ function onError(error) {
     speedEle.textContent = error.message;
   }
 
-  function lowAccuracy() {
-    document.querySelector("#error").textContent = "Low accuracy or no speed";
+  function lowAccuracy(error) {
+    document.querySelector("#error").innerHTML = error;
   }
