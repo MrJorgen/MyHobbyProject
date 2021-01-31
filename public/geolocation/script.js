@@ -1,5 +1,11 @@
 let speedEle = document.querySelector("#speed");
 
+let options = {
+    enableHighAccuracy: true,
+    timeout: 1000,
+    maximumAge: 0
+  };
+
 speedEle.textContent = "test";
 
 if(navigator.geolocation) {
@@ -22,6 +28,9 @@ function onSuccess(pos) {
     }
     if(pos.coords.accuracy > 50) {
         error += "<li>Low accuracy</li>";
+    }
+    else {
+        error += `<li>${pos.coords.accuracy}</li>`;
     }
     if(error.length > 0) {
         lowAccuracy(error);
