@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Generated Clouds</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="cloud" id="cloud-1"></div>
+  <div class="cloud" id="cloud-2"></div>
+  <div class="cloud" id="cloud-3"></div>
+  <div class="cloud" id="cloud-4"></div>    
+    <svg width="0" height="0"> 
+      <filter id="filter-1">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="8" seed="756" />     
+        <feDisplacementMap  in="SourceGraphic" scale="200" />
+      </filter>
+      <filter id="filter-2">
+        <feTurbulence type="fractalNoise"  baseFrequency="0.012" numOctaves="6" seed="756"/>
+        <feDisplacementMap  in="SourceGraphic" scale="175" />
+      </filter>
+      <filter id="filter-3">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="756"/>
+        <feDisplacementMap  in="SourceGraphic" scale="150" />
+      </filter>
+      <filter id="filter-4">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="756"/>
+        <feDisplacementMap  in="SourceGraphic" scale="100" />
+      </filter>
+    </svg>
+</body>
+</html>
+
+
+<!-- https://css-tricks.com/drawing-realistic-clouds-with-svg-and-css/ -->
+
+<!-- https://tympanus.net/codrops/2015/11/04/rain-water-effect-experiments/ -->

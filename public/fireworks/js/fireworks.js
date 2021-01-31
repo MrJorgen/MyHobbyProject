@@ -16,7 +16,11 @@ document.addEventListener('DOMContentLoaded', function () {
         gravity = rocketSpeed / 90,
         maxParticles = 0,
         totalParticles = 0,
-        frameCounter = 0;
+        frameCounter = 0,
+        deltaTime = 0,
+        lastTime;
+
+        radius *= 2;
 
     launchRocket();
     update();
@@ -38,15 +42,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function explode(rocket) {
-        let numParticles = randomNumber(125, 175),
+        let numParticles = randomNumber(200, 250),
             rnd = Math.floor(Math.random() * 2),
             burstSpeed = Math.random() * 0.5 + 0.75;
+            burstSpeed *= 3;
         for (let i = 0; i < numParticles; i++) {
             let p = new Particle(rocket.x, rocket.y, burstSpeed * Math.random() * particleSpeed, Math.random() * Math.PI * 2, gravity);
             p.vx += rocket.vx * 0.6; // Inheit some initial speed from the rocket
             p.radius = Math.random() * 1 * radius; // Random radius
             p.mass = 0.15 * p.radius; // Set mass depending on radius
-            p.friction = 0.975; // Friction...
+            p.friction = 0.98; // Friction...
             // p.friction = .975 * (1 + (p.mass / 60)); // Friction...
             p.color = rnd == 1 ? JSON.parse(JSON.stringify(rocket.color)) : randomColor(); // 50% chance to be multicolored else same color as rocket
             // p.color = rocket.color.name === "white" ? randomColor() : JSON.parse(JSON.stringify(rocket.color));
@@ -56,6 +61,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     function update(timer = 0) {
+        if(lastTime) {
+            deltaTime = timer - lastTime;
+        }
+        else {
+            deltaTime = 1 / 60;
+        }
+
         let currentParticles = rockets.length + particles.length,
             averageParticles = totalParticles / frameCounter,
             textHeight = Math.floor(height / 50);
@@ -77,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         context.save();
         // context.globalCompositeOperation = 'hard-light';
-        context.fillStyle = "rgba(0, 0, 0, .5)";
+        context.fillStyle = "rgba(0, 0, 0, 0.5)";
         // context.fillStyle = "rgba(0, 0, 0, 1)";
 
         context.fillRect(0, 0, width, height);
@@ -88,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 context.beginPath();
                 context.arc(rocket.x, rocket.y, rocket.radius, 0, Math.PI * 2);
                 context.fill();
-                rocket.update();
+                rocket.update(deltaTime);
                 if (rocket.vy > 0) {
                     explode(rocket);
                     rockets.splice(i, 1);
@@ -103,8 +115,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 context.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
                 context.fill();
 
-                p.update();
-                p.color.a -= Math.random() * 0.02;
+                p.update(deltaTime);
+                p.color.a -= Math.random() * 0.012;
                 if (p.y > height ||
                     p.x > width && p.vx > 0 ||
                     p.x < 0 && p.vx < 0 ||
@@ -114,6 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         context.restore();
+        lastTime = timer;
         frameCounter = requestAnimationFrame(update);
     }
 }, false);

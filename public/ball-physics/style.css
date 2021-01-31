@@ -16,6 +16,9 @@ canvas {
 	margin: 0;
 	display: block;
 	overflow: hidden;
+	/* filter: url(#goo); */
+	/* -webkit-filter: url("#goo"); */
+	/* filter: url("index.html#goo"); */
 }
 
 #info {

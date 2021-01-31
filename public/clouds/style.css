@@ -1,0 +1,41 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(165deg, #527785 0%, #527785 100%);
+  /*   background: linear-gradient(165deg, #527785 0%, #527785 100%); */
+    padding: 1%;
+    overflow: hidden;
+  }
+  
+  .cloud {
+    width: 800px;
+    height: 350px;
+    border-radius: 50%;
+    position: absolute;
+    top: 0vh;
+    left: 25vw;
+  }
+  
+  #cloud-1 {
+    filter: url(#filter-1);
+    box-shadow: 300px 300px 30px -20px #fff;
+  }
+  
+  #cloud-2 {
+    filter: url(#filter-2);
+    box-shadow: 300px 340px 70px -60px rgba(158, 168, 179, 0.5);
+    left: 25vw;
+  }
+  
+  #cloud-3 {
+    filter: url(#filter-3);
+    box-shadow: 300px 370px 60px -100px rgba(0, 0, 0, 0.35);
+    left: 25vw;
+  }
+  
+  #cloud-4 {
+    filter: url(#filter-4);
+    box-shadow: 300px 370px 60px -100px rgba(0, 0, 0, 0.15);
+    left: 25vw;
+  }
+  
