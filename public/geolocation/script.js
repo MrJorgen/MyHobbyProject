@@ -58,7 +58,7 @@ function onSuccess(pos) {
         document.querySelector("#error").innerHTML = errorMessage;
     }
     if(debug) {
-        document.querySelector("#info").innerHTML += `Accuracy: ${pos.coords.accuracy} m<br>`;
+        document.querySelector("#info").innerHTML += `Accuracy: ${pos.coords.accuracy.toFixed(1)} m<br>`;
         document.querySelector("#info").innerHTML += `Speed: ${pos.coords.speed} m/s<br>`;
         document.querySelector("#info").innerHTML += `Age: ${Date.now() - pos.timestamp} ms`;
     }
