@@ -16,7 +16,7 @@ else {
     console.log("Geolocation NOT supported");
 }
 
-navigator.geolocation.getCurrentPosition(onSuccess, onError);
+navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
 
 function onSuccess(pos) {
     console.log(pos);
@@ -30,7 +30,7 @@ function onSuccess(pos) {
         error += "<li>Low accuracy</li>";
     }
     else {
-        error += `<li>Accuracy: ${pos.coords.accuracy.toFixed(1)} meters</li>`;
+        error += `<li>Accuracy: ${pos.coords.accuracy.toFixed(1)} m</li>`;
     }
     if(error.length > 0) {
         lowAccuracy(error);
