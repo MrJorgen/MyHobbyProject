@@ -26,11 +26,11 @@ function onSuccess(pos) {
     if(pos.coords.speed <= 0) {
         error += "<li>No speed</li>";
     }
-    if(pos.coords.accuracy > 50) {
+    if(pos.coords.accuracy > 20) {
         error += "<li>Low accuracy</li>";
     }
     else {
-        error += `<li>${pos.coords.accuracy}</li>`;
+        error += `<li>Accuracy: ${pos.coords.accuracy.toFixed(1)} meters</li>`;
     }
     if(error.length > 0) {
         lowAccuracy(error);
