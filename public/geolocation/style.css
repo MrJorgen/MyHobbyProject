@@ -37,3 +37,8 @@ body {
     text-align: center;
     color: red;
 }
+
+#info {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 18px;
+}
