@@ -60,9 +60,9 @@ body {
 }
 
 #bar {
-  width: 50%;
+  width: 25%;
   height: 100%;
-  background: yellowgreen;
+  background: red;
 }
 
 #info {
