@@ -1,0 +1,77 @@
+@font-face {
+  font-family: "Tratex";
+  src: url("./fonts/Tratex.ttf");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: white;
+  font-family: Tratex, Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#location {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffd908;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 50%;
+  border: 22px solid #f32a34;
+  color: black;
+  text-align: center;
+}
+
+#speed {
+  font-size: 70px;
+  line-height: 70px;
+}
+
+#error {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 20px;
+  color: red;
+  text-align: center;
+  top: calc(50% + 110px);
+  position: absolute;
+  width: 100%;
+  text-shadow: 1px 0px 2px rgba(0, 0, 0, 0.5);
+  /* display: none; */
+}
+
+#accuracy {
+  position: absolute;
+  width: 200px;
+  height: 20px;
+  left: 50%;
+  top: calc(50% - 120px);
+  transform: translate(-50%, -50%);
+  border: 1px solid black;
+}
+
+#bar {
+  width: 50%;
+  height: 100%;
+  background: yellowgreen;
+}
+
+#info {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  padding: 20px;
+  font-size: 20px;
+}
+
+#kmh {
+  font-size: 22px;
+  line-height: 18px;
+}

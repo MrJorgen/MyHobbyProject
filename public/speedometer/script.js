@@ -18,13 +18,9 @@ const options = {
       }
   }
 
-speedEle.textContent = "test";
-
 if(navigator.geolocation) {
     console.log("Geolocation supported");
-    speedEle.textContent = "OK";
     navigator.geolocation.watchPosition(onSuccess, onError, options);
-    // navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
 }
 else {
     console.log("Geolocation NOT supported");
@@ -37,7 +33,6 @@ function onSuccess(pos) {
 
     let errorMessage = "", error = false;
 
-    speedEle.style.fontSize = "50px";
     if(pos.coords.speed === null) {
         errors.noSpeed.error = true;
         errorMessage += errors.noSpeed.text;
@@ -52,7 +47,7 @@ function onSuccess(pos) {
 
     if(!error) {
         errorMessage += `<li>Accuracy: ${pos.coords.accuracy.toFixed(1)} m</li>`;
-        let kmH = pos.coords.speed * 3600 / 1000;
+        let kmH = pos.coords.speed * 3.6;
         speedEle.textContent = Math.round(kmH);
     }
     else {
