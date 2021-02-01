@@ -21,21 +21,27 @@ const errors = {
 
 const accuracyRange = [
   {
-    color: "green",
+    color: "hsl(80, 100%, 50%)",
     value: 10,
-    length: 1
+    width: 1
   },
   {
-    color: "yellow",
+    color: "hsl(60, 100%, 50%)",
     value: 20,
-    length: 0.75
+    width: 0.75
   },
   {
-    color: "orangered",
+    color: "hsl(40, 100%, 50%)",
     value: 50,
-    length: 0.5
+    width: 0.5
   }
 ];
+
+/*
+HUE Color range
+from Red to Green
+0 - 120
+*/
 
 if (navigator.geolocation) {
   console.log("Geolocation supported");
@@ -47,19 +53,18 @@ if (navigator.geolocation) {
 function onSuccess(pos) {
   document.querySelector("#error").innerHTM = "";
   console.log(pos);
-  let accuracyColor = "red";
+  let accuracyColor = "hsl(0, 100%, 50%)";
 
   let bar = document.querySelector("#bar");
   for(let i = 0; i < accuracyRange.length; i++) {
     if(pos.coords.accuracy < accuracyRange[i].value) {
       accuracyColor = accuracyRange[i].color;
-      bar.style.width = accuracyRange[i].length * 100 + "%";
+      bar.style.width = accuracyRange[i].width * 100 + "%";
       bar.style.backgroundColor = accuracyRange[i].color;
       break;
     }
   }
   console.log(accuracyColor);
-
 
   let errorMessage = "",
     error = false;
