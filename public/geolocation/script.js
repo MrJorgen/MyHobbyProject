@@ -53,7 +53,7 @@ function onSuccess(pos) {
     if(!error) {
         errorMessage += `<li>Accuracy: ${pos.coords.accuracy.toFixed(1)} m</li>`;
         let kmH = pos.coords.speed * 3600 / 1000;
-        speedEle.textContent = Math.round(kmH) + " km/h";
+        speedEle.textContent = Math.round(kmH);
     }
     else {
         document.querySelector("#error").innerHTML = errorMessage;
