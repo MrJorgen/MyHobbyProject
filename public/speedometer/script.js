@@ -84,10 +84,11 @@ function onSuccess(pos) {
     document.querySelector("#error").innerHTML = errorMessage;
   }
   if (debug) {
+    let speedText = (pos.coords.speed === null) ? "No measurment<br>" : pos.coords.speed.toFixed(2) + "m/s<br>";
     document.querySelector("#info").innerHTML = "";
     document.querySelector("#info").innerHTML += `Accuracy: ${pos.coords.accuracy.toFixed(1)} m<br>`;
-    document.querySelector("#info").innerHTML += "Speed:" + (pos.coords.speed === null) ? "No measurment<br>" : pos.coords.speed.toFixed(2) + "m/s<br>";
-    document.querySelector("#info").innerHTML += `Age: ${Date.now() - pos.timestamp} ms`;
+    document.querySelector("#info").innerHTML += "Speed: " + speedText;
+    // document.querySelector("#info").innerHTML += `Age: ${Date.now() - pos.timestamp} ms`;
   }
 }
 
