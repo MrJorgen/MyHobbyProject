@@ -122,3 +122,79 @@ body {
   background-color: #86e01e;
   height: 100%;
 }
+
+.css-button-stop {
+	font-size: 16px;
+	border-radius: 5px;
+	border: solid 1px #d83526;
+	color: #ffffff;
+	background: linear-gradient(180deg, #fe1900 5%, #ce0000 100%);
+	text-shadow: 1px 1px 0px #b23d35;
+	box-shadow: inset 1px 1px 2px 0px #f29d93;
+	font-family: Arial;
+	cursor: pointer;
+	text-align: center;
+	user-select: none;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+}
+.css-button-stop:hover {
+	background: linear-gradient(180deg, #ce0000 5%, #fe1900 100%);
+}
+.css-button-stop:active {
+	position: relative;
+	top: 1px;
+}
+.css-button-stop > span {
+	display: block;
+}
+.css-button-stop-icon {
+	padding: 10px 10px;
+	border-right: 1px solid rgba(255, 255, 255, 0.16);
+	box-shadow: rgba(0, 0, 0, 0.14) -1px 0px 0px inset;
+}
+.css-button-stop-icon svg {
+	vertical-align: middle;
+}
+.css-button-stop-text {
+	padding: 10px 10px;
+}
+
+.css-button-start {
+	font-size: 16px;
+	border-radius: 5px;
+	border: solid 1px #268a16;
+	color: #306108;
+	background: linear-gradient(180deg, #77d42a 5%, #5cb811 100%);
+	text-shadow: 1px 1px 0px #aade7c;
+	box-shadow: inset 1px 1px 2px 0px #c9efab;
+	font-family: Arial;
+	cursor: pointer;
+	text-align: center;
+	user-select: none;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+}
+.css-button-start:hover {
+	background: linear-gradient(180deg, #5cb811 5%, #77d42a 100%);
+}
+.css-button-start:active {
+	position: relative;
+	top: 1px;
+}
+.css-button-start > span {
+	display: block;
+}
+.css-button-start-icon {
+	padding: 10px 10px;
+	border-right: 1px solid rgba(255, 255, 255, 0.16);
+	box-shadow: rgba(0, 0, 0, 0.14) -1px 0px 0px inset;
+}
+.css-button-start-icon svg {
+	vertical-align: middle;
+}
+.css-button-start-text {
+	padding: 10px 10px;
+}

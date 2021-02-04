@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <title>Speedometer</title>
-</head>
-<body>
+  </head>
+  <body>
     <div id="location">
-        <p id="speed">70</p>
-        <p id="kmh">km/h</p>
+      <p id="speed">70</p>
+      <p id="kmh">km/h</p>
     </div>
     <ul id="error"></ul>
     <div id="info"></div>
     <div id="accuracy">
-        <div id="accuracy-bar" class="bar-none"></div>
+      <div id="accuracy-bar" class="bar-none"></div>
     </div>
+    <a class="css-button-start">
+      <span class="css-button-start-icon"><svg width="16" height="16" id="i_pos" viewBox="2 2 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.596 10.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V6.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 010 1.393z"/>
+    </svg></span>
+      <span class="css-button-start-text">Starta</span>
+    </a>
+    <a class="css-button-stop">
+      <span class="css-button-stop-icon"><svg width="16" height="16" id="i_pos" viewBox="2 2 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7 5.5h6A1.5 1.5 0 0114.5 7v6a1.5 1.5 0 01-1.5 1.5H7A1.5 1.5 0 015.5 13V7A1.5 1.5 0 017 5.5z"/>
+    </svg></span>
+      <span class="css-button-stop-text">Stoppa</span>
+    </a>
     <script src="script.js"></script>
-</body>
+  </body>
 </html>

@@ -1,5 +1,18 @@
 let speedEle = document.querySelector("#speed"),
   debug = true;
+  let positions = [];
+
+  let donken = {
+    tornby: {
+      lat: 58.432492,
+      lon: 15.589988
+    },
+    ryd: {
+      lat: 58.406409,
+      lon: 15.578270
+
+    }
+  }
 
 const options = {
   enableHighAccuracy: true,
@@ -77,17 +90,21 @@ function onSuccess(pos) {
   }
 
   if (!error) {
+    positions.push(pos);
     errorMessage += `<li>Accuracy: ${pos.coords.accuracy.toFixed(1)} m</li>`;
     let kmH = pos.coords.speed * 3.6;
     speedEle.textContent = Math.round(kmH);
-  } else {
+  }
+  else {
     document.querySelector("#error").innerHTML = errorMessage;
   }
   if (debug) {
+    console.log(pos, positions);
     let speedText = (pos.coords.speed === null) ? "No measurment<br>" : pos.coords.speed.toFixed(2) + "m/s<br>";
     document.querySelector("#info").innerHTML = "";
     document.querySelector("#info").innerHTML += `Accuracy: ${pos.coords.accuracy.toFixed(1)} m<br>`;
     document.querySelector("#info").innerHTML += "Speed: " + speedText;
+    document.querySelector("#info").innerHTML += "Dist to: " + (distanceInKmBetweenEarthCoordinates(donken.ryd.lat, donken.ryd.lon, pos.coords.latitude, pos.coords.longitude) * 1000).toFixed(2) + " meter";
     // document.querySelector("#info").innerHTML += `Age: ${Date.now() - pos.timestamp} ms`;
   }
 }
@@ -98,3 +115,24 @@ function onError(error) {
   speedEle.style.fontSize = "25px";
   speedEle.textContent = error.message;
 }
+
+function degreesToRadians(degrees) {
+  return degrees * Math.PI / 180;
+}
+
+function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
+  var earthRadiusKm = 6371.0710;
+
+  var dLat = degreesToRadians(lat2-lat1);
+  var dLon = degreesToRadians(lon2-lon1);
+
+  lat1 = degreesToRadians(lat1);
+  lat2 = degreesToRadians(lat2);
+
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  return earthRadiusKm * c;
+}
+
+
