@@ -90,7 +90,7 @@ function onSuccess(pos) {
   }
 
   if (!error) {
-    positions.push(pos.coord);
+    positions.push(pos.coords);
     errorMessage += `<li>Accuracy: ${pos.coords.accuracy.toFixed(1)} m</li>`;
     let kmH = pos.coords.speed * 3.6;
     speedEle.textContent = Math.round(kmH);
