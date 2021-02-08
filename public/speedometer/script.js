@@ -118,12 +118,13 @@ function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
 }
 
 [startButton, stopButton].forEach((ele) => {
-  ele.addEventListener("click", () => {
-  toggleVisibility();
+  ele.addEventListener("click", (e) => {
+  toggleVisibility(e);
   })
 });
 
-function toggleVisibility() {
+function toggleVisibility(e) {
+  console.log(e.target);
   distanceTraveled = 0;
   readDistance = !readDistance;  
   [startButton, stopButton].forEach((ele) => {
