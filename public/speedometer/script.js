@@ -86,7 +86,7 @@ function onSuccess(pos) {
     document.querySelector("#info").innerHTML += "Speed: " + speedText;
     document.querySelector("#info").innerHTML += "Dist to: " + (distanceInKmBetweenEarthCoordinates(donken.ryd.lat, donken.ryd.lon, pos.coords.latitude, pos.coords.longitude) * 1000).toFixed(2) + " meter<br>";
     if(readDistance) {
-      document.querySelector("#info").innerHTML += "Distance traveled: " + distanceTraveled + " m";
+      document.querySelector("#info").innerHTML += "Distance traveled: " + Math.floor(distanceTraveled) + " m";
     }
     // document.querySelector("#info").innerHTML += `Age: ${Date.now() - pos.timestamp} ms`;
   }
