@@ -86,9 +86,15 @@ function onSuccess(pos) {
     document.querySelector("#info").innerHTML = "";
     document.querySelector("#info").innerHTML += `Accuracy: ${pos.coords.accuracy.toFixed(1)} m<br>`;
     document.querySelector("#info").innerHTML += "Speed: " + speedText;
-    document.querySelector("#info").innerHTML += "Dist to: " + (distanceInKmBetweenEarthCoordinates(donken.ryd.lat, donken.ryd.lon, pos.coords.latitude, pos.coords.longitude) * 1000).toFixed(2) + " meter<br>";
+    // document.querySelector("#info").innerHTML += "Dist to: " + (distanceInKmBetweenEarthCoordinates(donken.ryd.lat, donken.ryd.lon, pos.coords.latitude, pos.coords.longitude) * 1000).toFixed(2) + " meter<br>";
     if(readDistance) {
-      document.querySelector("#info").innerHTML += "Distance traveled: " + Math.floor(distanceTraveled) + " m";
+      if(distanceTraveled < 2000) {
+        document.querySelector("#info").innerHTML += "Distance traveled: " + Math.floor(distanceTraveled) + " m";
+      }
+      else {
+        distanceTraveled /= 1000;
+        document.querySelector("#info").innerHTML += "Distance traveled: " + Math.floor(distanceTraveled.toFixed(1)) + " km";
+      }
     }
     // document.querySelector("#info").innerHTML += `Age: ${Date.now() - pos.timestamp} ms`;
   }
