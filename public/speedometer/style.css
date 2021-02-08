@@ -198,3 +198,7 @@ body {
 .css-button-start-text {
 	padding: 10px 10px;
 }
+
+.display-none {
+  display: none;
+}
