@@ -2,6 +2,8 @@ let speedEle = document.querySelector("#speed"),
   startButton = document.querySelector(".css-button-start"),
   stopButton = document.querySelector(".css-button-stop"),
   debug = true;
+
+const dummyAudio = document.querySelector("#dummyAudio");
 let positions = [], distanceTraveled = 0, readDistance = false;
 
 let donken = {
@@ -125,6 +127,8 @@ function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
 
 function toggleVisibility(e) {
   console.log(e.target);
+  dummyAudio.loop = true;
+  dummyAudio.play();
   distanceTraveled = 0;
   readDistance = !readDistance;  
   [startButton, stopButton].forEach((ele) => {
