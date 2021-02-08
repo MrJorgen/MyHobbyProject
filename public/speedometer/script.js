@@ -134,7 +134,7 @@ function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
 function toggleVisibility(e) {
   console.log(e.target);
   dummyAudio.loop = true;
-  setInterval(() => {dummyAudio.play()}, 60 * 1000);
+  setInterval(() => {dummyAudio.play()}, 10 * 1000);
   distanceTraveled = 0;
   readDistance = !readDistance;  
   [startButton, stopButton].forEach((ele) => {
