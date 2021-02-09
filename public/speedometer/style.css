@@ -11,7 +11,7 @@
 :root {
   --sign-bg-color: rgba(255, 255, 255, 0.5);
   /* --sign-fg-color: rgba(0, 0, 0, 0.75); */
-  --sign-fg-color: rgb(88, 168, 233);
+  --sign-fg-color: rgb(176, 220, 255);
 }
 
 * {
