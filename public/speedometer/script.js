@@ -4,6 +4,8 @@ let speedEle = document.querySelector("#speed"),
   stopButton = document.querySelector(".css-button-stop"),
   debug = true;
 
+let wakeLock = null;
+
 let positions = [], distanceTraveled = 0, readDistance = false;
 
 const options = {enableHighAccuracy: true, timeout: 1000, maximumAge: 0};
@@ -120,11 +122,22 @@ function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
   })
 });
 
-function toggleVisibility(e) {
+async function toggleVisibility(e) {
+  // Request a screen wake lock…
+  await requestWakeLock();
+  // …and release it again after 5s.
+  // window.setTimeout(() => {
+  //   wakeLock.release();
+  //   wakeLock = null;
+  // }, 5000);
+
+
   const videoElement = document.createElement("video");
   videoElement.setAttribute("playsinline", "");
   videoElement.setAttribute("autoplay", "");
   videoElement.setAttribute("loop", "");
+  videoElement.style.position = "absolute";
+  videoElement.style.left = "-1000px";
   const videoSrc = document.createElement("source");
   videoSrc.src = video;
   videoSrc.type = "video/mp4";
@@ -138,3 +151,19 @@ function toggleVisibility(e) {
     ele.classList.toggle("display-none");
   })
 }
+
+
+
+// Function that attempts to request a screen wake lock.
+const requestWakeLock = async () => {
+  try {
+    wakeLock = await navigator.wakeLock.request();
+    wakeLock.addEventListener('release', () => {
+      console.log('Screen Wake Lock released:', wakeLock.released);
+    });
+    console.log('Screen Wake Lock released:', wakeLock.released);
+  } catch (err) {
+    console.error(`${err.name}, ${err.message}`);
+  }
+};
+
