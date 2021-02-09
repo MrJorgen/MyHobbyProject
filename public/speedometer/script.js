@@ -31,10 +31,13 @@ if (navigator.geolocation) {
 }
 
 function onSuccess(pos) {
-  positions.push(pos.coords)
-  while(positions.length > 2){
-    positions.splice(2, 1);
+  positions.unshift(pos.coords);
+  while(positions.length > 2) {
+    positions.pop();
   }
+  // while(positions.length > 2){
+  //   positions.splice(2, 1);
+  // }
   console.log(positions);
   document.querySelector("#error").innerHTML = "";
 
@@ -77,13 +80,11 @@ function onSuccess(pos) {
     document.querySelector("#info").innerHTML = "";
     document.querySelector("#info").innerHTML += `Accuracy: ${pos.coords.accuracy.toFixed(1)} m<br>`;
     document.querySelector("#info").innerHTML += "Speed: " + speedText;
-    // document.querySelector("#info").innerHTML += "Dist to: " + (distanceInKmBetweenEarthCoordinates(donken.ryd.lat, donken.ryd.lon, pos.coords.latitude, pos.coords.longitude) * 1000).toFixed(2) + " meter<br>";
     if(readDistance) {
       if(distanceTraveled < 2000) {
         document.querySelector("#info").innerHTML += "Distance traveled: " + Math.floor(distanceTraveled) + " m";
       }
       else {
-        
         document.querySelector("#info").innerHTML += "Distance traveled: " + (distanceTraveled / 1000).toFixed(1) + " km";
       }
     }
