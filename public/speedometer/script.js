@@ -83,8 +83,8 @@ function onSuccess(pos) {
         document.querySelector("#info").innerHTML += "Distance traveled: " + Math.floor(distanceTraveled) + " m";
       }
       else {
-        distanceTraveled /= 1000;
-        document.querySelector("#info").innerHTML += "Distance traveled: " + distanceTraveled.toFixed(1) + " km";
+        
+        document.querySelector("#info").innerHTML += "Distance traveled: " + (distanceTraveled / 1000).toFixed(1) + " km";
       }
     }
     // document.querySelector("#info").innerHTML += `Age: ${Date.now() - pos.timestamp} ms`;
