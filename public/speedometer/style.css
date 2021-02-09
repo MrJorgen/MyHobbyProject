@@ -3,6 +3,17 @@
   src: url("./fonts/Tratex.ttf");
 }
 
+@font-face {
+  font-family: "7 seg";
+  src: url("./fonts/fonts-DSEG_v046/DSEG7-Classic/DSEG7Classic-Bold.ttf");
+}
+
+:root {
+  --sign-bg-color: rgba(255, 255, 255, 0.5);
+  /* --sign-fg-color: rgba(0, 0, 0, 0.75); */
+  --sign-fg-color: rgba(30, 100, 200, 1);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -10,7 +21,8 @@
 }
 
 body {
-  background-color: #2a2a2a;
+  /* background-color: #2a2a2a; */
+  background-color: #2a332a;
   font-family: Tratex, Verdana, Geneva, Tahoma, sans-serif;
   overflow: hidden;
 }
@@ -22,18 +34,22 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #ffd908;
+  /* background-color: #ffd908; */
+  /* border: 22px solid #f32a34; */
+  /* border-radius: 50%; */
+  border: 3px solid black;
+  background-color: black;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  border-radius: 50%;
-  border: 22px solid #f32a34;
   color: black;
   text-align: center;
 }
 
 #speed {
+  font-family: "7 seg";
+  color: var(--sign-fg-color);
   font-size: 70px;
   line-height: 70px;
 }
@@ -58,8 +74,9 @@ body {
 }
 
 #kmh {
+  color: var(--sign-fg-color);
   font-size: 22px;
-  line-height: 18px;
+  margin-bottom: -10px;
 }
 
 #accuracy {
