@@ -25,7 +25,11 @@ body {
   background-color: #2a332a;
   font-family: Tratex, Verdana, Geneva, Tahoma, sans-serif;
   overflow: hidden;
-  max-width: 400px;
+}
+
+div#button-container {
+  display: flex;
+  justify-content: center;
 }
 
 #location {
