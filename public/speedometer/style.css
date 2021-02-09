@@ -5,13 +5,13 @@
 
 @font-face {
   font-family: "7 seg";
-  src: url("./fonts/fonts-DSEG_v046/DSEG7-Classic/DSEG7Classic-Bold.ttf");
+  src: url("./fonts/fonts-DSEG_v046/DSEG7-Modern/DSEG7Modern-Bold.ttf");
 }
 
 :root {
   --sign-bg-color: rgba(255, 255, 255, 0.5);
   /* --sign-fg-color: rgba(0, 0, 0, 0.75); */
-  --sign-fg-color: rgba(30, 100, 200, 1);
+  --sign-fg-color: rgb(88, 168, 233);
 }
 
 * {
@@ -25,6 +25,7 @@ body {
   background-color: #2a332a;
   font-family: Tratex, Verdana, Geneva, Tahoma, sans-serif;
   overflow: hidden;
+  max-width: 400px;
 }
 
 #location {
@@ -37,7 +38,8 @@ body {
   /* background-color: #ffd908; */
   /* border: 22px solid #f32a34; */
   /* border-radius: 50%; */
-  border: 3px solid black;
+  border: 3px solid rgba(255, 255, 255, 1);
+  border-radius: 2%;
   background-color: black;
   display: flex;
   justify-content: center;
