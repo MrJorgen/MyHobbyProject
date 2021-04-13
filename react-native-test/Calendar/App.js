@@ -1,78 +1,52 @@
 import React from "react";
-import { View, Text, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, Dimensions, TouchableOpacity, Alert } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome5";
 
 import CalendarRow from "./components/CalendarRow";
 
 import { schema } from "./schema";
 
 let toDay = new Date(),
-  thisMonth = toDay.getMonth();
+  thisMonth = toDay.getMonth(),
+  offSet = 50;
 
 const monthNames = ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"];
 
 const App = () => {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
+
+      <View style={styles.borderBottom}>
+        <Text style={styles.monthText}>
+          {monthNames[thisMonth]} {toDay.getFullYear()}
+        </Text>
+        <Icon onPress={() => {Alert.alert("Todays date", toDay.toDateString())}} name="bars" color="#555" size={32} style={styles.navIcon} />
+      </View>
+
       <ScrollView>
-        <View style={styles.monthContainer}>
-          <Text style={styles.monthText}>
-            {monthNames[thisMonth]} {toDay.getFullYear()}{" "}
-          </Text>
-        </View>
-        <CalendarRow />
+        <CalendarRow date={toDay} />
       </ScrollView>
+
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    fontFamily: "Verdana",
-    backgroundColor: "#eee",
-    alignItems: "center",
-  },
-  monthContainer: {
-    flex: 1,
-    width: "100%",
+  borderBottom: {
     borderBottomColor: "#999",
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5
+  },
+  navIcon: {
+    position: "absolute",
+    top: 5,
+    left:5,
+    paddingHorizontal: 5
   },
   monthText: {
     textAlign: "center",
     color: "darkslateblue",
-    fontSize: 36,
-    paddingTop: 5,
-  },
+    fontSize: 32
+  }
 });
-
-function formatDate(date) {
-  let month = date.getMonth() + 1,
-    day = date.getDate(),
-    year = date.getFullYear();
-
-  if (month.toString().length < 2) {
-    month = "0" + month;
-  }
-  if (day.toString().length < 2) {
-    day = "0" + day;
-  }
-
-  return year + "-" + month + "-" + day;
-}
-
-function getWeekNumber(d) {
-  // Copy date so don't modify original
-  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  // Set to nearest Thursday: current date + 4 - current day number
-  // Make Sunday's day number 7
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-  // Get first day of year
-  var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  // Calculate full weeks to nearest Thursday
-  var weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
-  // Return week number
-  return weekNo;
-}
 
 export default App;

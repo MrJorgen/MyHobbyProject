@@ -1,0 +1,25 @@
+*, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#bgCanvas {
+    border: 5px ridge rgba(100, 100, 100, 1);
+    z-index: 1;
+}
+
+#layerCanvas {
+    z-index: 2;
+}
+
+#piecesCanvas {
+    z-index: 3;
+}
+
+#bgCanvas, #layerCanvas, #piecesCanvas {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
