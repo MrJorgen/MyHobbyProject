@@ -28,7 +28,7 @@ document.getElementById('close').onmousedown = function (e) {
     return false;
 };
 
-let NUM_BALLS = 5,
+let NUM_BALLS = 100,
     DAMPING = 0.8,
     GRAVITY = 1,
     MOUSE_SIZE = 50,
@@ -296,6 +296,7 @@ window.onload = function () {
     canvas.height = height = window.innerHeight;
 
     randomRadius = { min: width / 100, max: width / 50 };
+    // randomRadius = { min: 3, max: 3 };
 
     MOUSE_SIZE = (randomRadius.min + randomRadius.max) / 2;
 

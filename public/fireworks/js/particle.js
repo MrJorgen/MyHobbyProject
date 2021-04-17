@@ -43,12 +43,14 @@ class Particle {
         this.vy += ay;
     }
 
-    update() {
-        this.vx *= this.friction;
-        this.vy *= this.friction;
-        this.vy += this.gravity * this.mass;
-        this.x += this.vx;
-        this.y += this.vy;
+    update(dt = 1/60) {
+        let diff = (dt / 1000) / (1/60);
+        // console.log(dt, diff);
+        this.vx *= (this.friction);
+        this.vy *= (this.friction);
+        this.vy += (this.gravity) * (this.mass * diff);
+        this.x += this.vx * diff;
+        this.y += this.vy * diff;
     }
 
     angleTo(p2) {

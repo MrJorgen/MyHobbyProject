@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer Test</title>
+    <script src="main.js" type="module"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Pulp Fiction */
+            /* background: url("https://image.tmdb.org/t/p/w600_and_h900_bestv2/dRZpdpKLgN9nk57zggJCs1TjJb4.jpg"); */
+            
+            /* Kill Bill */ 
+            /* background: url("https://www.themoviedb.org/t/p/original/sLDXX6HP7Y0qG33yjwlgJOkdXI9.jpg"); */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        #info {
+            position: absolute;
+            bottom:2%;
+            left: 0;
+            color: rgb(230, 230, 230);
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-size: 20px;
+            padding-left: 10px;
+            text-shadow: 1px 1px 3px black
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="info">
+        <div id="frames"></div>
+        <div id="frameTime"></div>
+        <div id="fps"></div>
+    </div>
+</body>
+</html>

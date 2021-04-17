@@ -12,8 +12,8 @@ const roof = true,
     gravity = 1.5,
     friction = 0.90,
     bounce = 0.90,
-    radiusRange = [50, 100],
-    numBalls = 50;
+    radiusRange = [25, 50],
+    numBalls = 200;
 
 const utils = new Utils();
 
@@ -32,7 +32,8 @@ class Ball {
         y = roof ? randomNumber(radius, center.y) : randomNumber(-height, center.y),
         xVel = randomNumber(-50, 50),
         yVel = randomNumber(0, 20),
-        color = randomColor(),
+        // color = randomColor(),
+        color = "rgb(200, 200, 10)",
     ) {
         this.index = index;
         this.x = x;
@@ -111,7 +112,7 @@ class Ball {
         context.beginPath();
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         context.fill();
-        context.stroke();
+        // context.stroke();
         context.closePath();
         context.restore();
     }

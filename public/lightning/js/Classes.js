@@ -24,7 +24,7 @@ export class Vector {
 export class Lightning {
   constructor(lines) {
     this.lines = lines;
-    this.displayFrames = 5;
+    this.displayFrames = 20;
     this.fadeRate = 0.08;
     this.opacity = 1;
     this.color = this.setColor();

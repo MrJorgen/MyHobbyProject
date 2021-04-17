@@ -108,7 +108,7 @@ class Clock {
       // ctx.drawImage(secs1, hrs1.width * 4 + 26, 0);
       // ctx.drawImage(secs2, hrs1.width * 5 + 26, 0);
       
-      document.querySelector("#time").innerHTML = time.toLocaleString().slice(-8);
+      // document.querySelector("#time").innerHTML = time.toLocaleString().slice(-8);
 
       requestAnimationFrame(() => this.update(ctx));
     }
