@@ -1,4 +1,5 @@
 import { ChessPiece, black, white, ChessBoard } from "./classes.js";
+import { loadImage } from "./utilities.js";
 
 const canvas = document.querySelector("#bgCanvas"),
   bgCtx = canvas.getContext("2d"),
@@ -25,9 +26,10 @@ const canvas = document.querySelector("#bgCanvas"),
       white: "#f1e1cd",
       padding: "#deb887",
     },
+    pieces: ["neo", "game_room", "tournament"],
   };
 
-const theme = "test";
+const theme = "silver";
 
 let mouse = {
   x: 0,
@@ -35,7 +37,7 @@ let mouse = {
   dragging: false,
 };
 
-let size = parseInt(Math.min(window.innerWidth, window.innerHeight) * 0.75);
+let size = parseInt(Math.min(window.innerWidth, window.innerHeight) * 0.85);
 size = size - (size % 9);
 // size = 1200;
 const squareSize = size / 9,
@@ -55,15 +57,16 @@ setup();
 
 async function setup() {
   for (let piece of black) {
-    piece.img = await loadImage(piece.imgName);
+    let imgSrc = `https://images.chesscomfiles.com/chess-themes/pieces/${themes.pieces[2]}/150/${piece.imgName}.png`;
+    piece.img = await loadImage(imgSrc);
     board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "black", piece.img, piece.x, piece.y);
   }
 
   for (let piece of white) {
-    piece.img = await loadImage(piece.imgName);
+    let imgSrc = `https://images.chesscomfiles.com/chess-themes/pieces/${themes.pieces[2]}/150/${piece.imgName}.png`;
+    piece.img = await loadImage(imgSrc);
     board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "white", piece.img, piece.x, piece.y);
   }
-  console.log(board);
   drawBoard();
   drawPieces();
 }
@@ -110,19 +113,6 @@ function drawBoard() {
     bgCtx.fillText("abcdefgh".charAt(i), squareSize + i * squareSize, size - startPos / 2);
     bgCtx.fillText("12345678".charAt(i), startPos / 2, size - squareSize * (i + 1));
   }
-}
-
-function loadImage(src) {
-  return new Promise((resolve) => {
-    const image = new Image();
-    image.addEventListener("load", () => {
-      resolve(image);
-    });
-    // image.src = `./img/${src}.svg`;
-    // image.src = `https://images.chesscomfiles.com/chess-themes/pieces/neo/150/${src}.png`;
-    // image.src = `https://images.chesscomfiles.com/chess-themes/pieces/game_room/150/${src}.png`;
-    image.src = `https://images.chesscomfiles.com/chess-themes/pieces/tournament/150/${src}.png`;
-  });
 }
 
 animCanvas.addEventListener("mousemove", (evt) => {
@@ -179,35 +169,44 @@ animCanvas.addEventListener("mousedown", (evt) => {
     animCtx.drawImage(mouse.piece.img, mouse.x - startPos, mouse.y - startPos, squareSize, squareSize);
     animCanvas.style.cursor = "none";
 
-    findLegalMoves(mouse.piece);
+    mouse.moves = findLegalMoves(mouse.piece);
   }
 });
 
 animCanvas.addEventListener("mouseup", (evt) => {
   if (mouse.dragging) {
+    let moveIsLegal = false;
     let coords = {
       x: Math.floor((mouse.x - startPos) / squareSize),
       y: Math.floor((mouse.y - startPos) / squareSize),
     };
-    if (board.pieces[coords.x][coords.y]) {
-      // Square has a piece on it
-      if (board.pieces[coords.x][coords.y].color !== mouse.piece.color) {
-        // Square is occupied by the opponent
-        piecesCtx.clearRect(coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
-        guideCtx.clearRect(coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
-        piecesCtx.drawImage(mouse.piece.img, coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
-        board.pieces[coords.x][coords.y] = new ChessPiece(mouse.piece.type, mouse.piece.color, mouse.piece.img, coords.x, coords.y);
+    for (let i = 0; i < mouse.moves.length; i++) {
+      if (mouse.moves[i].x === coords.x && mouse.moves[i].y === coords.y) {
+        moveIsLegal = true;
+      }
+    }
+    if (moveIsLegal) {
+      if (board.pieces[coords.x][coords.y]) {
+        // Square has a piece on it
+        if (board.pieces[coords.x][coords.y].color !== mouse.piece.color) {
+          // Square is occupied by the opponent
+          piecesCtx.clearRect(coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
+          guideCtx.clearRect(coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
+          piecesCtx.drawImage(mouse.piece.img, coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
+          board.pieces[coords.x][coords.y] = new ChessPiece(mouse.piece.type, mouse.piece.color, mouse.piece.img, coords.x, coords.y);
+        }
       } else {
-        // Square is occupied by own piece
-        piecesCtx.drawImage(mouse.piece.img, mouse.piece.x * squareSize + startPos, mouse.piece.y * squareSize + startPos, squareSize, squareSize);
-        board.pieces[mouse.piece.x][mouse.piece.y] = new ChessPiece(mouse.piece.type, mouse.piece.color, mouse.piece.img, mouse.piece.x, mouse.piece.y);
+        // Square is empty
+        board.pieces[coords.x][coords.y] = new ChessPiece(mouse.piece.type, mouse.piece.color, mouse.piece.img, coords.x, coords.y);
+        piecesCtx.drawImage(mouse.piece.img, coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
       }
     } else {
-      // Square is empty
-      board.pieces[coords.x][coords.y] = new ChessPiece(mouse.piece.type, mouse.piece.color, mouse.piece.img, coords.x, coords.y);
-      piecesCtx.drawImage(mouse.piece.img, coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
+      // Square is occupied by own piece or not legal
+      piecesCtx.drawImage(mouse.piece.img, mouse.piece.x * squareSize + startPos, mouse.piece.y * squareSize + startPos, squareSize, squareSize);
+      board.pieces[mouse.piece.x][mouse.piece.y] = new ChessPiece(mouse.piece.type, mouse.piece.color, mouse.piece.img, mouse.piece.x, mouse.piece.y);
     }
     animCtx.clearRect(0, 0, size, size);
+    guideCtx.clearRect(0, 0, size, size);
     delete mouse.piece;
     mouse.dragging = false;
     animCanvas.style.cursor = "default";
@@ -224,7 +223,6 @@ function findLegalMoves(piece) {
     let y = piece.y;
     let repeat = piece.moves[i].repeat || false;
 
-    // If repeat...
     do {
       x += piece.moves[i].x || 0;
       y += piece.moves[i].y || 0;
@@ -247,8 +245,6 @@ function findLegalMoves(piece) {
         repeat = false;
       }
     } while (repeat);
-
-    // End if repeat
   }
   guideCtx.restore();
   return legalMoves;
