@@ -4,9 +4,29 @@
     box-sizing: border-box;
 }
 
+.dark_wood {
+    background-image: url("https://images.chesscomfiles.com/chess-themes/boards/dark_wood/150.png");
+}
+
+.metal {
+    background-image: url("https://images.chesscomfiles.com/chess-themes/boards/metal/150.png");
+}
+
+.marble {
+    background-image: url("https://images.chesscomfiles.com/chess-themes/boards/marble/150.png");
+}
+
+.walnut {
+    background-image: url("https://images.chesscomfiles.com/chess-themes/boards/walnut/150.png");
+}
+
 #bgCanvas {
     border: 5px ridge rgba(100, 100, 100, 1);
     z-index: 1;
+    background-color: rgb(127, 127, 127);
+    background-size: calc(100% / 9 * 8);
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
 #layerCanvas {
@@ -17,7 +37,11 @@
     z-index: 3;
 }
 
-#bgCanvas, #layerCanvas, #piecesCanvas {
+#animCanvas {
+    z-index: 4;
+}
+
+canvas {
     position: absolute;
     left: 50%;
     top: 50%;
