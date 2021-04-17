@@ -27,30 +27,23 @@ const canvas = document.querySelector("#bgCanvas"),
       padding: "#deb887",
     },
     pieces: ["neo", "game_room", "tournament"],
-  };
-
-const theme = "silver";
+  },
+  theme = "silver";
 
 let mouse = {
-  x: 0,
-  y: 0,
-  dragging: false,
-};
+    x: 0,
+    y: 0,
+    dragging: false,
+  },
+  size = parseInt(Math.min(window.innerWidth, window.innerHeight) * 0.85);
 
-let size = parseInt(Math.min(window.innerWidth, window.innerHeight) * 0.85);
-size = size - (size % 9);
-// size = 1200;
+size -= size % 9;
+
 const squareSize = size / 9,
   startPos = squareSize / 2 - 0.5;
 
-canvas.width = size;
-canvas.height = size;
-canvas2.width = size;
-canvas2.height = size;
-canvas3.width = size;
-canvas3.height = size;
-animCanvas.width = size;
-animCanvas.height = size;
+canvas.width = canvas2.width = canvas3.width = animCanvas.width = size;
+canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
 
 const board = new ChessBoard();
 setup();
