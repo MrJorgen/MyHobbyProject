@@ -16,26 +16,21 @@ const canvas = document.querySelector("#bgCanvas"),
       white: "#e5e5e6",
       padding: "#cdcdd0",
     },
-    test: {
+    brown: {
       black: "#b58863", // (181,136,99)
       white: "#f0d9b5", // (240,217,181)
       padding: "rgb(211, 176, 141)",
     },
-    brown: {
-      black: "#b2936c",
-      white: "#f1e1cd",
-      padding: "#deb887",
-    },
     pieces: ["neo", "game_room", "tournament"],
-  },
-  theme = "silver";
+  };
 
 let mouse = {
     x: 0,
     y: 0,
     dragging: false,
   },
-  size = parseInt(Math.min(window.innerWidth, window.innerHeight) * 0.85);
+  size = parseInt(Math.min(window.innerWidth, window.innerHeight) * 0.85),
+  theme = "brown";
 
 size -= size % 9;
 
@@ -210,6 +205,11 @@ animCanvas.addEventListener("mouseup", (evt) => {
     mouse.dragging = false;
     animCanvas.style.cursor = "default";
   }
+});
+
+document.querySelector("#themeSelect").addEventListener("change", (evt) => {
+  theme = evt.target.value;
+  drawBoard();
 });
 
 function findLegalMoves(piece) {

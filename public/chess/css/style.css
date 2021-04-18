@@ -47,3 +47,7 @@ canvas {
     top: 50%;
     transform: translate(-50%, -50%);
 }
+
+#themeSelect {
+    margin: 20px;
+}
