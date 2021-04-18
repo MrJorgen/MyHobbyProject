@@ -153,14 +153,13 @@ animCanvas.addEventListener("mousedown", (evt) => {
 
   // Grabbing a piece
   if (board.pieces[coords.x][coords.y]) {
-    let tmpPiece = board.pieces[coords.x][coords.y];
     mouse.dragging = true;
-    mouse.piece = new ChessPiece(tmpPiece.type, tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
+    mouse.piece = Object.assign({}, board.pieces[coords.x][coords.y]);
 
     delete board.pieces[coords.x][coords.y];
     piecesCtx.clearRect(startPos + coords.x * squareSize, startPos + coords.y * squareSize, squareSize, squareSize);
     animCtx.drawImage(mouse.piece.img, mouse.x - startPos, mouse.y - startPos, squareSize, squareSize);
-    animCanvas.style.cursor = "none";
+    animCanvas.style.cursor = "grabbing";
 
     mouse.moves = findLegalMoves(mouse.piece);
   }
@@ -185,18 +184,25 @@ animCanvas.addEventListener("mouseup", (evt) => {
           // Square is occupied by the opponent
           piecesCtx.clearRect(coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
           guideCtx.clearRect(coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
+          mouse.pice = Object.assign(mouse.piece, coords);
+          board.pieces[coords.x][coords.y] = Object.assign({}, mouse.piece);
+          board.pieces[coords.x][coords.y].hasMoved = true;
           piecesCtx.drawImage(mouse.piece.img, coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
-          board.pieces[coords.x][coords.y] = new ChessPiece(mouse.piece.type, mouse.piece.color, mouse.piece.img, coords.x, coords.y);
         }
       } else {
         // Square is empty
-        board.pieces[coords.x][coords.y] = new ChessPiece(mouse.piece.type, mouse.piece.color, mouse.piece.img, coords.x, coords.y);
+        mouse.pice = Object.assign(mouse.piece, coords);
+        board.pieces[coords.x][coords.y] = Object.assign({}, mouse.piece);
+        board.pieces[coords.x][coords.y].hasMoved = true;
         piecesCtx.drawImage(mouse.piece.img, coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
+      }
+      if (board.pieces[coords.x][coords.y].type === "pawn" && board.pieces[coords.x][coords.y].hasMoved && board.pieces[coords.x][coords.y].moves.length > 1) {
+        board.pieces[coords.x][coords.y].moves.pop();
       }
     } else {
       // Square is occupied by own piece or not legal
       piecesCtx.drawImage(mouse.piece.img, mouse.piece.x * squareSize + startPos, mouse.piece.y * squareSize + startPos, squareSize, squareSize);
-      board.pieces[mouse.piece.x][mouse.piece.y] = new ChessPiece(mouse.piece.type, mouse.piece.color, mouse.piece.img, mouse.piece.x, mouse.piece.y);
+      board.pieces[mouse.piece.x][mouse.piece.y] = Object.assign({}, mouse.piece);
     }
     animCtx.clearRect(0, 0, size, size);
     guideCtx.clearRect(0, 0, size, size);
@@ -208,13 +214,13 @@ animCanvas.addEventListener("mouseup", (evt) => {
 
 function findLegalMoves(piece) {
   guideCtx.save();
-  let lineOffset = bgCtx.lineWidth;
+  const legalMoves = [],
+    lineOffset = bgCtx.lineWidth;
   guideCtx.lineWidth = bgCtx.lineWidth * 1.5;
-  let legalMoves = [];
   for (let i = 0; i < piece.moves.length; i++) {
-    let x = piece.x;
-    let y = piece.y;
-    let repeat = piece.moves[i].repeat || false;
+    let x = piece.x,
+      y = piece.y,
+      repeat = piece.moves[i].repeat || false;
 
     do {
       x += piece.moves[i].x || 0;
