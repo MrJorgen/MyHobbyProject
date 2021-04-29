@@ -1,9 +1,14 @@
 export class Player {
-  constructor(color) {}
+  constructor(color, ai = false) {
+    this.color = color;
+    this.pieces = [];
+    this.possibleMoves = [];
+    this.ai = ai;
+  }
 }
 
 export class ChessPiece {
-  constructor(type, color, img, posX, posY) {
+  constructor(type, color, img, posX, posY, value) {
     this.type = type;
     this.img = img;
     this.x = posX;
@@ -14,14 +19,15 @@ export class ChessPiece {
       this.moves = moves[this.type];
     } else {
       if (color === "white") {
-        this.moves = [{ y: -1 }, { y: -2 }];
-      } else {
-        this.moves = [{ y: 1 }, { y: 2 }];
+        this.moves = [{ y: -1 }];
+      } else if (color == "black") {
+        this.moves = [{ y: 1 }];
       }
     }
+    this.value = value;
   }
 
-  move(to) {
+  move(to, board) {
     this.hasMoved = true;
     this.x = to.x;
     this.y = to.y;
@@ -29,8 +35,40 @@ export class ChessPiece {
 }
 
 export class ChessBoard {
-  constructor() {
+  constructor(ctx, squareSize) {
     this.pieces = make2dArray(8, 8);
+    this.turn = "white";
+    this.ctx = ctx;
+    this.squareSize = squareSize;
+    this.recent = [];
+  }
+
+  setup(size) {
+    this.ctx.clearRect(0, 0, size, size);
+    for (let tmp of this.pieces) {
+      for (let piece of tmp) {
+        if (piece) {
+          this.drawPiece(piece, piece);
+        }
+      }
+    }
+  }
+
+  movePiece(from, to) {}
+
+  update() {}
+
+  drawPiece(piece, coords) {
+    let { x, y } = coords;
+    let startPos = this.squareSize / 2;
+    this.ctx.clearRect(startPos + x * this.squareSize, startPos + y * this.squareSize, this.squareSize, this.squareSize);
+    this.ctx.drawImage(piece.img, x * this.squareSize + startPos, y * this.squareSize + startPos, this.squareSize, this.squareSize);
+  }
+
+  clearSquare(coords) {
+    let { x, y } = coords,
+      startPos = this.squareSize / 2;
+    this.ctx.clearRect(x * this.squareSize + startPos, y * this.squareSize + startPos, this.squareSize, this.squareSize);
   }
 }
 
@@ -79,41 +117,41 @@ const moves = {
 };
 
 export const black = [
-  { x: 0, y: 0, imgName: "br", type: "rook" },
-  { x: 1, y: 0, imgName: "bn", type: "knight" },
-  { x: 2, y: 0, imgName: "bb", type: "bishop" },
-  { x: 3, y: 0, imgName: "bq", type: "queen" },
-  { x: 4, y: 0, imgName: "bk", type: "king" },
-  { x: 5, y: 0, imgName: "bb", type: "bishop" },
-  { x: 6, y: 0, imgName: "bn", type: "knight" },
-  { x: 7, y: 0, imgName: "br", type: "rook" },
-  { x: 0, y: 1, imgName: "bp", type: "pawn" },
-  { x: 1, y: 1, imgName: "bp", type: "pawn" },
-  { x: 2, y: 1, imgName: "bp", type: "pawn" },
-  { x: 3, y: 1, imgName: "bp", type: "pawn" },
-  { x: 4, y: 1, imgName: "bp", type: "pawn" },
-  { x: 5, y: 1, imgName: "bp", type: "pawn" },
-  { x: 6, y: 1, imgName: "bp", type: "pawn" },
-  { x: 7, y: 1, imgName: "bp", type: "pawn" },
+  { x: 0, y: 0, imgName: "br", type: "rook", value: 5 },
+  { x: 1, y: 0, imgName: "bn", type: "knight", value: 3 },
+  { x: 2, y: 0, imgName: "bb", type: "bishop", value: 3 },
+  { x: 3, y: 0, imgName: "bq", type: "queen", value: 9 },
+  { x: 4, y: 0, imgName: "bk", type: "king", value: Infinity },
+  { x: 5, y: 0, imgName: "bb", type: "bishop", value: 3 },
+  { x: 6, y: 0, imgName: "bn", type: "knight", value: 3 },
+  { x: 7, y: 0, imgName: "br", type: "rook", value: 5 },
+  { x: 0, y: 1, imgName: "bp", type: "pawn", value: 1 },
+  { x: 1, y: 1, imgName: "bp", type: "pawn", value: 1 },
+  { x: 2, y: 1, imgName: "bp", type: "pawn", value: 1 },
+  { x: 3, y: 1, imgName: "bp", type: "pawn", value: 1 },
+  { x: 4, y: 1, imgName: "bp", type: "pawn", value: 1 },
+  { x: 5, y: 1, imgName: "bp", type: "pawn", value: 1 },
+  { x: 6, y: 1, imgName: "bp", type: "pawn", value: 1 },
+  { x: 7, y: 1, imgName: "bp", type: "pawn", value: 1 },
 ];
 
 export const white = [
-  { x: 0, y: 7, imgName: "wr", type: "rook" },
-  { x: 1, y: 7, imgName: "wn", type: "knight" },
-  { x: 2, y: 7, imgName: "wb", type: "bishop" },
-  { x: 3, y: 7, imgName: "wq", type: "queen" },
-  { x: 4, y: 7, imgName: "wk", type: "king" },
-  { x: 5, y: 7, imgName: "wb", type: "bishop" },
-  { x: 6, y: 7, imgName: "wn", type: "knight" },
-  { x: 7, y: 7, imgName: "wr", type: "rook" },
-  { x: 0, y: 6, imgName: "wp", type: "pawn" },
-  { x: 1, y: 6, imgName: "wp", type: "pawn" },
-  { x: 2, y: 6, imgName: "wp", type: "pawn" },
-  { x: 3, y: 6, imgName: "wp", type: "pawn" },
-  { x: 4, y: 6, imgName: "wp", type: "pawn" },
-  { x: 5, y: 6, imgName: "wp", type: "pawn" },
-  { x: 6, y: 6, imgName: "wp", type: "pawn" },
-  { x: 7, y: 6, imgName: "wp", type: "pawn" },
+  { x: 0, y: 7, imgName: "wr", type: "rook", value: 5 },
+  { x: 1, y: 7, imgName: "wn", type: "knight", value: 3 },
+  { x: 2, y: 7, imgName: "wb", type: "bishop", value: 3 },
+  { x: 3, y: 7, imgName: "wq", type: "queen", value: 9 },
+  { x: 4, y: 7, imgName: "wk", type: "king", value: Infinity },
+  { x: 5, y: 7, imgName: "wb", type: "bishop", value: 3 },
+  { x: 6, y: 7, imgName: "wn", type: "knight", value: 3 },
+  { x: 7, y: 7, imgName: "wr", type: "rook", value: 5 },
+  { x: 0, y: 6, imgName: "wp", type: "pawn", value: 1 },
+  { x: 1, y: 6, imgName: "wp", type: "pawn", value: 1 },
+  { x: 2, y: 6, imgName: "wp", type: "pawn", value: 1 },
+  { x: 3, y: 6, imgName: "wp", type: "pawn", value: 1 },
+  { x: 4, y: 6, imgName: "wp", type: "pawn", value: 1 },
+  { x: 5, y: 6, imgName: "wp", type: "pawn", value: 1 },
+  { x: 6, y: 6, imgName: "wp", type: "pawn", value: 1 },
+  { x: 7, y: 6, imgName: "wp", type: "pawn", value: 1 },
 ];
 
 /*
@@ -129,7 +167,7 @@ Queen: 9
 
 */
 
-let test = [
+const test = [
   ["a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"],
   ["a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7"],
   ["a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"],

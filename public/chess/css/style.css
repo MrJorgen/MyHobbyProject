@@ -6,27 +6,41 @@
 
 .dark_wood {
     background-image: url("https://images.chesscomfiles.com/chess-themes/boards/dark_wood/150.png");
+    background-size: calc(100% / 9 * 8);
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
 .metal {
     background-image: url("https://images.chesscomfiles.com/chess-themes/boards/metal/150.png");
+    background-size: calc(100% / 9 * 8);
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
 .marble {
     background-image: url("https://images.chesscomfiles.com/chess-themes/boards/marble/150.png");
+    background-size: calc(100% / 9 * 8);
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
 .walnut {
     background-image: url("https://images.chesscomfiles.com/chess-themes/boards/walnut/150.png");
+    background-size: calc(100% / 9 * 8);
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.test {
+    background-image: url("../img/textures/seamless-wood-texture-4.jpg");
+    background-size: cover;
 }
 
 #bgCanvas {
     border: 5px ridge rgba(100, 100, 100, 1);
     z-index: 1;
-    background-color: rgb(127, 127, 127);
-    background-size: calc(100% / 9 * 8);
-    background-position: center center;
-    background-repeat: no-repeat;
+    /* background-color: rgb(127, 127, 127); */
 }
 
 #layerCanvas {
@@ -50,4 +64,8 @@ canvas {
 
 #themeSelect {
     margin: 20px;
+}
+
+#info {
+    margin-left: 20px;
 }

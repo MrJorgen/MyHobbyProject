@@ -1,4 +1,4 @@
-import { ChessPiece, black, white, ChessBoard } from "./classes.js";
+import { ChessPiece, black, white, ChessBoard, Player } from "./classes.js";
 import { loadImage } from "./utilities.js";
 
 const canvas = document.querySelector("#bgCanvas"),
@@ -21,6 +21,24 @@ const canvas = document.querySelector("#bgCanvas"),
       white: "#f0d9b5", // (240,217,181)
       padding: "rgb(211, 176, 141)",
     },
+    texture_warm: {
+      black: "rgba(181, 126, 99, 0.6)", // (181,136,99)
+      white: "rgba(240, 217, 181, 0.6)", // (240,217,181)
+      padding: "rgba(211, 176, 141, 0.5)",
+      style: {
+        backgroundImage: 'url("./img/textures/seamless-wood-texture-4.jpg")',
+        backgroundSize: "cover",
+      },
+    },
+    texture_dark: {
+      black: "rgba(0, 0, 0, 0.5)", // (181,136,99)
+      white: "rgba(255, 255, 255, 0.5)", // (240,217,181)
+      padding: "rgba(128, 128, 128, 0.5)",
+      style: {
+        backgroundImage: 'url("./img/textures/seamless-wood-texture-4.jpg")',
+        backgroundSize: "cover",
+      },
+    },
     pieces: ["neo", "game_room", "tournament"],
   };
 
@@ -30,7 +48,7 @@ let mouse = {
     dragging: false,
   },
   size = parseInt(Math.min(window.innerWidth, window.innerHeight) * 0.85),
-  theme = "brown";
+  theme = "texture_dark";
 
 size -= size % 9;
 
@@ -40,37 +58,44 @@ const squareSize = size / 9,
 canvas.width = canvas2.width = canvas3.width = animCanvas.width = size;
 canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
 
-const board = new ChessBoard();
+const players = {
+  white: new Player("white"),
+  black: new Player("black", true),
+};
+const board = new ChessBoard(piecesCtx, squareSize);
+board.players = players;
 setup();
 
 async function setup() {
-  for (let piece of black) {
-    let imgSrc = `https://images.chesscomfiles.com/chess-themes/pieces/${themes.pieces[2]}/150/${piece.imgName}.png`;
-    piece.img = await loadImage(imgSrc);
-    board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "black", piece.img, piece.x, piece.y);
-  }
-
   for (let piece of white) {
     let imgSrc = `https://images.chesscomfiles.com/chess-themes/pieces/${themes.pieces[2]}/150/${piece.imgName}.png`;
     piece.img = await loadImage(imgSrc);
-    board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "white", piece.img, piece.x, piece.y);
+    board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "white", piece.img, piece.x, piece.y, piece.value);
+    players.white.pieces.push(board.pieces[piece.x][piece.y]);
   }
-  drawBoard();
-  drawPieces();
+
+  for (let piece of black) {
+    let imgSrc = `https://images.chesscomfiles.com/chess-themes/pieces/${themes.pieces[2]}/150/${piece.imgName}.png`;
+    piece.img = await loadImage(imgSrc);
+    board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "black", piece.img, piece.x, piece.y, piece.value);
+    players.black.pieces.push(board.pieces[piece.x][piece.y]);
+  }
+
+  drawBoard(false);
+  board.setup(size);
 }
 
-function drawPieces() {
-  piecesCtx.clearRect(0, 0, size, size);
-  for (let tmp of board.pieces) {
-    for (let piece of tmp) {
-      if (piece) {
-        piecesCtx.drawImage(piece.img, piece.x * squareSize + startPos, piece.y * squareSize + startPos, squareSize, squareSize);
-      }
+function drawBoard(drawLines = true) {
+  bgCtx.clearRect(0, 0, size, size);
+  if (themes[theme].hasOwnProperty("style")) {
+    console.log(themes[theme].style);
+    for (let prop in themes[theme].style) {
+      console.log(canvas.style[prop]);
+      canvas.style[prop] = themes[theme].style[prop];
     }
+  } else {
+    // canvas.style.
   }
-}
-
-function drawBoard() {
   bgCtx.fillStyle = themes[theme].padding;
   bgCtx.fillRect(0, 0, size, size);
   bgCtx.fillStyle = themes[theme].black;
@@ -82,17 +107,20 @@ function drawBoard() {
       bgCtx.fillRect((1 + i) * squareSize + startPos, (1 + j) * squareSize + startPos, squareSize, squareSize);
     }
   }
+  // Draw lines
   bgCtx.strokeStyle = themes.line;
   bgCtx.lineWidth = 2.5;
   for (let i = 0; i <= 8; i++) {
-    bgCtx.beginPath();
-    bgCtx.moveTo(i * squareSize + startPos, 0 + startPos);
-    bgCtx.lineTo(i * squareSize + startPos, size - startPos);
-    bgCtx.stroke();
-    bgCtx.beginPath();
-    bgCtx.moveTo(0 + startPos, i * squareSize + startPos);
-    bgCtx.lineTo(size - startPos, i * squareSize + startPos);
-    bgCtx.stroke();
+    if (drawLines) {
+      bgCtx.beginPath();
+      bgCtx.moveTo(i * squareSize + startPos, 0 + startPos);
+      bgCtx.lineTo(i * squareSize + startPos, size - startPos);
+      bgCtx.stroke();
+      bgCtx.beginPath();
+      bgCtx.moveTo(0 + startPos, i * squareSize + startPos);
+      bgCtx.lineTo(size - startPos, i * squareSize + startPos);
+      bgCtx.stroke();
+    }
 
     bgCtx.fillStyle = "black";
     bgCtx.textAlign = "center";
@@ -120,10 +148,12 @@ animCanvas.addEventListener("mousemove", (evt) => {
       for (let y = startPos; y < size - squareSize; y += squareSize) {
         if (mouse.x > x && mouse.x < x + squareSize && (mouse.y > y) & (mouse.y < y + squareSize)) {
           guideCtx.fillRect(x, y, squareSize, squareSize);
-          if (board.pieces[coords.x][coords.y]) {
-            animCanvas.style.cursor = "grab";
-          } else {
-            animCanvas.style.cursor = "default";
+          if (animCanvas.style.cursor !== "wait") {
+            if (board.pieces[coords.x][coords.y] && board.pieces[coords.x][coords.y].color === board.turn) {
+              animCanvas.style.cursor = "grab";
+            } else {
+              animCanvas.style.cursor = "default";
+            }
           }
           break outerLoop;
         }
@@ -147,7 +177,7 @@ animCanvas.addEventListener("mousedown", (evt) => {
   };
 
   // Grabbing a piece
-  if (board.pieces[coords.x][coords.y]) {
+  if (board.pieces[coords.x][coords.y] && board.turn === board.pieces[coords.x][coords.y].color) {
     mouse.dragging = true;
     mouse.piece = Object.assign({}, board.pieces[coords.x][coords.y]);
 
@@ -177,25 +207,39 @@ animCanvas.addEventListener("mouseup", (evt) => {
         // Square has a piece on it
         if (board.pieces[coords.x][coords.y].color !== mouse.piece.color) {
           // Square is occupied by the opponent
-          piecesCtx.clearRect(coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
-          guideCtx.clearRect(coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
+          board.clearSquare(coords);
           mouse.pice = Object.assign(mouse.piece, coords);
           board.pieces[coords.x][coords.y] = Object.assign({}, mouse.piece);
           board.pieces[coords.x][coords.y].hasMoved = true;
-          piecesCtx.drawImage(mouse.piece.img, coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
+          board.drawPiece(mouse.piece, coords);
+          updatePlayerPieces();
         }
       } else {
         // Square is empty
         mouse.pice = Object.assign(mouse.piece, coords);
         board.pieces[coords.x][coords.y] = Object.assign({}, mouse.piece);
         board.pieces[coords.x][coords.y].hasMoved = true;
-        piecesCtx.drawImage(mouse.piece.img, coords.x * squareSize + startPos, coords.y * squareSize + startPos, squareSize, squareSize);
+        board.drawPiece(mouse.piece, coords);
       }
       if (board.pieces[coords.x][coords.y].type === "pawn" && board.pieces[coords.x][coords.y].hasMoved && board.pieces[coords.x][coords.y].moves.length > 1) {
         board.pieces[coords.x][coords.y].moves.pop();
       }
+      // Player has moved, switch turns
+      board.turn = board.turn === "black" ? "white" : "black";
+      console.log(players);
+
+      // Check if there's AIs turn
+      if (players[board.turn].ai) {
+        // Ok, so implement some kind of AI to move pieces
+        // animCanvas.style.cursor = "wait";
+        getAllPossbileMoves(board.turn);
+        console.log("It is AIs turn to move");
+      } else {
+        animCanvas.style.cursor = "default";
+      }
     } else {
       // Square is occupied by own piece or not legal
+      guideCtx.clearRect(0, 0, size, size);
       piecesCtx.drawImage(mouse.piece.img, mouse.piece.x * squareSize + startPos, mouse.piece.y * squareSize + startPos, squareSize, squareSize);
       board.pieces[mouse.piece.x][mouse.piece.y] = Object.assign({}, mouse.piece);
     }
@@ -203,9 +247,69 @@ animCanvas.addEventListener("mouseup", (evt) => {
     guideCtx.clearRect(0, 0, size, size);
     delete mouse.piece;
     mouse.dragging = false;
-    animCanvas.style.cursor = "default";
+    if (animCanvas.style.cursor !== "wait") {
+      animCanvas.style.cursor = "default";
+    }
   }
 });
+
+// This is for AI to know which moves it has choose from
+function getAllPossbileMoves(color) {
+  let player = players[color];
+  player.possibleMoves = [];
+  for (let i = 0; i < player.pieces.length; i++) {
+    let tmpArray = [];
+    let piece = player.pieces[i];
+    tmpArray = findLegalMoves(piece);
+    if (tmpArray.length > 0) {
+      player.possibleMoves.push({ piece, movesTo: tmpArray });
+    }
+  }
+
+  // Get a random piece to move to
+  if (player.possibleMoves.length > 0) {
+    let pieceIndex = Math.floor(Math.random() * player.possibleMoves.length);
+    let moveIndex = Math.floor(Math.random() * player.possibleMoves[pieceIndex].movesTo.length);
+
+    let oldX = player.possibleMoves[pieceIndex].piece.x;
+    let oldY = player.possibleMoves[pieceIndex].piece.y;
+    let newX = player.possibleMoves[pieceIndex].movesTo[moveIndex].x;
+    let newY = player.possibleMoves[pieceIndex].movesTo[moveIndex].y;
+
+    if (board.pieces[newX][newY]) {
+      delete board.pieces[newX][newY];
+      piecesCtx.clearRect(newX * squareSize + startPos, newY * squareSize + startPos, squareSize, squareSize);
+    }
+    board.pieces[newX][newY] = Object.assign({}, board.pieces[oldX][oldY]);
+    let currentPiece = board.pieces[newX][newY];
+    currentPiece.x = newX;
+    currentPiece.y = newY;
+
+    guideCtx.fillStyle = "rgb(255,255,153)";
+    guideCtx.fillRect(newX * squareSize + startPos, newY * squareSize + startPos, squareSize, squareSize);
+    guideCtx.fillRect(oldX * squareSize + startPos, oldY * squareSize + startPos, squareSize, squareSize);
+
+    board.clearSquare({ x: oldX, y: oldY });
+    board.drawPiece(currentPiece, { x: newX, y: newY });
+    delete board.pieces[oldX][oldY];
+    updatePlayerPieces();
+    board.turn = board.turn === "black" ? "white" : "black";
+  } else {
+    // This is where checkmate and stalemate happens
+  }
+}
+
+function updatePlayerPieces() {
+  players.white.pieces = [];
+  players.black.pieces = [];
+  for (let x = 0; x < 8; x++) {
+    for (let y = 0; y < 8; y++) {
+      if (board.pieces[x][y]) {
+        players[board.pieces[x][y].color].pieces.push(board.pieces[x][y]);
+      }
+    }
+  }
+}
 
 document.querySelector("#themeSelect").addEventListener("change", (evt) => {
   theme = evt.target.value;
@@ -214,9 +318,11 @@ document.querySelector("#themeSelect").addEventListener("change", (evt) => {
 
 function findLegalMoves(piece) {
   guideCtx.save();
-  const legalMoves = [],
-    lineOffset = bgCtx.lineWidth;
+  const legalMoves = [];
   guideCtx.lineWidth = bgCtx.lineWidth * 1.5;
+  guideCtx.strokeStyle = "rgba(0, 0, 0, 0.3)";
+  guideCtx.lineWidth = squareSize * 0.1;
+
   for (let i = 0; i < piece.moves.length; i++) {
     let x = piece.x,
       y = piece.y,
@@ -226,16 +332,40 @@ function findLegalMoves(piece) {
       x += piece.moves[i].x || 0;
       y += piece.moves[i].y || 0;
       if (x >= 0 && x <= 7 && y >= 0 && y <= 7) {
+        // Pawn captures
+        if (piece.type === "pawn" && !repeat) {
+          if (x >= 1 && board.pieces[x - 1][y] && board.pieces[x - 1][y].color !== piece.color) {
+            legalMoves.push({ x: x - 1, y });
+            guideCtx.beginPath();
+            guideCtx.arc((x - 1) * squareSize + squareSize, y * squareSize + squareSize, squareSize * 0.4, 0, Math.PI * 2);
+            guideCtx.stroke();
+          }
+          if (x <= 6 && board.pieces[x + 1][y] && board.pieces[x + 1][y].color !== piece.color) {
+            legalMoves.push({ x: x + 1, y });
+            guideCtx.beginPath();
+            guideCtx.arc((x + 1) * squareSize + squareSize, y * squareSize + squareSize, squareSize * 0.4, 0, Math.PI * 2);
+            guideCtx.stroke();
+          }
+          if ((piece.color === "white" && piece.y === 6) || (piece.color === "black" && piece.y === 1)) {
+            repeat = true;
+          }
+        } else if (piece.type === "pawn" && repeat) {
+          repeat = false;
+        }
+
         if (board.pieces[x][y]) {
           repeat = false;
-          if (board.pieces[x][y].color !== piece.color) {
+          // Take opponents piece
+          if (board.pieces[x][y].color !== piece.color && piece.type !== "pawn") {
             legalMoves.push({ x, y });
-            guideCtx.strokeStyle = "#ff5555";
-            guideCtx.strokeRect(startPos + x * squareSize + lineOffset, startPos + y * squareSize + lineOffset, squareSize - lineOffset * 2, squareSize - lineOffset * 2);
+            guideCtx.beginPath();
+            guideCtx.arc(x * squareSize + squareSize, y * squareSize + squareSize, squareSize * 0.4, 0, Math.PI * 2);
+            guideCtx.stroke();
           }
         } else {
+          // Move to empty square
           legalMoves.push({ x, y });
-          guideCtx.fillStyle = "rgba(0, 0, 0, 0.25)";
+          guideCtx.fillStyle = "rgba(0, 0, 0, 0.3)";
           guideCtx.beginPath();
           guideCtx.arc(x * squareSize + squareSize, y * squareSize + squareSize, squareSize * 0.2, 0, Math.PI * 2);
           guideCtx.fill();
@@ -247,4 +377,8 @@ function findLegalMoves(piece) {
   }
   guideCtx.restore();
   return legalMoves;
+}
+
+function checkForCheck() {
+  let test = true;
 }
