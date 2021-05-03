@@ -4,43 +4,24 @@ export class Player {
     this.pieces = [];
     this.possibleMoves = [];
     this.ai = ai;
-  }
-}
-
-export class ChessPiece {
-  constructor(type, color, img, posX, posY, value) {
-    this.type = type;
-    this.img = img;
-    this.x = posX;
-    this.y = posY;
-    this.color = color;
-    this.hasMoved = false;
-    if (type !== "pawn") {
-      this.moves = moves[this.type];
-    } else {
-      if (color === "white") {
-        this.moves = [{ y: -1 }];
-      } else if (color == "black") {
-        this.moves = [{ y: 1 }];
-      }
-    }
-    this.value = value;
-  }
-
-  move(to, board) {
-    this.hasMoved = true;
-    this.x = to.x;
-    this.y = to.y;
+    this.checked = false;
   }
 }
 
 export class ChessBoard {
-  constructor(ctx, squareSize) {
+  constructor(ctx, squareSize, guideCtx, ai) {
     this.pieces = make2dArray(8, 8);
     this.turn = "white";
     this.ctx = ctx;
     this.squareSize = squareSize;
     this.recent = [];
+    this.guides = {
+      ctx: guideCtx,
+    };
+    this.players = {
+      white: new Player("white"),
+      black: new Player("black", true),
+    };
   }
 
   setup(size) {
@@ -57,6 +38,17 @@ export class ChessBoard {
   movePiece(from, to) {}
 
   update() {}
+
+  redraw() {
+    let startPos = this.squareSize / 2;
+    this.ctx.clearRect(startPos, startPos, this.squareSize * 8, this.squareSize * 8);
+    for (let x = 0; x < this.pieces.length; x++) {
+      for (let y = 0; y < this.pieces[x].length; y++) {
+        let piece = this.pieces[x][y];
+        this.ctx.drawImage(piece.img, piece.x * this.squareSize + startPos, piece.y * this.squareSize + startPos, this.squareSize, this.squareSize);
+      }
+    }
+  }
 
   drawPiece(piece, coords) {
     let { x, y } = coords;
@@ -79,43 +71,6 @@ function make2dArray(cols, rows) {
   }
   return arr;
 }
-
-const moves = {
-  rook: [
-    { x: 1, repeat: true },
-    { x: -1, repeat: true },
-    { y: 1, repeat: true },
-    { y: -1, repeat: true },
-  ],
-  knight: [
-    { x: 2, y: 1 },
-    { x: 2, y: -1 },
-    { x: -2, y: 1 },
-    { x: -2, y: -1 },
-    { x: 1, y: 2 },
-    { x: 1, y: -2 },
-    { x: -1, y: 2 },
-    { x: -1, y: -2 },
-  ],
-  bishop: [
-    { x: 1, y: 1, repeat: true },
-    { x: 1, y: -1, repeat: true },
-    { x: -1, y: 1, repeat: true },
-    { x: -1, y: -1, repeat: true },
-  ],
-  queen: [
-    { x: 1, repeat: true },
-    { x: -1, repeat: true },
-    { y: 1, repeat: true },
-    { y: -1, repeat: true },
-    { x: 1, y: 1, repeat: true },
-    { x: 1, y: -1, repeat: true },
-    { x: -1, y: 1, repeat: true },
-    { x: -1, y: -1, repeat: true },
-  ],
-  king: [{ x: 1 }, { x: -1 }, { y: 1 }, { y: -1 }, { x: 1, y: 1 }, { x: 1, y: -1 }, { x: -1, y: 1 }, { x: -1, y: -1 }],
-};
-
 export const black = [
   { x: 0, y: 0, imgName: "br", type: "rook", value: 5 },
   { x: 1, y: 0, imgName: "bn", type: "knight", value: 3 },

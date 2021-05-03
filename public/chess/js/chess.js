@@ -1,7 +1,10 @@
-import { ChessPiece, black, white, ChessBoard, Player } from "./classes.js";
+import { black, white, ChessBoard, Player } from "./classes.js";
+import { GuideLayer } from "./GuideLayer.js";
+import { ChessPiece } from "./Piece.js";
 import { loadImage } from "./utilities.js";
 
-const canvas = document.querySelector("#bgCanvas"),
+const messageEle = document.querySelector("#message"),
+  canvas = document.querySelector("#bgCanvas"),
   bgCtx = canvas.getContext("2d"),
   canvas2 = document.querySelector("#layerCanvas"),
   guideCtx = canvas2.getContext("2d"),
@@ -57,16 +60,12 @@ const squareSize = size / 9,
 
 canvas.width = canvas2.width = canvas3.width = animCanvas.width = size;
 canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
+const board = new ChessBoard(piecesCtx, squareSize, guideCtx);
+const guides = new GuideLayer(guideCtx, squareSize);
+const players = board.players;
+loadPieces();
 
-const players = {
-  white: new Player("white"),
-  black: new Player("black", true),
-};
-const board = new ChessBoard(piecesCtx, squareSize);
-board.players = players;
-setup();
-
-async function setup() {
+async function loadPieces() {
   for (let piece of white) {
     let imgSrc = `https://images.chesscomfiles.com/chess-themes/pieces/${themes.pieces[2]}/150/${piece.imgName}.png`;
     piece.img = await loadImage(imgSrc);
@@ -79,22 +78,23 @@ async function setup() {
     piece.img = await loadImage(imgSrc);
     board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "black", piece.img, piece.x, piece.y, piece.value);
     players.black.pieces.push(board.pieces[piece.x][piece.y]);
-  }
 
-  drawBoard(false);
-  board.setup(size);
+    drawBoard(false);
+    board.setup(size);
+    getAllPossbileMoves("white", false);
+    getAllPossbileMoves("black", false);
+    guides.clearAll();
+  }
 }
 
-function drawBoard(drawLines = true) {
+function drawBoard(drawLines = false) {
   bgCtx.clearRect(0, 0, size, size);
   if (themes[theme].hasOwnProperty("style")) {
-    console.log(themes[theme].style);
     for (let prop in themes[theme].style) {
-      console.log(canvas.style[prop]);
       canvas.style[prop] = themes[theme].style[prop];
     }
   } else {
-    // canvas.style.
+    canvas.style.background = "none";
   }
   bgCtx.fillStyle = themes[theme].padding;
   bgCtx.fillRect(0, 0, size, size);
@@ -141,32 +141,36 @@ animCanvas.addEventListener("mousemove", (evt) => {
     y: Math.floor((mouse.y - startPos) / squareSize),
   };
 
-  guideCtx.clearRect(0, 0, size, size);
-  guideCtx.fillStyle = "#0088ff55";
-  if (mouse.x > startPos && mouse.y > startPos && mouse.x < size - startPos && mouse.y < size - startPos) {
-    outerLoop: for (let x = startPos; x < size - squareSize; x += squareSize) {
-      for (let y = startPos; y < size - squareSize; y += squareSize) {
-        if (mouse.x > x && mouse.x < x + squareSize && (mouse.y > y) & (mouse.y < y + squareSize)) {
-          guideCtx.fillRect(x, y, squareSize, squareSize);
-          if (animCanvas.style.cursor !== "wait") {
-            if (board.pieces[coords.x][coords.y] && board.pieces[coords.x][coords.y].color === board.turn) {
-              animCanvas.style.cursor = "grab";
-            } else {
-              animCanvas.style.cursor = "default";
+  // If mouse is hovering the board
+  if (coords.x >= 0 && coords.x <= 7 && coords.y >= 0 && coords.y <= 7) {
+    if (!mouse.dragging) {
+      if (board.pieces[coords.x][coords.y]?.color === board.turn) {
+        animCanvas.style.cursor = "grab";
+      } else {
+        animCanvas.style.cursor = "default";
+      }
+
+      // No need to fill squares anymore
+      /*
+      guideCtx.fillStyle = "#0088ff55";
+      if (mouse.x > startPos && mouse.y > startPos && mouse.x < size - startPos && mouse.y < size - startPos) {
+        outerLoop: for (let x = startPos; x < size - squareSize; x += squareSize) {
+          for (let y = startPos; y < size - squareSize; y += squareSize) {
+            if (mouse.x > x && mouse.x < x + squareSize && mouse.y > y && mouse.y < y + squareSize) {
+              // guideCtx.clearRect(x, y, squareSize, squareSize);
+              // guideCtx.fillRect(x, y, squareSize, squareSize);
+              break outerLoop;
             }
           }
-          break outerLoop;
         }
       }
+      */
     }
-  }
 
-  if (mouse.dragging) {
-    findLegalMoves(mouse.piece);
-
-    animCanvas.style.cursor = "grabbing";
-    animCtx.clearRect(0, 0, size, size);
-    animCtx.drawImage(mouse.piece.img, mouse.x - startPos, mouse.y - startPos, squareSize, squareSize);
+    if (mouse.dragging) {
+      animCtx.clearRect(0, 0, size, size);
+      animCtx.drawImage(mouse.piece.img, mouse.x - startPos, mouse.y - startPos, squareSize, squareSize);
+    }
   }
 });
 
@@ -177,7 +181,7 @@ animCanvas.addEventListener("mousedown", (evt) => {
   };
 
   // Grabbing a piece
-  if (board.pieces[coords.x][coords.y] && board.turn === board.pieces[coords.x][coords.y].color) {
+  if (board.pieces[coords.x][coords.y]?.color === board.turn) {
     mouse.dragging = true;
     mouse.piece = Object.assign({}, board.pieces[coords.x][coords.y]);
 
@@ -186,33 +190,44 @@ animCanvas.addEventListener("mousedown", (evt) => {
     animCtx.drawImage(mouse.piece.img, mouse.x - startPos, mouse.y - startPos, squareSize, squareSize);
     animCanvas.style.cursor = "grabbing";
 
-    mouse.moves = findLegalMoves(mouse.piece);
+    for (let move of mouse.piece.legalMoves) {
+      if (move.isCapture) {
+        guides.moveToCapture(move);
+      } else {
+        guides.moveToEmpty(move);
+      }
+    }
   }
 });
 
 animCanvas.addEventListener("mouseup", (evt) => {
+  // Dropping a piece
   if (mouse.dragging) {
+    let opponent = board.turn === "black" ? "white" : "black";
     let moveIsLegal = false;
     let coords = {
       x: Math.floor((mouse.x - startPos) / squareSize),
       y: Math.floor((mouse.y - startPos) / squareSize),
     };
-    for (let i = 0; i < mouse.moves.length; i++) {
-      if (mouse.moves[i].x === coords.x && mouse.moves[i].y === coords.y) {
+
+    // Check if the square is in the array of allowed moves
+    for (let i = 0; i < mouse.piece.legalMoves.length; i++) {
+      if (mouse.piece.legalMoves[i].x === coords.x && mouse.piece.legalMoves[i].y === coords.y) {
         moveIsLegal = true;
       }
     }
+
+    // Piece is dropped on the board
     if (moveIsLegal) {
+      // Square has a piece on it
       if (board.pieces[coords.x][coords.y]) {
-        // Square has a piece on it
+        // Square is occupied by the opponent so it's a capture
         if (board.pieces[coords.x][coords.y].color !== mouse.piece.color) {
-          // Square is occupied by the opponent
           board.clearSquare(coords);
           mouse.pice = Object.assign(mouse.piece, coords);
           board.pieces[coords.x][coords.y] = Object.assign({}, mouse.piece);
           board.pieces[coords.x][coords.y].hasMoved = true;
           board.drawPiece(mouse.piece, coords);
-          updatePlayerPieces();
         }
       } else {
         // Square is empty
@@ -221,30 +236,53 @@ animCanvas.addEventListener("mouseup", (evt) => {
         board.pieces[coords.x][coords.y].hasMoved = true;
         board.drawPiece(mouse.piece, coords);
       }
-      if (board.pieces[coords.x][coords.y].type === "pawn" && board.pieces[coords.x][coords.y].hasMoved && board.pieces[coords.x][coords.y].moves.length > 1) {
-        board.pieces[coords.x][coords.y].moves.pop();
+
+      updatePlayerPieces();
+      let isPlayerChecked = isChecked(board.turn);
+      let isOpponentChecked = isChecked(opponent);
+
+      if (isOpponentChecked) {
+        let checkedKing = players[opponent].pieces.filter((piece) => {
+          return piece.type === "king";
+        })[0];
+        console.log(checkedKing);
+        messageEle.style.opacity = "1";
+        messageEle.textContent = `${opponent} is checked`;
+        setTimeout(() => {
+          messageEle.style.opacity = "0";
+        }, 1500);
       }
+
+      if (isPlayerChecked) {
+        messageEle.style.opacity = "1";
+        messageEle.textContent = `${board.turn} is checked`;
+        setTimeout(() => {
+          messageEle.style.opacity = "0";
+        }, 1500);
+      }
+
       // Player has moved, switch turns
       board.turn = board.turn === "black" ? "white" : "black";
-      console.log(players);
 
-      // Check if there's AIs turn
+      // Check if it's AIs turn
+      getAllPossbileMoves(opponent, false);
       if (players[board.turn].ai) {
         // Ok, so implement some kind of AI to move pieces
         // animCanvas.style.cursor = "wait";
-        getAllPossbileMoves(board.turn);
-        console.log("It is AIs turn to move");
+        guides.clearAll();
+
+        getAllPossbileMoves(board.turn, true);
+        // guideCtx.clearRect(0, 0, size, size);
       } else {
         animCanvas.style.cursor = "default";
       }
     } else {
-      // Square is occupied by own piece or not legal
+      // Square is not legal
       guideCtx.clearRect(0, 0, size, size);
       piecesCtx.drawImage(mouse.piece.img, mouse.piece.x * squareSize + startPos, mouse.piece.y * squareSize + startPos, squareSize, squareSize);
       board.pieces[mouse.piece.x][mouse.piece.y] = Object.assign({}, mouse.piece);
     }
     animCtx.clearRect(0, 0, size, size);
-    guideCtx.clearRect(0, 0, size, size);
     delete mouse.piece;
     mouse.dragging = false;
     if (animCanvas.style.cursor !== "wait") {
@@ -254,7 +292,7 @@ animCanvas.addEventListener("mouseup", (evt) => {
 });
 
 // This is for AI to know which moves it has choose from
-function getAllPossbileMoves(color) {
+function getAllPossbileMoves(color, aiMoves = true) {
   let player = players[color];
   player.possibleMoves = [];
   for (let i = 0; i < player.pieces.length; i++) {
@@ -265,37 +303,51 @@ function getAllPossbileMoves(color) {
       player.possibleMoves.push({ piece, movesTo: tmpArray });
     }
   }
+  if (!aiMoves) {
+    return player.possibleMoves;
+  }
 
-  // Get a random piece to move to
+  // Frome here on it's about ai making a move
+  // Make a random move
   if (player.possibleMoves.length > 0) {
+    // Get a random piece
     let pieceIndex = Math.floor(Math.random() * player.possibleMoves.length);
+
+    // Make a random move with that piece
     let moveIndex = Math.floor(Math.random() * player.possibleMoves[pieceIndex].movesTo.length);
 
-    let oldX = player.possibleMoves[pieceIndex].piece.x;
-    let oldY = player.possibleMoves[pieceIndex].piece.y;
-    let newX = player.possibleMoves[pieceIndex].movesTo[moveIndex].x;
-    let newY = player.possibleMoves[pieceIndex].movesTo[moveIndex].y;
+    let oldX = player.possibleMoves[pieceIndex].piece.x,
+      oldY = player.possibleMoves[pieceIndex].piece.y;
 
+    let newX = player.possibleMoves[pieceIndex].movesTo[moveIndex].x,
+      newY = player.possibleMoves[pieceIndex].movesTo[moveIndex].y;
+
+    // It is a capture
     if (board.pieces[newX][newY]) {
       delete board.pieces[newX][newY];
       piecesCtx.clearRect(newX * squareSize + startPos, newY * squareSize + startPos, squareSize, squareSize);
     }
+
     board.pieces[newX][newY] = Object.assign({}, board.pieces[oldX][oldY]);
     let currentPiece = board.pieces[newX][newY];
     currentPiece.x = newX;
     currentPiece.y = newY;
 
-    guideCtx.fillStyle = "rgb(255,255,153)";
+    guideCtx.fillStyle = "rgb(220, 200, 100, 0.5)";
     guideCtx.fillRect(newX * squareSize + startPos, newY * squareSize + startPos, squareSize, squareSize);
     guideCtx.fillRect(oldX * squareSize + startPos, oldY * squareSize + startPos, squareSize, squareSize);
 
     board.clearSquare({ x: oldX, y: oldY });
     board.drawPiece(currentPiece, { x: newX, y: newY });
     delete board.pieces[oldX][oldY];
+
+    let oppenentColor = color === "black" ? "white" : "black";
+    getAllPossbileMoves(oppenentColor, false);
     updatePlayerPieces();
     board.turn = board.turn === "black" ? "white" : "black";
   } else {
-    // This is where checkmate and stalemate happens
+    // No possible moves
+    // This is where checkmate and/or stalemate happens
   }
 }
 
@@ -317,11 +369,7 @@ document.querySelector("#themeSelect").addEventListener("change", (evt) => {
 });
 
 function findLegalMoves(piece) {
-  guideCtx.save();
-  const legalMoves = [];
-  guideCtx.lineWidth = bgCtx.lineWidth * 1.5;
-  guideCtx.strokeStyle = "rgba(0, 0, 0, 0.3)";
-  guideCtx.lineWidth = squareSize * 0.1;
+  piece.legalMoves = [];
 
   for (let i = 0; i < piece.moves.length; i++) {
     let x = piece.x,
@@ -335,16 +383,10 @@ function findLegalMoves(piece) {
         // Pawn captures
         if (piece.type === "pawn" && !repeat) {
           if (x >= 1 && board.pieces[x - 1][y] && board.pieces[x - 1][y].color !== piece.color) {
-            legalMoves.push({ x: x - 1, y });
-            guideCtx.beginPath();
-            guideCtx.arc((x - 1) * squareSize + squareSize, y * squareSize + squareSize, squareSize * 0.4, 0, Math.PI * 2);
-            guideCtx.stroke();
+            piece.legalMoves.push({ x: x - 1, y, isCapture: true });
           }
           if (x <= 6 && board.pieces[x + 1][y] && board.pieces[x + 1][y].color !== piece.color) {
-            legalMoves.push({ x: x + 1, y });
-            guideCtx.beginPath();
-            guideCtx.arc((x + 1) * squareSize + squareSize, y * squareSize + squareSize, squareSize * 0.4, 0, Math.PI * 2);
-            guideCtx.stroke();
+            piece.legalMoves.push({ x: x + 1, y, isCapture: true });
           }
           if ((piece.color === "white" && piece.y === 6) || (piece.color === "black" && piece.y === 1)) {
             repeat = true;
@@ -357,28 +399,41 @@ function findLegalMoves(piece) {
           repeat = false;
           // Take opponents piece
           if (board.pieces[x][y].color !== piece.color && piece.type !== "pawn") {
-            legalMoves.push({ x, y });
-            guideCtx.beginPath();
-            guideCtx.arc(x * squareSize + squareSize, y * squareSize + squareSize, squareSize * 0.4, 0, Math.PI * 2);
-            guideCtx.stroke();
+            piece.legalMoves.push({ x, y, isCapture: true });
           }
         } else {
           // Move to empty square
-          legalMoves.push({ x, y });
-          guideCtx.fillStyle = "rgba(0, 0, 0, 0.3)";
-          guideCtx.beginPath();
-          guideCtx.arc(x * squareSize + squareSize, y * squareSize + squareSize, squareSize * 0.2, 0, Math.PI * 2);
-          guideCtx.fill();
+          piece.legalMoves.push({ x, y, isCapture: false });
         }
       } else {
         repeat = false;
       }
     } while (repeat);
   }
-  guideCtx.restore();
-  return legalMoves;
+  return piece.legalMoves;
 }
 
-function checkForCheck() {
-  let test = true;
+function isChecked(color) {
+  // Find oppenent
+  let opponent = color === "white" ? "black" : "white";
+
+  // Get all oppenent moves
+  let tmpArray = getAllPossbileMoves(opponent, false);
+
+  // Find my king
+  let myKing = players[color].pieces.filter((piece) => {
+    return piece.type === "king";
+  })[0];
+
+  // Check if my king is under attack from oppenent
+  for (let i = 0; i < tmpArray.length; i++) {
+    for (let j = 0; j < tmpArray[i].movesTo.length; j++) {
+      if (tmpArray[i].movesTo[j].x === myKing.x && tmpArray[i].movesTo[j].y === myKing.y) {
+        // Ok, my king is checked
+        console.log(color + " is checked!");
+        return true;
+      }
+    }
+  }
+  return false;
 }
