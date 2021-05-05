@@ -20,10 +20,10 @@ export class ChessPiece {
     this.legalMoves = [];
   }
 
-  move(to, board) {
-    this.hasMoved = true;
+  move(to) {
     this.x = to.x;
     this.y = to.y;
+    this.hasMoved = true;
   }
 
   findLegalMoves(board) {
@@ -69,6 +69,9 @@ export class ChessPiece {
     }
     // Special moves
 
+    /*
+    NOT READY TO IMPLEMENT!!!
+    -----------------------------------------------------------
     // Castling
     if (this.type === "king") {
       if (!this.hasMoved) {
@@ -99,9 +102,12 @@ export class ChessPiece {
         }
       }
     }
+    ------------------------------------------------------------
+    */
   }
 }
 
+// How the pieces move
 const moves = {
   rook: [
     { x: 1, repeat: true },

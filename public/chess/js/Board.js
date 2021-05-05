@@ -11,15 +11,16 @@ export class ChessBoard {
       ctx: guideCtx,
     };
     this.players = {
-      white: new Player("white"),
+      white: new Player("white", true),
       black: new Player("black", true),
     };
     this.history = { moves: [], index: -1 };
     this.captures = [];
+    this.sounds = { move: new Audio("./sounds/move-self.webm"), capture: new Audio("./sounds/capture.webm"), illegal: new Audio("./sounds/illegal.webm") };
   }
 
-  setup(size) {
-    this.ctx.clearRect(0, 0, size, size);
+  setup() {
+    this.ctx.clearRect(0, 0, this.squareSize * 8, this.squareSize * 8);
     for (let tmp of this.pieces) {
       for (let piece of tmp) {
         if (piece) {
@@ -30,24 +31,24 @@ export class ChessBoard {
     }
   }
 
-  movePiece(from, to) {
+  makeMove(from, to) {
+    this.sounds.move.play();
+    let currentPlayer = this.pieces[from.x][from.y].color,
+      opponent = currentPlayer === "black" ? "black" : "white";
     this.pieces[to.x][to.y] = this.pieces[from.x][from.y];
-    this.pieces[to.x][to.y].x = to.x;
-    this.pieces[to.x][to.y].y = to.y;
+    this.pieces[to.x][to.y].move(to);
     delete this.pieces[from.x][from.y];
-    this.pieces[to.x][to.y].hasMoved = true;
 
     this.clearSquare(to);
     this.clearSquare(from);
     this.drawPiece(this.pieces[to.x][to.y], to);
-    this.history.moves.push({ from, to });
+    this.history.moves.push({ from: { x: from.x, y: from.y }, to });
     this.history.index++;
 
-    // When piece has moved update all the legal moves
-    for (let x = 0; x < this.pieces.pieces; x++) {
+    // When a piece has moved update all pieces legal moves
+    for (let x = 0; x < this.pieces.length; x++) {
       for (let y = 0; y < this.pieces[x].length; y++) {
         if (this.pieces[x][y]) {
-          // this.findLegalMoves(piece);
           this.pieces[x][y].findLegalMoves(this);
         }
       }
@@ -123,19 +124,6 @@ export const white = [
   { x: 6, y: 6, imgName: "wp", type: "pawn", value: 1 },
   { x: 7, y: 6, imgName: "wp", type: "pawn", value: 1 },
 ];
-
-/*
-
-Values:
------------
-Pawn: 1
-Bishop: 3
-Knight: 3
-Rook: 5
-Queen: 9
-
-
-*/
 
 const test = [
   ["a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"],

@@ -64,26 +64,214 @@ canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
 const board = new ChessBoard(piecesCtx, squareSize, guideCtx);
 const guides = new GuideLayer(guideCtx, squareSize);
 const players = board.players;
-loadPieces();
+await loadPieces();
 drawBoard(false);
+board.setup();
+
+// let start = performance.now();
+// let stop = performance.now();
+// console.log("It took " + (stop - start) + " ms.");
 
 async function loadPieces() {
   for (let piece of white) {
-    let imgSrc = `https://images.chesscomfiles.com/chess-themes/pieces/${themes.pieces[2]}/150/${piece.imgName}.png`;
+    let imgSrc = `./img/pieces/${themes.pieces[2]}/${piece.imgName}.png`;
     piece.img = await loadImage(imgSrc);
     board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "white", piece.img, piece.x, piece.y, piece.value);
     players.white.pieces.push(board.pieces[piece.x][piece.y]);
   }
 
   for (let piece of black) {
-    let imgSrc = `https://images.chesscomfiles.com/chess-themes/pieces/${themes.pieces[2]}/150/${piece.imgName}.png`;
+    let imgSrc = `./img/pieces/${themes.pieces[2]}/${piece.imgName}.png`;
     piece.img = await loadImage(imgSrc);
     board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "black", piece.img, piece.x, piece.y, piece.value);
     players.black.pieces.push(board.pieces[piece.x][piece.y]);
   }
-  board.setup(size);
-  guides.clearAll();
 }
+
+animCanvas.addEventListener("mousedown", grabPiece);
+animCanvas.addEventListener("mousemove", handleMouseMove);
+animCanvas.addEventListener("mouseup", dropPiece);
+
+function grabPiece(evt) {
+  let coords = {
+    x: Math.floor((mouse.x - startPos) / squareSize),
+    y: Math.floor((mouse.y - startPos) / squareSize),
+  };
+
+  // Grabbing a piece
+  if (board.pieces[coords.x][coords.y]?.color === board.turn) {
+    mouse.dragging = true;
+    mouse.piece = {
+      x: coords.x,
+      y: coords.y,
+      img: board.pieces[coords.x][coords.y].img,
+    };
+
+    board.clearSquare(coords);
+    animCtx.drawImage(mouse.piece.img, mouse.x - startPos, mouse.y - startPos, squareSize, squareSize);
+
+    // Draw guides showing the possible moves
+    for (let move of board.pieces[coords.x][coords.y].legalMoves) {
+      if (move.isCapture) {
+        guides.moveToCapture(move);
+      } else {
+        guides.moveToEmpty(move);
+      }
+    }
+  }
+}
+
+function dropPiece(evt) {
+  // Dropping a piece on the board
+  if (mouse.dragging) {
+    let opponent = board.turn === "black" ? "white" : "black";
+    let moveIsLegal = false;
+    let coords = {
+      x: Math.floor((mouse.x - startPos) / squareSize),
+      y: Math.floor((mouse.y - startPos) / squareSize),
+    };
+
+    // Check if the square is in the array of legal moves
+    for (let i = 0; i < board.pieces[mouse.piece.x][mouse.piece.y].legalMoves.length; i++) {
+      if (board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].x === coords.x && board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].y === coords.y) {
+        moveIsLegal = true;
+        break;
+      }
+    }
+
+    if (moveIsLegal) {
+      // It's a legal move
+      board.makeMove(mouse.piece, coords);
+
+      // Player has moved, clear and mark the move then switch turns
+      guides.clearAll();
+      guides.markMove(mouse.piece, coords);
+      board.turn = opponent;
+
+      // Check if it's AIs turn
+      if (players[board.turn].ai) {
+        // Ok, so implement some kind of AI to move pieces
+        animCanvas.style.cursor = "wait";
+        let delay = 500 + Math.floor(Math.random() * 500);
+        setTimeout(() => {
+          makeAiMove(players[board.turn]);
+        }, delay);
+      } else {
+        animCanvas.style.cursor = "default";
+      }
+    } else {
+      // Move is not legal, so set piece back where it was
+      guides.clearAll();
+      board.drawPiece(mouse.piece, mouse.piece);
+      delete mouse.piece;
+    }
+    animCtx.clearRect(0, 0, size, size);
+    delete mouse.piece;
+    mouse.dragging = false;
+    // if (animCanvas.style.cursor == "wait") {
+    //   animCanvas.style.cursor = "default";
+    // }
+  }
+}
+
+function handleMouseMove(evt) {
+  const rect = canvas.getBoundingClientRect();
+  mouse.x = evt.clientX - rect.left - 5;
+  mouse.y = evt.clientY - rect.top - 5;
+
+  let coords = {
+    x: Math.floor((mouse.x - startPos) / squareSize),
+    y: Math.floor((mouse.y - startPos) / squareSize),
+  };
+
+  // If mouse is hovering the board
+  console.log(animCanvas.style.cursor);
+  if (coords.x >= 0 && coords.x <= 7 && coords.y >= 0 && coords.y <= 7) {
+    if (!mouse.dragging) {
+      if (board.pieces[coords.x][coords.y]?.color === board.turn) {
+        animCanvas.style.cursor = "grab";
+      } else {
+        animCanvas.style.cursor = "default";
+      }
+    }
+
+    if (mouse.dragging) {
+      animCtx.clearRect(0, 0, size, size);
+      animCtx.drawImage(mouse.piece.img, mouse.x - startPos, mouse.y - startPos, squareSize, squareSize);
+    }
+  }
+}
+
+// This is for AI to know which moves it has choose from
+function getAllPossbileMoves() {
+  for (let color in players) {
+    let player = players[color];
+    player.possibleMoves = [];
+    for (let piece of player.pieces) {
+      if (piece.legalMoves.length > 0) {
+        player.possibleMoves.push({ piece, moves: piece.legalMoves });
+      }
+    }
+  }
+}
+
+function makeAiMove(player) {
+  updatePlayerPieces();
+  getAllPossbileMoves();
+  if (player.possibleMoves.length > 0) {
+    // Get a random piece
+    let pieceIndex = Math.floor(Math.random() * player.possibleMoves.length);
+
+    // Find a random move with that piece
+    let moveIndex = Math.floor(Math.random() * player.possibleMoves[pieceIndex].moves.length);
+
+    let oldX = player.possibleMoves[pieceIndex].piece.x,
+      oldY = player.possibleMoves[pieceIndex].piece.y,
+      newX = player.possibleMoves[pieceIndex].moves[moveIndex].x,
+      newY = player.possibleMoves[pieceIndex].moves[moveIndex].y;
+
+    board.makeMove({ x: oldX, y: oldY }, { x: newX, y: newY });
+    board.sounds.move.play();
+    guides.clearAll();
+    guides.markMove({ x: oldX, y: oldY }, { x: newX, y: newY });
+    updatePlayerPieces();
+
+    let oppenentColor = player.color === "black" ? "white" : "black";
+    getAllPossbileMoves();
+
+    // AI has moved, switch turns
+    board.turn = oppenentColor;
+    animCanvas.style.cursor = "default";
+  } else {
+    // No possible moves
+    // This is where checkmate and/or stalemate happens
+  }
+}
+
+function updatePlayerPieces() {
+  players.white.pieces = [];
+  players.black.pieces = [];
+  let score = {
+    white: 0,
+    black: 0,
+  };
+  for (let x = 0; x < 8; x++) {
+    for (let y = 0; y < 8; y++) {
+      if (board.pieces[x][y]) {
+        players[board.pieces[x][y].color].pieces.push(board.pieces[x][y]);
+        if (board.pieces[x][y].type !== "king") {
+          score[board.pieces[x][y].color] += board.pieces[x][y].value;
+        }
+      }
+    }
+  }
+  infoDiv.innerHTML = `<h3>Score</h3><br>White: ${score.white}<br>Black: ${score.black}`;
+}
+
+document.querySelector("#themeSelect").addEventListener("change", (evt) => {
+  theme = evt.target.value;
+  drawBoard();
+});
 
 function drawBoard(drawLines = false) {
   bgCtx.clearRect(0, 0, size, size);
@@ -128,183 +316,3 @@ function drawBoard(drawLines = false) {
     bgCtx.fillText("12345678".charAt(i), startPos / 2, size - squareSize * (i + 1));
   }
 }
-
-animCanvas.addEventListener("mousemove", (evt) => {
-  const rect = canvas.getBoundingClientRect();
-  mouse.x = evt.clientX - rect.left - 5;
-  mouse.y = evt.clientY - rect.top - 5;
-
-  let coords = {
-    x: Math.floor((mouse.x - startPos) / squareSize),
-    y: Math.floor((mouse.y - startPos) / squareSize),
-  };
-
-  // If mouse is hovering the board
-  if (coords.x >= 0 && coords.x <= 7 && coords.y >= 0 && coords.y <= 7) {
-    if (!mouse.dragging) {
-      if (board.pieces[coords.x][coords.y]?.color === board.turn) {
-        animCanvas.style.cursor = "grab";
-      } else {
-        animCanvas.style.cursor = "default";
-      }
-    }
-
-    if (mouse.dragging) {
-      animCtx.clearRect(0, 0, size, size);
-      animCtx.drawImage(mouse.piece.img, mouse.x - startPos, mouse.y - startPos, squareSize, squareSize);
-    }
-  }
-});
-
-animCanvas.addEventListener("mousedown", (evt) => {
-  let coords = {
-    x: Math.floor((mouse.x - startPos) / squareSize),
-    y: Math.floor((mouse.y - startPos) / squareSize),
-  };
-
-  // Grabbing a piece
-  if (board.pieces[coords.x][coords.y]?.color === board.turn) {
-    mouse.dragging = true;
-    mouse.piece = {
-      x: coords.x,
-      y: coords.y,
-      img: board.pieces[coords.x][coords.y].img,
-    };
-
-    piecesCtx.clearRect(startPos + coords.x * squareSize, startPos + coords.y * squareSize, squareSize, squareSize);
-    animCtx.drawImage(mouse.piece.img, mouse.x - startPos, mouse.y - startPos, squareSize, squareSize);
-
-    // Draw guides showing the possible moves
-    for (let move of board.pieces[coords.x][coords.y].legalMoves) {
-      if (move.isCapture) {
-        guides.moveToCapture(move);
-      } else {
-        guides.moveToEmpty(move);
-      }
-    }
-  }
-});
-
-animCanvas.addEventListener("mouseup", (evt) => {
-  // Dropping a piece
-  if (mouse.dragging) {
-    let opponent = board.turn === "black" ? "white" : "black";
-    let moveIsLegal = false;
-    let coords = {
-      x: Math.floor((mouse.x - startPos) / squareSize),
-      y: Math.floor((mouse.y - startPos) / squareSize),
-    };
-
-    // Check if the square is in the array of legal moves
-    for (let i = 0; i < board.pieces[mouse.piece.x][mouse.piece.y].legalMoves.length; i++) {
-      if (board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].x === coords.x && board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].y === coords.y) {
-        moveIsLegal = true;
-        break;
-      }
-    }
-
-    if (moveIsLegal) {
-      // It's a legal move
-      board.movePiece(mouse.piece, coords);
-
-      // Player has moved, switch turns
-      getAllPossbileMoves();
-      updatePlayerPieces();
-      board.turn = board.turn === "black" ? "white" : "black";
-
-      guides.clearAll();
-      guides.markMove(mouse.piece, coords);
-      // Check if it's AIs turn
-      if (players[board.turn].ai) {
-        // Ok, so implement some kind of AI to move pieces
-        animCanvas.style.cursor = "wait";
-
-        makeAiMove(players[board.turn]);
-      } else {
-        animCanvas.style.cursor = "default";
-      }
-    } else {
-      // Move is not legal, so set piece back where it was
-      guides.clearAll();
-      piecesCtx.drawImage(mouse.piece.img, mouse.piece.x * squareSize + startPos, mouse.piece.y * squareSize + startPos, squareSize, squareSize);
-      board.drawPiece(mouse.piece, mouse.piece);
-      delete mouse.piece;
-    }
-    animCtx.clearRect(0, 0, size, size);
-    delete mouse.piece;
-    mouse.dragging = false;
-    if (animCanvas.style.cursor == "wait") {
-      animCanvas.style.cursor = "default";
-    }
-  }
-});
-
-// This is for AI to know which moves it has choose from
-function getAllPossbileMoves() {
-  for (let color in players) {
-    let player = players[color];
-    player.possibleMoves = [];
-    for (let i = 0; i < player.pieces.length; i++) {
-      let piece = player.pieces[i];
-      // board.findLegalMoves(piece);
-      piece.findLegalMoves(board);
-      if (piece.legalMoves.length > 0) {
-        player.possibleMoves.push({ piece, moveTo: piece.legalMoves });
-      }
-    }
-  }
-}
-
-function makeAiMove(player) {
-  if (player.possibleMoves.length > 0) {
-    // Get a random piece
-    let pieceIndex = Math.floor(Math.random() * player.possibleMoves.length);
-
-    // Find a random move with that piece
-    let moveIndex = Math.floor(Math.random() * player.possibleMoves[pieceIndex].moveTo.length);
-
-    let oldX = player.possibleMoves[pieceIndex].piece.x,
-      oldY = player.possibleMoves[pieceIndex].piece.y,
-      newX = player.possibleMoves[pieceIndex].moveTo[moveIndex].x,
-      newY = player.possibleMoves[pieceIndex].moveTo[moveIndex].y;
-
-    board.movePiece({ x: oldX, y: oldY }, { x: newX, y: newY });
-    guides.clearAll();
-    guides.markMove({ x: oldX, y: oldY }, { x: newX, y: newY });
-    updatePlayerPieces();
-
-    let oppenentColor = player.color === "black" ? "white" : "black";
-    // getAllPossbileMoves();
-
-    // AI has moved, switch turns
-    board.turn = oppenentColor;
-  } else {
-    // No possible moves
-    // This is where checkmate and/or stalemate happens
-  }
-}
-
-function updatePlayerPieces() {
-  players.white.pieces = [];
-  players.black.pieces = [];
-  let score = {
-    white: 0,
-    black: 0,
-  };
-  for (let x = 0; x < 8; x++) {
-    for (let y = 0; y < 8; y++) {
-      if (board.pieces[x][y]) {
-        players[board.pieces[x][y].color].pieces.push(board.pieces[x][y]);
-        if (board.pieces[x][y].type !== "king") {
-          score[board.pieces[x][y].color] += board.pieces[x][y].value;
-        }
-      }
-    }
-  }
-  infoDiv.innerHTML = `<h3>Score</h3><br>White: ${score.white}<br>Black: ${score.black}`;
-}
-
-document.querySelector("#themeSelect").addEventListener("change", (evt) => {
-  theme = evt.target.value;
-  drawBoard();
-});

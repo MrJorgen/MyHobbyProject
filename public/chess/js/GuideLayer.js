@@ -10,7 +10,7 @@ export class GuideLayer {
   }
 
   markMove(from, to) {
-    this.ctx.fillStyle = "rgb(220, 200, 100, 0.5)";
+    this.ctx.fillStyle = "rgb(255, 255, 0, 0.5)";
     this.ctx.fillRect(from.x * this.squareSize + this.padding, from.y * this.squareSize + this.padding, this.squareSize, this.squareSize);
     this.ctx.fillRect(to.x * this.squareSize + this.padding, to.y * this.squareSize + this.padding, this.squareSize, this.squareSize);
   }
