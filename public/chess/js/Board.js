@@ -1,12 +1,4 @@
-export class Player {
-  constructor(color, ai = false) {
-    this.color = color;
-    this.pieces = [];
-    this.possibleMoves = [];
-    this.ai = ai;
-    this.checked = false;
-  }
-}
+import { Player } from "./Player.js";
 
 export class ChessBoard {
   constructor(ctx, squareSize, guideCtx, ai) {
@@ -22,6 +14,8 @@ export class ChessBoard {
       white: new Player("white"),
       black: new Player("black", true),
     };
+    this.history = { moves: [], index: -1 };
+    this.captures = [];
   }
 
   setup(size) {
@@ -30,14 +24,35 @@ export class ChessBoard {
       for (let piece of tmp) {
         if (piece) {
           this.drawPiece(piece, piece);
+          piece.findLegalMoves(this);
         }
       }
     }
   }
 
-  movePiece(from, to) {}
+  movePiece(from, to) {
+    this.pieces[to.x][to.y] = this.pieces[from.x][from.y];
+    this.pieces[to.x][to.y].x = to.x;
+    this.pieces[to.x][to.y].y = to.y;
+    delete this.pieces[from.x][from.y];
+    this.pieces[to.x][to.y].hasMoved = true;
 
-  update() {}
+    this.clearSquare(to);
+    this.clearSquare(from);
+    this.drawPiece(this.pieces[to.x][to.y], to);
+    this.history.moves.push({ from, to });
+    this.history.index++;
+
+    // When piece has moved update all the legal moves
+    for (let x = 0; x < this.pieces.pieces; x++) {
+      for (let y = 0; y < this.pieces[x].length; y++) {
+        if (this.pieces[x][y]) {
+          // this.findLegalMoves(piece);
+          this.pieces[x][y].findLegalMoves(this);
+        }
+      }
+    }
+  }
 
   redraw() {
     let startPos = this.squareSize / 2;

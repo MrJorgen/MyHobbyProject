@@ -9,6 +9,12 @@ export class GuideLayer {
     this.ctx.clearRect(this.padding, this.padding, this.squareSize * 8, this.squareSize * 8);
   }
 
+  markMove(from, to) {
+    this.ctx.fillStyle = "rgb(220, 200, 100, 0.5)";
+    this.ctx.fillRect(from.x * this.squareSize + this.padding, from.y * this.squareSize + this.padding, this.squareSize, this.squareSize);
+    this.ctx.fillRect(to.x * this.squareSize + this.padding, to.y * this.squareSize + this.padding, this.squareSize, this.squareSize);
+  }
+
   moveToEmpty(pos) {
     /*
       // Testing to draw a rounded green rectangle

@@ -1,10 +1,17 @@
+@font-face{
+    font-family: 'MaxWebProLight';
+    src: url("WebFontFont.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
 *, body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 body {
-    font-family: Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "MaxWebProLight", Tahoma, Geneva, Verdana, sans-serif;
     font-size: 2em;
     background-color: #201f20;
     color: white;
