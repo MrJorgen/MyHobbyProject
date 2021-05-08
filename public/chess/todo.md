@@ -1,3 +1,0 @@
-- [ ] Update all possible moves when a player (or ai) drops a piece on the board
-- [x] Some more todo...
-- [x] Write the press release

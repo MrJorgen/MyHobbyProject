@@ -51,7 +51,7 @@ let mouse = {
     y: 0,
     dragging: false,
   },
-  size = parseInt(Math.min(window.innerWidth, window.innerHeight) * 0.85),
+  size = parseInt(Math.min(window.innerWidth, window.innerHeight) * 0.8),
   theme = "brown";
 
 size -= size % 9;
@@ -63,28 +63,27 @@ canvas.width = canvas2.width = canvas3.width = animCanvas.width = size;
 canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
 const board = new ChessBoard(piecesCtx, squareSize, guideCtx);
 const guides = new GuideLayer(guideCtx, squareSize);
-const players = board.players;
 await loadPieces();
 drawBoard(false);
 board.setup();
 
-// let start = performance.now();
 // let stop = performance.now();
-// console.log("It took " + (stop - start) + " ms.");
+// let start = performance.now();
+// console.log("It took " + (stop - start) + " ms for the AI to make it's move");
 
 async function loadPieces() {
   for (let piece of white) {
     let imgSrc = `./img/pieces/${themes.pieces[2]}/${piece.imgName}.png`;
     piece.img = await loadImage(imgSrc);
     board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "white", piece.img, piece.x, piece.y, piece.value);
-    players.white.pieces.push(board.pieces[piece.x][piece.y]);
+    board.players.white.pieces.push(board.pieces[piece.x][piece.y]);
   }
 
   for (let piece of black) {
     let imgSrc = `./img/pieces/${themes.pieces[2]}/${piece.imgName}.png`;
     piece.img = await loadImage(imgSrc);
     board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "black", piece.img, piece.x, piece.y, piece.value);
-    players.black.pieces.push(board.pieces[piece.x][piece.y]);
+    board.players.black.pieces.push(board.pieces[piece.x][piece.y]);
   }
 }
 
@@ -121,7 +120,7 @@ function grabPiece(evt) {
   }
 }
 
-function dropPiece(evt) {
+async function dropPiece(evt) {
   // Dropping a piece on the board
   if (mouse.dragging) {
     let opponent = board.turn === "black" ? "white" : "black";
@@ -132,30 +131,48 @@ function dropPiece(evt) {
     };
 
     // Check if the square is in the array of legal moves
+    let currentMove = undefined;
     for (let i = 0; i < board.pieces[mouse.piece.x][mouse.piece.y].legalMoves.length; i++) {
       if (board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].x === coords.x && board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].y === coords.y) {
         moveIsLegal = true;
+        currentMove = board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i];
         break;
       }
     }
 
     if (moveIsLegal) {
       // It's a legal move
+
       board.makeMove(mouse.piece, coords);
 
-      // Player has moved, clear and mark the move then switch turns
+      // Make the rook move when castling
+      if (currentMove.castle) {
+        board.makeMove(currentMove.castle.from, currentMove.castle.to);
+      }
+
+      board.sounds.move.play();
+      // Pawn promotion
+      if (board.pieces[coords.x][coords.y].promoted) {
+        let imgName = board.pieces[coords.x][coords.y].color.substr(0, 1);
+        let src = `./img/pieces/${themes.pieces[2]}/${imgName}q.png`;
+        board.pieces[coords.x][coords.y].img = await loadImage(src);
+        board.pieces[coords.x][coords.y].promoted = false;
+      }
+      board.redraw();
+
+      // Player has moved, clear legal moves and mark the move then switch turns
       guides.clearAll();
       guides.markMove(mouse.piece, coords);
       board.turn = opponent;
 
       // Check if it's AIs turn
-      if (players[board.turn].ai) {
+      if (board.players[board.turn].ai) {
         // Ok, so implement some kind of AI to move pieces
         animCanvas.style.cursor = "wait";
-        let delay = 500 + Math.floor(Math.random() * 500);
-        setTimeout(() => {
-          makeAiMove(players[board.turn]);
-        }, delay);
+        // let delay = 400 + Math.floor(Math.random() * 500);
+        // setTimeout(() => {
+        makeAiMove(board.players[board.turn]);
+        // }, delay);
       } else {
         animCanvas.style.cursor = "default";
       }
@@ -185,7 +202,6 @@ function handleMouseMove(evt) {
   };
 
   // If mouse is hovering the board
-  console.log(animCanvas.style.cursor);
   if (coords.x >= 0 && coords.x <= 7 && coords.y >= 0 && coords.y <= 7) {
     if (!mouse.dragging) {
       if (board.pieces[coords.x][coords.y]?.color === board.turn) {
@@ -202,23 +218,9 @@ function handleMouseMove(evt) {
   }
 }
 
-// This is for AI to know which moves it has choose from
-function getAllPossbileMoves() {
-  for (let color in players) {
-    let player = players[color];
-    player.possibleMoves = [];
-    for (let piece of player.pieces) {
-      if (piece.legalMoves.length > 0) {
-        player.possibleMoves.push({ piece, moves: piece.legalMoves });
-      }
-    }
-  }
-}
-
 function makeAiMove(player) {
-  updatePlayerPieces();
-  getAllPossbileMoves();
   if (player.possibleMoves.length > 0) {
+    0;
     // Get a random piece
     let pieceIndex = Math.floor(Math.random() * player.possibleMoves.length);
 
@@ -231,13 +233,12 @@ function makeAiMove(player) {
       newY = player.possibleMoves[pieceIndex].moves[moveIndex].y;
 
     board.makeMove({ x: oldX, y: oldY }, { x: newX, y: newY });
+    board.redraw();
     board.sounds.move.play();
     guides.clearAll();
     guides.markMove({ x: oldX, y: oldY }, { x: newX, y: newY });
-    updatePlayerPieces();
 
     let oppenentColor = player.color === "black" ? "white" : "black";
-    getAllPossbileMoves();
 
     // AI has moved, switch turns
     board.turn = oppenentColor;
@@ -248,24 +249,19 @@ function makeAiMove(player) {
   }
 }
 
-function updatePlayerPieces() {
-  players.white.pieces = [];
-  players.black.pieces = [];
+function updateScore() {
   let score = {
     white: 0,
     black: 0,
   };
   for (let x = 0; x < 8; x++) {
     for (let y = 0; y < 8; y++) {
-      if (board.pieces[x][y]) {
-        players[board.pieces[x][y].color].pieces.push(board.pieces[x][y]);
-        if (board.pieces[x][y].type !== "king") {
-          score[board.pieces[x][y].color] += board.pieces[x][y].value;
-        }
+      if (board.pieces[x][y].type !== "king") {
+        score[board.pieces[x][y].color] += board.pieces[x][y].value;
       }
     }
   }
-  infoDiv.innerHTML = `<h3>Score</h3><br>White: ${score.white}<br>Black: ${score.black}`;
+  infoDiv.innerHTML = `<h3>Score</h3><br>White: ${39 - score.black}<br>Black: ${39 - score.white}`;
 }
 
 document.querySelector("#themeSelect").addEventListener("change", (evt) => {

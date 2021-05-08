@@ -1,5 +1,5 @@
 export class ChessPiece {
-  constructor(type, color, img, posX, posY, value) {
+  constructor(type, color, img, posX, posY, value, promoted = false) {
     this.type = type;
     this.img = img;
     this.x = posX;
@@ -18,6 +18,7 @@ export class ChessPiece {
     this.value = value;
     this.pinned = false;
     this.legalMoves = [];
+    this.promoted = promoted;
   }
 
   move(to) {
@@ -33,6 +34,8 @@ export class ChessPiece {
         y = this.y,
         repeat = this.moves[i].repeat || false;
 
+      let enPassant = false;
+
       do {
         x += this.moves[i].x || 0;
         y += this.moves[i].y || 0;
@@ -45,11 +48,12 @@ export class ChessPiece {
             if (x <= 6 && board.pieces[x + 1][y] && board.pieces[x + 1][y].color !== this.color) {
               this.legalMoves.push({ x: x + 1, y, isCapture: true });
             }
-            if ((this.color === "white" && this.y === 6) || (this.color === "black" && this.y === 1)) {
+            if (!this.hasMoved) {
               repeat = true;
             }
           } else if (this.type === "pawn" && repeat) {
             repeat = false;
+            enPassant = true;
           }
 
           if (board.pieces[x][y]) {
@@ -60,50 +64,98 @@ export class ChessPiece {
             }
           } else {
             // Move to empty square
-            this.legalMoves.push({ x, y, isCapture: false });
+            if (enPassant) {
+              this.legalMoves.push({ x, y, isCapture: false, enPassant: true });
+            } else {
+              this.legalMoves.push({ x, y, isCapture: false });
+            }
           }
         } else {
           repeat = false;
         }
       } while (repeat);
     }
-    // Special moves
 
-    /*
-    NOT READY TO IMPLEMENT!!!
-    -----------------------------------------------------------
+    // Special moves(Castling & En Passant)
+
     // Castling
     if (this.type === "king") {
-      if (!this.hasMoved) {
+      if (!this.hasMoved && !this.isChecked) {
         let queenSideRook = board.pieces[this.x - 4][this.y]?.type == "rook" && board.pieces[this.x - 4][this.y].color === this.color ? board.pieces[this.x - 4][this.y] : undefined;
         let kingSideRook = board.pieces[this.x + 3][this.y]?.type == "rook" && board.pieces[this.x + 3][this.y].color === this.color ? board.pieces[this.x + 3][this.y] : undefined;
 
         // Queenside
-        if (!this.isChecked && !queenSideRook?.hasMoved) {
+        if (queenSideRook && !queenSideRook.hasMoved) {
+          let canCastle = true;
           // Check if the squares are empty
-          for (let i = this.x - 1; i > queenSideRook.x; i--) {
-            if (!board.pieces[i][this.y]) {
-              console.error(board.pieces[i][this.y]);
-            }
-          }
-        }
-        // Kingside
-        if (!this.isChecked && !kingSideRook?.hasMoved) {
-          for (let i = this.x + 1; i < kingSideRook.x; i++) {
-            if (!board.pieces[i][this.y]) {
-              console.log(board.pieces[i][this.y]);
-            }
-          }
-          // Check if the king moves through check or ends up in check
-        }
+          for (let x = this.x - 1; x > queenSideRook.x; x--) {
+            if (board.pieces[x][this.y]) {
+              // Square is occupied
+              canCastle = false;
+              break;
+            } else {
+              // Square is empty, now check if it's attacked
+              let opponent = this.color == "black" ? "white" : "black";
+              opponent = board.players[opponent];
 
+              // Get opponents possible moves
+              for (let i = 0; i < opponent.possibleMoves.length; i++) {
+                for (let move of opponent.possibleMoves[i].moves) {
+                  // Compare squares
+                  if (move.x === x && move.y === this.y && x >= this.x - 2) {
+                    canCastle = false;
+                  }
+                }
+                if (!canCastle) break;
+              }
+            }
+          }
+          if (canCastle) {
+            this.legalMoves.push({
+              x: this.x - 2,
+              y: this.y,
+              isCapture: false,
+              castle: { from: { x: this.x - 4, y: this.y }, to: { x: this.x - 1, y: this.y } },
+            });
+          }
+        }
         // Kingside
-        if (!this.isChecked && !this.hasMoved && !kingSideRook?.hasMoved) {
+        if (kingSideRook && !kingSideRook.hasMoved) {
+          let canCastle = true;
+          // Check if the squares are empty
+          for (let x = this.x + 1; x < kingSideRook.x; x++) {
+            if (board.pieces[x][this.y]) {
+              // Square is occupied
+              canCastle = false;
+              break;
+            } else {
+              // Square is empty, now check if it's attacked
+              let opponent = this.color == "black" ? "white" : "black";
+              opponent = board.players[opponent];
+
+              // Get opponents possible moves
+              for (let i = 0; i < opponent.possibleMoves.length; i++) {
+                for (let move of opponent.possibleMoves[i].moves) {
+                  // Compare squares
+                  if (move.x === x && move.y === this.y && x >= this.x + 2) {
+                    canCastle = false;
+                  }
+                }
+                if (!canCastle) break;
+              }
+            }
+          }
+          if (canCastle) {
+            this.legalMoves.push({
+              x: this.x + 2,
+              y: this.y,
+              isCapture: false,
+              castle: { from: { x: this.x + 3, y: this.y }, to: { x: this.x + 1, y: this.y } },
+            });
+          }
         }
       }
     }
-    ------------------------------------------------------------
-    */
   }
 }
 

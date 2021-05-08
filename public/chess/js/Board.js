@@ -1,4 +1,5 @@
 import { Player } from "./Player.js";
+import { ChessPiece } from "./Piece.js";
 
 export class ChessBoard {
   constructor(ctx, squareSize, guideCtx, ai) {
@@ -32,16 +33,18 @@ export class ChessBoard {
   }
 
   makeMove(from, to) {
-    this.sounds.move.play();
     let currentPlayer = this.pieces[from.x][from.y].color,
       opponent = currentPlayer === "black" ? "black" : "white";
+    delete this.pieces[to.x][to.y];
     this.pieces[to.x][to.y] = this.pieces[from.x][from.y];
-    this.pieces[to.x][to.y].move(to);
+    this.pieces[from.x][from.y].move(to);
     delete this.pieces[from.x][from.y];
 
-    this.clearSquare(to);
-    this.clearSquare(from);
-    this.drawPiece(this.pieces[to.x][to.y], to);
+    // Check if it's a pawn to promote
+    if (this.pieces[to.x][to.y].type === "pawn" && (to.y === 0 || to.y === 7)) {
+      this.pieces[to.x][to.y] = new ChessPiece("queen", this.pieces[to.x][to.y].color, null, this.pieces[to.x][to.y].x, this.pieces[to.x][to.y].y, 9, true);
+    }
+
     this.history.moves.push({ from: { x: from.x, y: from.y }, to });
     this.history.index++;
 
@@ -53,6 +56,34 @@ export class ChessBoard {
         }
       }
     }
+    this.getAllPossibleMoves();
+  }
+
+  pawnPromo() {}
+
+  undoMove() {
+    // This is needed later...
+  }
+
+  getAllPossibleMoves() {
+    this.players.white.pieces = [];
+    this.players.black.pieces = [];
+    for (let x = 0; x < 8; x++) {
+      for (let y = 0; y < 8; y++) {
+        if (this.pieces[x][y]) {
+          this.players[this.pieces[x][y].color].pieces.push(this.pieces[x][y]);
+        }
+      }
+    }
+    for (let color in this.players) {
+      let player = this.players[color];
+      player.possibleMoves = [];
+      for (let piece of player.pieces) {
+        if (piece.legalMoves.length > 0) {
+          player.possibleMoves.push({ piece, moves: piece.legalMoves });
+        }
+      }
+    }
   }
 
   redraw() {
@@ -60,8 +91,10 @@ export class ChessBoard {
     this.ctx.clearRect(startPos, startPos, this.squareSize * 8, this.squareSize * 8);
     for (let x = 0; x < this.pieces.length; x++) {
       for (let y = 0; y < this.pieces[x].length; y++) {
-        let piece = this.pieces[x][y];
-        this.ctx.drawImage(piece.img, piece.x * this.squareSize + startPos, piece.y * this.squareSize + startPos, this.squareSize, this.squareSize);
+        if (this.pieces[x][y]) {
+          let piece = this.pieces[x][y];
+          this.ctx.drawImage(piece.img, piece.x * this.squareSize + startPos, piece.y * this.squareSize + startPos, this.squareSize, this.squareSize);
+        }
       }
     }
   }
