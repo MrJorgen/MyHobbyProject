@@ -1,7 +1,6 @@
-import { black, white, ChessBoard } from "./Board.js";
+import { ChessBoard } from "./Board.js";
 import { GuideLayer } from "./GuideLayer.js";
-import { ChessPiece } from "./Piece.js";
-import { loadImage } from "./utilities.js";
+import { loadImage, themes } from "./utilities.js";
 
 const infoDiv = document.querySelector("#info"),
   messageEle = document.querySelector("#message"),
@@ -12,45 +11,9 @@ const infoDiv = document.querySelector("#info"),
   canvas3 = document.querySelector("#piecesCanvas"),
   piecesCtx = canvas3.getContext("2d"),
   animCanvas = document.querySelector("#animCanvas"),
-  animCtx = animCanvas.getContext("2d"),
-  themes = {
-    line: "rgb(50, 50, 50)",
-    silver: {
-      black: "#b0b2b5",
-      white: "#e5e5e6",
-      padding: "#cdcdd0",
-    },
-    brown: {
-      black: "#b58863", // (181,136,99)
-      white: "#f0d9b5", // (240,217,181)
-      padding: "rgb(211, 176, 141)",
-    },
-    texture_warm: {
-      black: "rgba(181, 126, 99, 0.6)", // (181,136,99)
-      white: "rgba(240, 217, 181, 0.6)", // (240,217,181)
-      padding: "rgba(211, 176, 141, 0.5)",
-      style: {
-        backgroundImage: 'url("./img/textures/seamless-wood-texture-4.jpg")',
-        backgroundSize: "cover",
-      },
-    },
-    texture_dark: {
-      black: "rgba(0, 0, 0, 0.5)", // (181,136,99)
-      white: "rgba(255, 255, 255, 0.5)", // (240,217,181)
-      padding: "rgba(128, 128, 128, 0.5)",
-      style: {
-        backgroundImage: 'url("./img/textures/seamless-wood-texture-4.jpg")',
-        backgroundSize: "cover",
-      },
-    },
-    pieces: ["neo", "game_room", "tournament"],
-  };
+  animCtx = animCanvas.getContext("2d");
 
-let mouse = {
-    x: 0,
-    y: 0,
-    dragging: false,
-  },
+let mouse = { x: 0, y: 0, dragging: false },
   size = parseInt(Math.min(window.innerWidth, window.innerHeight) * 0.8),
   theme = "brown";
 
@@ -61,37 +24,54 @@ const squareSize = size / 9,
 
 canvas.width = canvas2.width = canvas3.width = animCanvas.width = size;
 canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
-const board = new ChessBoard(piecesCtx, squareSize, guideCtx);
+let settings = {
+  theme: themes.pieces[2],
+  ai: {
+    white: false,
+    black: true,
+  },
+  squareSize,
+};
+const board = new ChessBoard(piecesCtx, guideCtx, settings);
 const guides = new GuideLayer(guideCtx, squareSize);
-await loadPieces();
+await board.setup(themes.pieces[2]);
 drawBoard(false);
-board.setup();
 
 // let stop = performance.now();
 // let start = performance.now();
 // console.log("It took " + (stop - start) + " ms for the AI to make it's move");
-
-async function loadPieces() {
-  for (let piece of white) {
-    let imgSrc = `./img/pieces/${themes.pieces[2]}/${piece.imgName}.png`;
-    piece.img = await loadImage(imgSrc);
-    board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "white", piece.img, piece.x, piece.y, piece.value);
-    board.players.white.pieces.push(board.pieces[piece.x][piece.y]);
-  }
-
-  for (let piece of black) {
-    let imgSrc = `./img/pieces/${themes.pieces[2]}/${piece.imgName}.png`;
-    piece.img = await loadImage(imgSrc);
-    board.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "black", piece.img, piece.x, piece.y, piece.value);
-    board.players.black.pieces.push(board.pieces[piece.x][piece.y]);
-  }
+if (!settings.ai.black || !settings.ai.white) {
+  setupEventListeners();
 }
 
-animCanvas.addEventListener("mousedown", grabPiece);
-animCanvas.addEventListener("mousemove", handleMouseMove);
-animCanvas.addEventListener("mouseup", dropPiece);
+function setupEventListeners() {
+  animCanvas.addEventListener("mousedown", grabPiece);
+  animCanvas.addEventListener("mousemove", handleMouseMove);
+  animCanvas.addEventListener("mouseup", dropPiece);
+}
+
+animCanvas.addEventListener("contextmenu", (event) => event.preventDefault());
+
+if (settings.ai.white) {
+  makeAiMove(board.players.white);
+}
 
 function grabPiece(evt) {
+  if (evt.which === 3) {
+    evt.preventDefault();
+    board.unMakeMove();
+    board.redraw();
+    board.turn = board.turn === "black" ? "white" : "black";
+    if (board.players[board.turn].ai) {
+      setTimeout(() => {
+        grabPiece(evt);
+      }, 500);
+      // makeAiMove(board.players[board.turn]);
+    } else {
+      setupEventListeners();
+    }
+    return;
+  }
   let coords = {
     x: Math.floor((mouse.x - startPos) / squareSize),
     y: Math.floor((mouse.y - startPos) / squareSize),
@@ -112,9 +92,9 @@ function grabPiece(evt) {
     // Draw guides showing the possible moves
     for (let move of board.pieces[coords.x][coords.y].legalMoves) {
       if (move.isCapture) {
-        guides.moveToCapture(move);
+        guides.moveToCapture(move.to);
       } else {
-        guides.moveToEmpty(move);
+        guides.moveToEmpty(move.to);
       }
     }
   }
@@ -133,9 +113,11 @@ async function dropPiece(evt) {
     // Check if the square is in the array of legal moves
     let currentMove = undefined;
     for (let i = 0; i < board.pieces[mouse.piece.x][mouse.piece.y].legalMoves.length; i++) {
-      if (board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].x === coords.x && board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].y === coords.y) {
+      if (board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].to.x === coords.x && board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].to.y === coords.y) {
         moveIsLegal = true;
         currentMove = board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i];
+        currentMove.from = { x: mouse.piece.x, y: mouse.piece.y };
+
         break;
       }
     }
@@ -143,39 +125,8 @@ async function dropPiece(evt) {
     if (moveIsLegal) {
       // It's a legal move
 
-      board.makeMove(mouse.piece, coords);
-
-      // Make the rook move when castling
-      if (currentMove.castle) {
-        board.makeMove(currentMove.castle.from, currentMove.castle.to);
-      }
-
-      board.sounds.move.play();
-      // Pawn promotion
-      if (board.pieces[coords.x][coords.y].promoted) {
-        let imgName = board.pieces[coords.x][coords.y].color.substr(0, 1);
-        let src = `./img/pieces/${themes.pieces[2]}/${imgName}q.png`;
-        board.pieces[coords.x][coords.y].img = await loadImage(src);
-        board.pieces[coords.x][coords.y].promoted = false;
-      }
-      board.redraw();
-
-      // Player has moved, clear legal moves and mark the move then switch turns
-      guides.clearAll();
-      guides.markMove(mouse.piece, coords);
-      board.turn = opponent;
-
-      // Check if it's AIs turn
-      if (board.players[board.turn].ai) {
-        // Ok, so implement some kind of AI to move pieces
-        animCanvas.style.cursor = "wait";
-        // let delay = 400 + Math.floor(Math.random() * 500);
-        // setTimeout(() => {
-        makeAiMove(board.players[board.turn]);
-        // }, delay);
-      } else {
-        animCanvas.style.cursor = "default";
-      }
+      board.makeMove(currentMove);
+      endTurn(currentMove);
     } else {
       // Move is not legal, so set piece back where it was
       guides.clearAll();
@@ -218,34 +169,66 @@ function handleMouseMove(evt) {
   }
 }
 
-function makeAiMove(player) {
-  if (player.possibleMoves.length > 0) {
-    0;
-    // Get a random piece
-    let pieceIndex = Math.floor(Math.random() * player.possibleMoves.length);
+async function makeAiMove(player) {
+  // Get a random piece
+  let pieceIndex = Math.floor(Math.random() * player.possibleMoves.length);
 
-    // Find a random move with that piece
-    let moveIndex = Math.floor(Math.random() * player.possibleMoves[pieceIndex].moves.length);
+  // Find a random move with that piece
+  let moveIndex = Math.floor(Math.random() * player.possibleMoves[pieceIndex].moves.length);
 
-    let oldX = player.possibleMoves[pieceIndex].piece.x,
-      oldY = player.possibleMoves[pieceIndex].piece.y,
-      newX = player.possibleMoves[pieceIndex].moves[moveIndex].x,
-      newY = player.possibleMoves[pieceIndex].moves[moveIndex].y;
+  let currentMove = {
+    from: {
+      x: player.possibleMoves[pieceIndex].piece.x,
+      y: player.possibleMoves[pieceIndex].piece.y,
+    },
+    to: player.possibleMoves[pieceIndex].moves[moveIndex].to,
+  };
 
-    board.makeMove({ x: oldX, y: oldY }, { x: newX, y: newY });
+  board.makeMove(currentMove);
+
+  endTurn(currentMove);
+}
+
+async function endTurn(currentMove, draw = true) {
+  if (currentMove.castle) {
+    board.makeMove(currentMove.castle, false, true);
+  }
+
+  board.sounds.move.play();
+  // Pawn promotion
+  let currentPiece = board.pieces[currentMove.to.x][currentMove.to.y];
+  if (currentPiece.promoted) {
+    currentPiece.promoted = false;
+    let imgName = currentPiece.color.substr(0, 1);
+    let src = `./img/pieces/${board.theme}/${imgName}q.png`;
+    if (draw) {
+      currentPiece.img = await loadImage(src);
+    }
+  }
+
+  if (draw) {
     board.redraw();
-    board.sounds.move.play();
+    // Player has moved, clear legal moves mark and mark the move then switch turns
     guides.clearAll();
-    guides.markMove({ x: oldX, y: oldY }, { x: newX, y: newY });
+    guides.markMove(currentMove);
+  }
 
-    let oppenentColor = player.color === "black" ? "white" : "black";
+  let opponentColor = currentPiece.color === "black" ? "white" : "black";
 
-    // AI has moved, switch turns
-    board.turn = oppenentColor;
-    animCanvas.style.cursor = "default";
+  if (board.players[opponentColor].possibleMoves.length > 0) {
+    // If opponent has possible moves
+    board.turn = opponentColor;
+    // Check if it's AIs turn
+    if (board.players[board.turn].ai) {
+      let delay = 250 + Math.floor(Math.random() * 250);
+      setTimeout(() => {
+        makeAiMove(board.players[board.turn]);
+      }, delay);
+    }
   } else {
-    // No possible moves
-    // This is where checkmate and/or stalemate happens
+    // Opponent has no moves. Player wins :)
+    messageEle.innerHTML = "Game Over<br> " + board.turn + " wins! <br>The game lasted for  " + board.moveIndex + " ply.";
+    messageEle.style.opacity = "1";
   }
 }
 

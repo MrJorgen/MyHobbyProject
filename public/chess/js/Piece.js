@@ -43,10 +43,10 @@ export class ChessPiece {
           // Pawn captures
           if (this.type === "pawn" && !repeat) {
             if (x >= 1 && board.pieces[x - 1][y] && board.pieces[x - 1][y].color !== this.color) {
-              this.legalMoves.push({ x: x - 1, y, isCapture: true });
+              this.legalMoves.push({ to: { x: x - 1, y }, isCapture: true });
             }
             if (x <= 6 && board.pieces[x + 1][y] && board.pieces[x + 1][y].color !== this.color) {
-              this.legalMoves.push({ x: x + 1, y, isCapture: true });
+              this.legalMoves.push({ to: { x: x + 1, y }, isCapture: true });
             }
             if (!this.hasMoved) {
               repeat = true;
@@ -60,14 +60,14 @@ export class ChessPiece {
             repeat = false;
             // Take opponents piece
             if (board.pieces[x][y].color !== this.color && this.type !== "pawn") {
-              this.legalMoves.push({ x, y, isCapture: true });
+              this.legalMoves.push({ to: { x, y }, isCapture: true });
             }
           } else {
             // Move to empty square
             if (enPassant) {
-              this.legalMoves.push({ x, y, isCapture: false, enPassant: true });
+              this.legalMoves.push({ to: { x, y }, isCapture: false, enPassant: true });
             } else {
-              this.legalMoves.push({ x, y, isCapture: false });
+              this.legalMoves.push({ to: { x, y }, isCapture: false });
             }
           }
         } else {
@@ -112,8 +112,10 @@ export class ChessPiece {
           }
           if (canCastle) {
             this.legalMoves.push({
-              x: this.x - 2,
-              y: this.y,
+              to: {
+                x: this.x - 2,
+                y: this.y,
+              },
               isCapture: false,
               castle: { from: { x: this.x - 4, y: this.y }, to: { x: this.x - 1, y: this.y } },
             });
@@ -147,8 +149,10 @@ export class ChessPiece {
           }
           if (canCastle) {
             this.legalMoves.push({
-              x: this.x + 2,
-              y: this.y,
+              to: {
+                x: this.x + 2,
+                y: this.y,
+              },
               isCapture: false,
               castle: { from: { x: this.x + 3, y: this.y }, to: { x: this.x + 1, y: this.y } },
             });
@@ -157,6 +161,8 @@ export class ChessPiece {
       }
     }
   }
+
+  verifyMove(piece, move) {}
 }
 
 // How the pieces move

@@ -1,26 +1,46 @@
 import { Player } from "./Player.js";
 import { ChessPiece } from "./Piece.js";
+import { loadImage, black, white, make2dArray } from "./utilities.js";
+import { Move } from "./Move.js";
 
 export class ChessBoard {
-  constructor(ctx, squareSize, guideCtx, ai) {
-    this.pieces = make2dArray(8, 8);
+  constructor(ctx, guideCtx, settings) {
+    this.pieces = null;
     this.turn = "white";
     this.ctx = ctx;
-    this.squareSize = squareSize;
-    this.recent = [];
+    this.squareSize = settings.squareSize;
     this.guides = {
       ctx: guideCtx,
     };
     this.players = {
-      white: new Player("white", true),
-      black: new Player("black", true),
+      white: new Player("white", settings.ai.white),
+      black: new Player("black", settings.ai.black),
     };
-    this.history = { moves: [], index: -1 };
-    this.captures = [];
+    this.history = [];
+    this.moveIndex = 0;
     this.sounds = { move: new Audio("./sounds/move-self.webm"), capture: new Audio("./sounds/capture.webm"), illegal: new Audio("./sounds/illegal.webm") };
+    this.theme = settings.theme;
   }
 
-  setup() {
+  async loadPieces(theme) {
+    for (let piece of white) {
+      let imgSrc = `./img/pieces/${theme}/${piece.imgName}.png`;
+      piece.img = await loadImage(imgSrc);
+      this.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "white", piece.img, piece.x, piece.y, piece.value);
+      this.players.white.pieces.push(this.pieces[piece.x][piece.y]);
+    }
+
+    for (let piece of black) {
+      let imgSrc = `./img/pieces/${theme}/${piece.imgName}.png`;
+      piece.img = await loadImage(imgSrc);
+      this.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "black", piece.img, piece.x, piece.y, piece.value);
+      this.players.black.pieces.push(this.pieces[piece.x][piece.y]);
+    }
+  }
+
+  async setup(theme) {
+    this.pieces = make2dArray(8, 8);
+    await this.loadPieces(theme);
     this.ctx.clearRect(0, 0, this.squareSize * 8, this.squareSize * 8);
     for (let tmp of this.pieces) {
       for (let piece of tmp) {
@@ -30,24 +50,32 @@ export class ChessBoard {
         }
       }
     }
+    this.getAllPossibleMoves();
   }
 
-  makeMove(from, to) {
-    let currentPlayer = this.pieces[from.x][from.y].color,
-      opponent = currentPlayer === "black" ? "black" : "white";
+  makeMove(incomingMove, capture = false, castle = false) {
+    let { from, to } = incomingMove;
+    if (this.pieces[to.x][to.y]) {
+      capture = this.pieces[to.x][to.y];
+    }
+    let currentMove = new Move({ x: from.x, y: from.y }, to, this.pieces[from.x][from.y], capture, castle);
+
+    // Delete the to square, no matter if there is a piece on it, it is cleared before "landing" on it, just to make sure...
     delete this.pieces[to.x][to.y];
+    this.history.push(currentMove);
+    this.moveIndex++;
+    console.log(this.history);
+
     this.pieces[to.x][to.y] = this.pieces[from.x][from.y];
     this.pieces[from.x][from.y].move(to);
     delete this.pieces[from.x][from.y];
 
     // Check if it's a pawn to promote
-    if (this.pieces[to.x][to.y].type === "pawn" && (to.y === 0 || to.y === 7)) {
-      this.pieces[to.x][to.y] = new ChessPiece("queen", this.pieces[to.x][to.y].color, null, this.pieces[to.x][to.y].x, this.pieces[to.x][to.y].y, 9, true);
-    }
+    this.pawnPromo(to);
+    this.updatePieces();
+  }
 
-    this.history.moves.push({ from: { x: from.x, y: from.y }, to });
-    this.history.index++;
-
+  updatePieces() {
     // When a piece has moved update all pieces legal moves
     for (let x = 0; x < this.pieces.length; x++) {
       for (let y = 0; y < this.pieces[x].length; y++) {
@@ -59,10 +87,44 @@ export class ChessBoard {
     this.getAllPossibleMoves();
   }
 
-  pawnPromo() {}
+  deepEqual(x, y) {
+    const ok = Object.keys,
+      tx = typeof x,
+      ty = typeof y;
+    return x && y && tx === "object" && tx === ty ? ok(x).length === ok(y).length && ok(x).every((key) => deepEqual(x[key], y[key])) : x === y;
+  }
 
-  undoMove() {
-    // This is needed later...
+  pawnPromo(to) {
+    // TODO: Make this so you can chose what to promote to(bishop, knight, rook or queen)
+    if (this.pieces[to.x][to.y].type === "pawn" && (to.y === 0 || to.y === 7)) {
+      this.pieces[to.x][to.y] = new ChessPiece("queen", this.pieces[to.x][to.y].color, null, this.pieces[to.x][to.y].x, this.pieces[to.x][to.y].y, 9, true);
+    }
+  }
+  demoteToPawn() {}
+
+  unMakeMove() {
+    let currentMove = this.history.pop();
+    this.moveIndex--;
+
+    console.log(currentMove);
+    // Clear spaces
+    delete this.pieces[currentMove.to.x][currentMove.to.y];
+    delete this.pieces[currentMove.from.x][currentMove.from.y];
+
+    // Place captured piece back
+    if (currentMove.capture) {
+      this.pieces[currentMove.to.x][currentMove.to.y] = currentMove.capture;
+    }
+
+    // Place current piece back
+    this.pieces[currentMove.from.x][currentMove.from.y] = currentMove.piece;
+    this.pieces[currentMove.from.x][currentMove.from.y].x = currentMove.from.x;
+    this.pieces[currentMove.from.x][currentMove.from.y].y = currentMove.from.y;
+    this.pieces[currentMove.from.x][currentMove.from.y].hasMoved = currentMove.hasMoved;
+    if (currentMove.isCastle) {
+      this.unMakeMove();
+    }
+    this.updatePieces();
   }
 
   getAllPossibleMoves() {
@@ -112,59 +174,3 @@ export class ChessBoard {
     this.ctx.clearRect(x * this.squareSize + startPos, y * this.squareSize + startPos, this.squareSize, this.squareSize);
   }
 }
-
-function make2dArray(cols, rows) {
-  let arr = new Array(cols);
-  for (let i = 0; i < arr.length; i++) {
-    arr[i] = new Array(rows);
-  }
-  return arr;
-}
-export const black = [
-  { x: 0, y: 0, imgName: "br", type: "rook", value: 5 },
-  { x: 1, y: 0, imgName: "bn", type: "knight", value: 3 },
-  { x: 2, y: 0, imgName: "bb", type: "bishop", value: 3 },
-  { x: 3, y: 0, imgName: "bq", type: "queen", value: 9 },
-  { x: 4, y: 0, imgName: "bk", type: "king", value: Infinity },
-  { x: 5, y: 0, imgName: "bb", type: "bishop", value: 3 },
-  { x: 6, y: 0, imgName: "bn", type: "knight", value: 3 },
-  { x: 7, y: 0, imgName: "br", type: "rook", value: 5 },
-  { x: 0, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { x: 1, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { x: 2, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { x: 3, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { x: 4, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { x: 5, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { x: 6, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { x: 7, y: 1, imgName: "bp", type: "pawn", value: 1 },
-];
-
-export const white = [
-  { x: 0, y: 7, imgName: "wr", type: "rook", value: 5 },
-  { x: 1, y: 7, imgName: "wn", type: "knight", value: 3 },
-  { x: 2, y: 7, imgName: "wb", type: "bishop", value: 3 },
-  { x: 3, y: 7, imgName: "wq", type: "queen", value: 9 },
-  { x: 4, y: 7, imgName: "wk", type: "king", value: Infinity },
-  { x: 5, y: 7, imgName: "wb", type: "bishop", value: 3 },
-  { x: 6, y: 7, imgName: "wn", type: "knight", value: 3 },
-  { x: 7, y: 7, imgName: "wr", type: "rook", value: 5 },
-  { x: 0, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { x: 1, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { x: 2, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { x: 3, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { x: 4, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { x: 5, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { x: 6, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { x: 7, y: 6, imgName: "wp", type: "pawn", value: 1 },
-];
-
-const test = [
-  ["a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"],
-  ["a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7"],
-  ["a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"],
-  ["a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5"],
-  ["a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4"],
-  ["a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3"],
-  ["a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2"],
-  ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"],
-];

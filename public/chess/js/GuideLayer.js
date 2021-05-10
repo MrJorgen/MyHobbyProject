@@ -9,7 +9,8 @@ export class GuideLayer {
     this.ctx.clearRect(this.padding, this.padding, this.squareSize * 8, this.squareSize * 8);
   }
 
-  markMove(from, to) {
+  markMove(currentMove) {
+    let { from, to } = currentMove;
     this.ctx.fillStyle = "rgb(255, 255, 0, 0.4)";
     this.ctx.fillRect(from.x * this.squareSize + this.padding, from.y * this.squareSize + this.padding, this.squareSize, this.squareSize);
     this.ctx.fillRect(to.x * this.squareSize + this.padding, to.y * this.squareSize + this.padding, this.squareSize, this.squareSize);
