@@ -1,6 +1,9 @@
+import { loadImage } from "./utilities.js";
+
 export class ChessPiece {
   constructor(type, color, img, posX, posY, value, promoted = false) {
     this.type = type;
+    // this.img = await loadImage(`./img/pieces/${img.theme}/${img.name}.png`);
     this.img = img;
     this.x = posX;
     this.y = posY;
@@ -19,6 +22,8 @@ export class ChessPiece {
     this.pinned = false;
     this.legalMoves = [];
     this.promoted = promoted;
+    this.enPassant = false;
+    this.isKing = false;
   }
 
   move(to) {
@@ -27,8 +32,9 @@ export class ChessPiece {
     this.hasMoved = true;
   }
 
-  findLegalMoves(board) {
+  findLegalMoves(board, verify) {
     this.legalMoves = [];
+    let opponent = board.players[this.color].opponent;
     for (let i = 0; i < this.moves.length; i++) {
       let x = this.x,
         y = this.y,
@@ -42,11 +48,13 @@ export class ChessPiece {
         if (x >= 0 && x <= 7 && y >= 0 && y <= 7) {
           // Pawn captures
           if (this.type === "pawn" && !repeat) {
-            if (x >= 1 && board.pieces[x - 1][y] && board.pieces[x - 1][y].color !== this.color) {
-              this.legalMoves.push({ to: { x: x - 1, y }, isCapture: true });
+            if (x >= 1 && board.pieces[x - 1][y] && board.pieces[x - 1][y].color === opponent) {
+              this.legalMoves.push({ from: { x: this.x, y: this.y }, to: { x: x - 1, y }, capture: board.pieces[x - 1][y] });
+              this.check(board.pieces[x - 1][y], board);
             }
-            if (x <= 6 && board.pieces[x + 1][y] && board.pieces[x + 1][y].color !== this.color) {
-              this.legalMoves.push({ to: { x: x + 1, y }, isCapture: true });
+            if (x <= 6 && board.pieces[x + 1][y] && board.pieces[x + 1][y].color === opponent) {
+              this.legalMoves.push({ from: { x: this.x, y: this.y }, to: { x: x + 1, y }, capture: board.pieces[x + 1][y] });
+              this.check(board.pieces[x + 1][y], board);
             }
             if (!this.hasMoved) {
               repeat = true;
@@ -58,16 +66,17 @@ export class ChessPiece {
 
           if (board.pieces[x][y]) {
             repeat = false;
-            // Take opponents piece
-            if (board.pieces[x][y].color !== this.color && this.type !== "pawn") {
-              this.legalMoves.push({ to: { x, y }, isCapture: true });
+            // Capture opponents piece
+            if (board.pieces[x][y].color === opponent && this.type !== "pawn") {
+              this.legalMoves.push({ from: { x: this.x, y: this.y }, to: { x, y }, capture: board.pieces[x][y] });
+              this.check(board.pieces[x][y], board);
             }
           } else {
             // Move to empty square
             if (enPassant) {
-              this.legalMoves.push({ to: { x, y }, isCapture: false, enPassant: true });
+              this.legalMoves.push({ from: { x: this.x, y: this.y }, to: { x, y }, capture: false, enPassant: true });
             } else {
-              this.legalMoves.push({ to: { x, y }, isCapture: false });
+              this.legalMoves.push({ from: { x: this.x, y: this.y }, to: { x, y }, capture: false });
             }
           }
         } else {
@@ -99,12 +108,10 @@ export class ChessPiece {
               opponent = board.players[opponent];
 
               // Get opponents possible moves
-              for (let i = 0; i < opponent.possibleMoves.length; i++) {
-                for (let move of opponent.possibleMoves[i].moves) {
-                  // Compare squares
-                  if (move.x === x && move.y === this.y && x >= this.x - 2) {
-                    canCastle = false;
-                  }
+              for (let move of opponent.possibleMoves) {
+                // Compare squares
+                if (move.x === x && move.y === this.y && x >= this.x - 2) {
+                  canCastle = false;
                 }
                 if (!canCastle) break;
               }
@@ -112,11 +119,9 @@ export class ChessPiece {
           }
           if (canCastle) {
             this.legalMoves.push({
-              to: {
-                x: this.x - 2,
-                y: this.y,
-              },
-              isCapture: false,
+              from: { x: this.x, y: this.y },
+              to: { x: this.x - 2, y: this.y },
+              capture: false,
               castle: { from: { x: this.x - 4, y: this.y }, to: { x: this.x - 1, y: this.y } },
             });
           }
@@ -136,12 +141,10 @@ export class ChessPiece {
               opponent = board.players[opponent];
 
               // Get opponents possible moves
-              for (let i = 0; i < opponent.possibleMoves.length; i++) {
-                for (let move of opponent.possibleMoves[i].moves) {
-                  // Compare squares
-                  if (move.x === x && move.y === this.y && x >= this.x + 2) {
-                    canCastle = false;
-                  }
+              for (let move of opponent.possibleMoves) {
+                // Compare squares
+                if (move.x === x && move.y === this.y && x >= this.x + 2) {
+                  canCastle = false;
                 }
                 if (!canCastle) break;
               }
@@ -149,11 +152,9 @@ export class ChessPiece {
           }
           if (canCastle) {
             this.legalMoves.push({
-              to: {
-                x: this.x + 2,
-                y: this.y,
-              },
-              isCapture: false,
+              from: { x: this.x, y: this.y },
+              to: { x: this.x + 2, y: this.y },
+              capture: false,
               castle: { from: { x: this.x + 3, y: this.y }, to: { x: this.x + 1, y: this.y } },
             });
           }
@@ -162,7 +163,12 @@ export class ChessPiece {
     }
   }
 
-  verifyMove(piece, move) {}
+  check(piece, board) {
+    if (piece.isKing) {
+      piece.isChecked = true;
+      board.players[piece.color].isChecked = true;
+    }
+  }
 }
 
 // How the pieces move

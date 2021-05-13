@@ -60,12 +60,13 @@ function grabPiece(evt) {
   if (evt.which === 3) {
     evt.preventDefault();
     board.unMakeMove();
+    guides.clearAll();
     board.redraw();
     board.turn = board.turn === "black" ? "white" : "black";
     if (board.players[board.turn].ai) {
       setTimeout(() => {
         grabPiece(evt);
-      }, 500);
+      }, 200);
       // makeAiMove(board.players[board.turn]);
     } else {
       setupEventListeners();
@@ -91,7 +92,7 @@ function grabPiece(evt) {
 
     // Draw guides showing the possible moves
     for (let move of board.pieces[coords.x][coords.y].legalMoves) {
-      if (move.isCapture) {
+      if (move.capture) {
         guides.moveToCapture(move.to);
       } else {
         guides.moveToEmpty(move.to);
@@ -170,22 +171,11 @@ function handleMouseMove(evt) {
 }
 
 async function makeAiMove(player) {
-  // Get a random piece
-  let pieceIndex = Math.floor(Math.random() * player.possibleMoves.length);
+  // Find a random move
+  let moveIndex = Math.floor(Math.random() * player.possibleMoves.length);
 
-  // Find a random move with that piece
-  let moveIndex = Math.floor(Math.random() * player.possibleMoves[pieceIndex].moves.length);
-
-  let currentMove = {
-    from: {
-      x: player.possibleMoves[pieceIndex].piece.x,
-      y: player.possibleMoves[pieceIndex].piece.y,
-    },
-    to: player.possibleMoves[pieceIndex].moves[moveIndex].to,
-  };
-
+  let currentMove = player.possibleMoves[moveIndex];
   board.makeMove(currentMove);
-
   endTurn(currentMove);
 }
 
@@ -252,19 +242,27 @@ document.querySelector("#themeSelect").addEventListener("change", (evt) => {
   drawBoard();
 });
 
-function drawBoard(drawLines = false) {
+async function drawBoard(drawLines = false) {
   bgCtx.clearRect(0, 0, size, size);
+  // if (themes[theme].hasOwnProperty("style")) {
+  //   for (let prop in themes[theme].style) {
+  //     canvas.style[prop] = themes[theme].style[prop];
+  //   }
+  // } else {
+  //   canvas.style.background = "none";
+  // }
+  let img = null;
   if (themes[theme].hasOwnProperty("style")) {
-    for (let prop in themes[theme].style) {
-      canvas.style[prop] = themes[theme].style[prop];
-    }
-  } else {
-    canvas.style.background = "none";
+    img = themes[theme].style.backgroundImage.split('"')[1];
+    img = await loadImage(img);
+    bgCtx.drawImage(img, 0, 0, size, size);
   }
   bgCtx.fillStyle = themes[theme].padding;
   bgCtx.fillRect(0, 0, size, size);
+  // bgCtx.globalCompositeOperation = "multiply";
   bgCtx.fillStyle = themes[theme].black;
   bgCtx.fillRect(0 + startPos, 0 + startPos, size - squareSize, size - squareSize);
+  // bgCtx.globalCompositeOperation = "screen";
   bgCtx.fillStyle = themes[theme].white;
   for (let i = 0; i < 8; i += 2) {
     for (let j = 0; j < 8; j += 2) {

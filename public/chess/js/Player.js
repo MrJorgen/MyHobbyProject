@@ -5,6 +5,7 @@ export class Player {
     this.possibleMoves = [];
     this.ai = ai;
     this.checked = false;
+    this.opponent = this.color === "black" ? "white" : "black";
   }
 
   updatePieces(board) {

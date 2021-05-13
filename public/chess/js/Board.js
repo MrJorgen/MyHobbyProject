@@ -1,6 +1,6 @@
 import { Player } from "./Player.js";
 import { ChessPiece } from "./Piece.js";
-import { loadImage, black, white, make2dArray } from "./utilities.js";
+import { loadImage, colors, make2dArray } from "./utilities.js";
 import { Move } from "./Move.js";
 
 export class ChessBoard {
@@ -20,21 +20,20 @@ export class ChessBoard {
     this.moveIndex = 0;
     this.sounds = { move: new Audio("./sounds/move-self.webm"), capture: new Audio("./sounds/capture.webm"), illegal: new Audio("./sounds/illegal.webm") };
     this.theme = settings.theme;
+    this.verify = false;
+    this.tmpIndex = 0;
   }
 
   async loadPieces(theme) {
-    for (let piece of white) {
-      let imgSrc = `./img/pieces/${theme}/${piece.imgName}.png`;
-      piece.img = await loadImage(imgSrc);
-      this.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "white", piece.img, piece.x, piece.y, piece.value);
-      this.players.white.pieces.push(this.pieces[piece.x][piece.y]);
-    }
-
-    for (let piece of black) {
-      let imgSrc = `./img/pieces/${theme}/${piece.imgName}.png`;
-      piece.img = await loadImage(imgSrc);
-      this.pieces[piece.x][piece.y] = new ChessPiece(piece.type, "black", piece.img, piece.x, piece.y, piece.value);
-      this.players.black.pieces.push(this.pieces[piece.x][piece.y]);
+    for (let color of colors) {
+      for (let piece of color) {
+        let img = await loadImage(`./img/pieces/${theme}/${piece.imgName}.png`);
+        this.pieces[piece.x][piece.y] = new ChessPiece(piece.type, piece.color, img, piece.x, piece.y, piece.value);
+        if (this.pieces[piece.x][piece.y].type === "king") {
+          this.pieces[piece.x][piece.y].isKing = true;
+        }
+        this.players[piece.color].pieces.push(this.pieces[piece.x][piece.y]);
+      }
     }
   }
 
@@ -54,44 +53,46 @@ export class ChessBoard {
   }
 
   makeMove(incomingMove, capture = false, castle = false) {
-    let { from, to } = incomingMove;
+    let { from, to } = incomingMove,
+      myColor = this.pieces[from.x][from.y].color;
     if (this.pieces[to.x][to.y]) {
       capture = this.pieces[to.x][to.y];
     }
     let currentMove = new Move({ x: from.x, y: from.y }, to, this.pieces[from.x][from.y], capture, castle);
 
-    // Delete the to square, no matter if there is a piece on it, it is cleared before "landing" on it, just to make sure...
+    // Delete the to square, just to make sure it is empty when landing on it
     delete this.pieces[to.x][to.y];
     this.history.push(currentMove);
     this.moveIndex++;
-    console.log(this.history);
 
     this.pieces[to.x][to.y] = this.pieces[from.x][from.y];
     this.pieces[from.x][from.y].move(to);
     delete this.pieces[from.x][from.y];
 
+    // Player has made a move and should no longer be in check(or else it would be illegal)
+    this.players[myColor].isChecked = false;
+    for (let piece of this.players[myColor].pieces) {
+      if (piece.isKing) {
+        piece.isChecked = false;
+        break;
+      }
+    }
+
     // Check if it's a pawn to promote
     this.pawnPromo(to);
-    this.updatePieces();
+    this.updatePieces(this.players[myColor].opponent);
   }
 
-  updatePieces() {
-    // When a piece has moved update all pieces legal moves
+  updatePieces(color) {
+    // When a piece has moved update player[color] pieces legal moves
     for (let x = 0; x < this.pieces.length; x++) {
       for (let y = 0; y < this.pieces[x].length; y++) {
-        if (this.pieces[x][y]) {
+        if (this.pieces[x][y] && this.pieces[x][y].color === color) {
           this.pieces[x][y].findLegalMoves(this);
         }
       }
     }
-    this.getAllPossibleMoves();
-  }
-
-  deepEqual(x, y) {
-    const ok = Object.keys,
-      tx = typeof x,
-      ty = typeof y;
-    return x && y && tx === "object" && tx === ty ? ok(x).length === ok(y).length && ok(x).every((key) => deepEqual(x[key], y[key])) : x === y;
+    this.getAllPossibleMoves([color]);
   }
 
   pawnPromo(to) {
@@ -100,13 +101,11 @@ export class ChessBoard {
       this.pieces[to.x][to.y] = new ChessPiece("queen", this.pieces[to.x][to.y].color, null, this.pieces[to.x][to.y].x, this.pieces[to.x][to.y].y, 9, true);
     }
   }
-  demoteToPawn() {}
 
   unMakeMove() {
     let currentMove = this.history.pop();
     this.moveIndex--;
 
-    console.log(currentMove);
     // Clear spaces
     delete this.pieces[currentMove.to.x][currentMove.to.y];
     delete this.pieces[currentMove.from.x][currentMove.from.y];
@@ -124,28 +123,68 @@ export class ChessBoard {
     if (currentMove.isCastle) {
       this.unMakeMove();
     }
-    this.updatePieces();
+    this.updatePieces(currentMove.piece.color);
   }
 
-  getAllPossibleMoves() {
-    this.players.white.pieces = [];
-    this.players.black.pieces = [];
-    for (let x = 0; x < 8; x++) {
-      for (let y = 0; y < 8; y++) {
-        if (this.pieces[x][y]) {
-          this.players[this.pieces[x][y].color].pieces.push(this.pieces[x][y]);
+  getAllPossibleMoves(colors = ["black", "white"]) {
+    // Update what pieces the players "own"
+    for (let color of colors) {
+      this.players[color].pieces = [];
+      for (let x = 0; x < 8; x++) {
+        for (let y = 0; y < 8; y++) {
+          if (this.pieces[x][y] && this.pieces[x][y].color == color) {
+            this.players[color].pieces.push(this.pieces[x][y]);
+          }
         }
       }
     }
+
+    // Make an array of possible moves for each player
     for (let color in this.players) {
       let player = this.players[color];
       player.possibleMoves = [];
       for (let piece of player.pieces) {
         if (piece.legalMoves.length > 0) {
-          player.possibleMoves.push({ piece, moves: piece.legalMoves });
+          for (let i = 0; i < piece.legalMoves.length; i++) {
+            player.possibleMoves.push(piece.legalMoves[i]);
+          }
         }
       }
     }
+
+    if (colors.length < 2 && !this.verify) {
+      this.verifyMoves(colors[0]);
+    }
+  }
+
+  verifyMoves(color) {
+    this.tmpIndex++;
+    console.log(this.tmpIndex);
+    let player = this.players[color],
+      illegalMoves = [],
+      myKing;
+    this.verify = true;
+    for (let x = 0; x < 8; x++) {
+      for (let y = 0; y < 8; y++) {
+        if (this.pieces[x][y] && this.pieces[x][y].isKing && this.pieces[x][y].color === color) {
+          myKing = this.pieces[x][y];
+        }
+      }
+    }
+    for (let move of player.possibleMoves) {
+      myKing.isChecked = false;
+      // console.log(player);
+      this.makeMove(move);
+      if (myKing.isChecked) {
+        // Remove this move from the array
+        console.log("Illegal move found!");
+        // ---------------------------------------------
+        // Remove illegal move from the array!!!!!!!!!!!!!!!!!!
+      }
+      this.unMakeMove();
+    }
+    this.updatePieces(this.players[color].opponent);
+    this.verify = false;
   }
 
   redraw() {
