@@ -9,42 +9,54 @@ export function loadImage(src) {
   });
 }
 
+export function loadImages(theme) {
+  black.forEach(async (piece) => {
+    piece.img = await loadImage(`./img/pieces/${theme}/${piece.imgName}.png`);
+    delete piece.imgName;
+  });
+
+  black.forEach(async (piece) => {
+    piece.img = await loadImage(`./img/pieces/${theme}/${piece.imgName}.png`);
+    delete piece.imgName;
+  });
+}
+
 const black = [
-  { color: "black", x: 0, y: 0, imgName: "br", type: "rook", value: 5 },
-  { color: "black", x: 1, y: 0, imgName: "bn", type: "knight", value: 3 },
-  { color: "black", x: 2, y: 0, imgName: "bb", type: "bishop", value: 3 },
-  { color: "black", x: 3, y: 0, imgName: "bq", type: "queen", value: 9 },
+  { color: "black", x: 0, y: 0, imgName: "br", type: "rook", value: 500 },
+  { color: "black", x: 1, y: 0, imgName: "bn", type: "knight", value: 320 },
+  { color: "black", x: 2, y: 0, imgName: "bb", type: "bishop", value: 330 },
+  { color: "black", x: 3, y: 0, imgName: "bq", type: "queen", value: 900 },
   { color: "black", x: 4, y: 0, imgName: "bk", type: "king", value: Infinity },
-  { color: "black", x: 5, y: 0, imgName: "bb", type: "bishop", value: 3 },
-  { color: "black", x: 6, y: 0, imgName: "bn", type: "knight", value: 3 },
-  { color: "black", x: 7, y: 0, imgName: "br", type: "rook", value: 5 },
-  { color: "black", x: 0, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { color: "black", x: 1, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { color: "black", x: 2, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { color: "black", x: 3, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { color: "black", x: 4, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { color: "black", x: 5, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { color: "black", x: 6, y: 1, imgName: "bp", type: "pawn", value: 1 },
-  { color: "black", x: 7, y: 1, imgName: "bp", type: "pawn", value: 1 },
+  { color: "black", x: 5, y: 0, imgName: "bb", type: "bishop", value: 330 },
+  { color: "black", x: 6, y: 0, imgName: "bn", type: "knight", value: 320 },
+  { color: "black", x: 7, y: 0, imgName: "br", type: "rook", value: 500 },
+  { color: "black", x: 0, y: 1, imgName: "bp", type: "pawn", value: 100 },
+  { color: "black", x: 1, y: 1, imgName: "bp", type: "pawn", value: 100 },
+  { color: "black", x: 2, y: 1, imgName: "bp", type: "pawn", value: 100 },
+  { color: "black", x: 3, y: 1, imgName: "bp", type: "pawn", value: 100 },
+  { color: "black", x: 4, y: 1, imgName: "bp", type: "pawn", value: 100 },
+  { color: "black", x: 5, y: 1, imgName: "bp", type: "pawn", value: 100 },
+  { color: "black", x: 6, y: 1, imgName: "bp", type: "pawn", value: 100 },
+  { color: "black", x: 7, y: 1, imgName: "bp", type: "pawn", value: 100 },
 ];
 
 const white = [
-  { color: "white", x: 0, y: 7, imgName: "wr", type: "rook", value: 5 },
-  { color: "white", x: 1, y: 7, imgName: "wn", type: "knight", value: 3 },
-  { color: "white", x: 2, y: 7, imgName: "wb", type: "bishop", value: 3 },
-  { color: "white", x: 3, y: 7, imgName: "wq", type: "queen", value: 9 },
+  { color: "white", x: 0, y: 7, imgName: "wr", type: "rook", value: 500 },
+  { color: "white", x: 1, y: 7, imgName: "wn", type: "knight", value: 320 },
+  { color: "white", x: 2, y: 7, imgName: "wb", type: "bishop", value: 330 },
+  { color: "white", x: 3, y: 7, imgName: "wq", type: "queen", value: 900 },
   { color: "white", x: 4, y: 7, imgName: "wk", type: "king", value: Infinity },
-  { color: "white", x: 5, y: 7, imgName: "wb", type: "bishop", value: 3 },
-  { color: "white", x: 6, y: 7, imgName: "wn", type: "knight", value: 3 },
-  { color: "white", x: 7, y: 7, imgName: "wr", type: "rook", value: 5 },
-  { color: "white", x: 0, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { color: "white", x: 1, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { color: "white", x: 2, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { color: "white", x: 3, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { color: "white", x: 4, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { color: "white", x: 5, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { color: "white", x: 6, y: 6, imgName: "wp", type: "pawn", value: 1 },
-  { color: "white", x: 7, y: 6, imgName: "wp", type: "pawn", value: 1 },
+  { color: "white", x: 5, y: 7, imgName: "wb", type: "bishop", value: 330 },
+  { color: "white", x: 6, y: 7, imgName: "wn", type: "knight", value: 320 },
+  { color: "white", x: 7, y: 7, imgName: "wr", type: "rook", value: 500 },
+  { color: "white", x: 0, y: 6, imgName: "wp", type: "pawn", value: 100 },
+  { color: "white", x: 1, y: 6, imgName: "wp", type: "pawn", value: 100 },
+  { color: "white", x: 2, y: 6, imgName: "wp", type: "pawn", value: 100 },
+  { color: "white", x: 3, y: 6, imgName: "wp", type: "pawn", value: 100 },
+  { color: "white", x: 4, y: 6, imgName: "wp", type: "pawn", value: 100 },
+  { color: "white", x: 5, y: 6, imgName: "wp", type: "pawn", value: 100 },
+  { color: "white", x: 6, y: 6, imgName: "wp", type: "pawn", value: 100 },
+  { color: "white", x: 7, y: 6, imgName: "wp", type: "pawn", value: 100 },
 ];
 
 export const colors = [black, white];
@@ -65,27 +77,21 @@ export const themes = {
     padding: "#cdcdd0",
   },
   brown: {
-    black: "#b58863", // (181,136,99)
-    white: "#f0d9b5", // (240,217,181)
+    black: "rgb(181,136,99)",
+    white: "rgb(240,217,181)",
     padding: "rgb(211, 176, 141)",
   },
   texture_warm: {
-    black: "rgba(181, 126, 99, 0.5)", // (181,136,99)
-    white: "rgba(240, 217, 181, 0.5)", // (240,217,181)
+    black: "rgba(181, 136, 99, 0.5)",
+    white: "rgba(240, 217, 181, 0.5)",
     padding: "rgba(211, 176, 141, 0.5)",
-    style: {
-      backgroundImage: 'url("./img/textures/seamless-wood-texture-4.jpg")',
-      backgroundSize: "cover",
-    },
+    img: "./img/textures/seamless-wood-texture-4.jpg",
   },
   texture_dark: {
-    black: "rgba(0, 0, 0, 0.5)", // (181,136,99)
-    white: "rgba(255, 255, 255, 0.5)", // (240,217,181)
+    black: "rgba(0, 0, 0, 0.5)",
+    white: "rgba(255, 255, 255, 0.5)",
     padding: "rgba(128, 128, 128, 0.5)",
-    style: {
-      backgroundImage: 'url("./img/textures/seamless-wood-texture-4.jpg")',
-      backgroundSize: "cover",
-    },
+    img: "./img/textures/seamless-wood-texture-4.jpg",
   },
   pieces: ["neo", "game_room", "tournament"],
 };

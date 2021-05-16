@@ -1,4 +1,6 @@
-import { loadImage } from "./utilities.js";
+import { Move } from "./Move.js";
+
+// https://www.chessprogramming.org/Simplified_Evaluation_Function
 
 export class ChessPiece {
   constructor(type, color, img, posX, posY, value, promoted = false) {
@@ -23,16 +25,19 @@ export class ChessPiece {
     this.legalMoves = [];
     this.promoted = promoted;
     this.enPassant = false;
-    this.isKing = false;
+    this.isKing = this.type === "king" ? true : false;
   }
 
-  move(to) {
+  move(to, skipUpdate) {
+    if (this.type === "pawn" && !skipUpdate) {
+      this.value += Math.abs(this.y - to.y) * 10;
+    }
     this.x = to.x;
     this.y = to.y;
     this.hasMoved = true;
   }
 
-  findLegalMoves(board, verify) {
+  findLegalMoves(board) {
     this.legalMoves = [];
     let opponent = board.players[this.color].opponent;
     for (let i = 0; i < this.moves.length; i++) {
@@ -49,11 +54,11 @@ export class ChessPiece {
           // Pawn captures
           if (this.type === "pawn" && !repeat) {
             if (x >= 1 && board.pieces[x - 1][y] && board.pieces[x - 1][y].color === opponent) {
-              this.legalMoves.push({ from: { x: this.x, y: this.y }, to: { x: x - 1, y }, capture: board.pieces[x - 1][y] });
+              this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x: x - 1, y }, this, board.pieces[x - 1][y]));
               this.check(board.pieces[x - 1][y], board);
             }
             if (x <= 6 && board.pieces[x + 1][y] && board.pieces[x + 1][y].color === opponent) {
-              this.legalMoves.push({ from: { x: this.x, y: this.y }, to: { x: x + 1, y }, capture: board.pieces[x + 1][y] });
+              this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x: x + 1, y }, this, board.pieces[x + 1][y]));
               this.check(board.pieces[x + 1][y], board);
             }
             if (!this.hasMoved) {
@@ -68,16 +73,13 @@ export class ChessPiece {
             repeat = false;
             // Capture opponents piece
             if (board.pieces[x][y].color === opponent && this.type !== "pawn") {
-              this.legalMoves.push({ from: { x: this.x, y: this.y }, to: { x, y }, capture: board.pieces[x][y] });
+              this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, board.pieces[x][y]));
               this.check(board.pieces[x][y], board);
             }
           } else {
             // Move to empty square
-            if (enPassant) {
-              this.legalMoves.push({ from: { x: this.x, y: this.y }, to: { x, y }, capture: false, enPassant: true });
-            } else {
-              this.legalMoves.push({ from: { x: this.x, y: this.y }, to: { x, y }, capture: false });
-            }
+            this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, false));
+            this.enPassant = enPassant;
           }
         } else {
           repeat = false;
@@ -118,12 +120,17 @@ export class ChessPiece {
             }
           }
           if (canCastle) {
-            this.legalMoves.push({
-              from: { x: this.x, y: this.y },
-              to: { x: this.x - 2, y: this.y },
-              capture: false,
-              castle: { from: { x: this.x - 4, y: this.y }, to: { x: this.x - 1, y: this.y } },
-            });
+            this.legalMoves.push(
+              // prettier-ignore
+              new Move(
+                { x: this.x, y: this.y },
+                { x: this.x - 2, y: this.y },
+                this,
+                false,
+                new Move({ x: this.x - 4, y: this.y }, { x: this.x - 1, y: this.y }, queenSideRook, false, false, true),
+                false,
+                3)
+            );
           }
         }
         // Kingside
@@ -151,12 +158,17 @@ export class ChessPiece {
             }
           }
           if (canCastle) {
-            this.legalMoves.push({
-              from: { x: this.x, y: this.y },
-              to: { x: this.x + 2, y: this.y },
-              capture: false,
-              castle: { from: { x: this.x + 3, y: this.y }, to: { x: this.x + 1, y: this.y } },
-            });
+            // prettier-ignore
+            this.legalMoves.push(
+              new Move(
+                { x: this.x, y: this.y },
+                { x: this.x + 2, y: this.y },
+                this,
+                false,
+                new Move({ x: this.x + 3, y: this.y }, { x: this.x + 1, y: this.y }, kingSideRook, false, false, true),
+                false,
+                3)
+            );
           }
         }
       }

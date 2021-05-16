@@ -14,13 +14,21 @@ const infoDiv = document.querySelector("#info"),
   animCtx = animCanvas.getContext("2d");
 
 let mouse = { x: 0, y: 0, dragging: false },
-  size = parseInt(Math.min(window.innerWidth, window.innerHeight) * 0.8),
+  size = Math.floor(Math.min(window.innerWidth, window.innerHeight) * (1 / 11)),
   theme = "brown";
 
-size -= size % 9;
+const squareSize = size - (size % 2),
+  startPos = size / 2;
 
-const squareSize = size / 9,
-  startPos = squareSize / 2;
+size = squareSize * 9;
+
+// For displaying captured pieces
+let root = document.documentElement,
+  blackStatus = document.querySelector("#blackStatus"),
+  whiteStatus = document.querySelector("#whiteStatus");
+root.style.setProperty("--size", size + "px");
+root.style.setProperty("--square-size", squareSize + "px");
+//   margin-left: calc(var(--square-size) * -0.4);
 
 canvas.width = canvas2.width = canvas3.width = animCanvas.width = size;
 canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
@@ -32,10 +40,14 @@ let settings = {
   },
   squareSize,
 };
-const board = new ChessBoard(piecesCtx, guideCtx, settings);
-const guides = new GuideLayer(guideCtx, squareSize);
+
+// Make the board
+const board = new ChessBoard(piecesCtx, settings);
+// Load pieces etc
 await board.setup(themes.pieces[2]);
-drawBoard(false);
+
+const guides = new GuideLayer(guideCtx, squareSize);
+drawBackground(false);
 
 // let stop = performance.now();
 // let start = performance.now();
@@ -66,7 +78,7 @@ function grabPiece(evt) {
     if (board.players[board.turn].ai) {
       setTimeout(() => {
         grabPiece(evt);
-      }, 200);
+      }, 250);
       // makeAiMove(board.players[board.turn]);
     } else {
       setupEventListeners();
@@ -173,20 +185,24 @@ function handleMouseMove(evt) {
 async function makeAiMove(player) {
   // Find a random move
   let moveIndex = Math.floor(Math.random() * player.possibleMoves.length);
-
   let currentMove = player.possibleMoves[moveIndex];
+
+  player.possibleMoves.sort((a, b) => {
+    return b.weight - a.weight;
+  });
+
+  if (player.possibleMoves[0].weight > 0) {
+    currentMove = player.possibleMoves[0];
+  }
   board.makeMove(currentMove);
   endTurn(currentMove);
 }
 
 async function endTurn(currentMove, draw = true) {
-  if (currentMove.castle) {
-    board.makeMove(currentMove.castle, false, true);
-  }
-
   board.sounds.move.play();
+  let currentPiece = board.pieces[currentMove.to.x][currentMove.to.y],
+    currentPlayer = board.players[currentMove.piece.color];
   // Pawn promotion
-  let currentPiece = board.pieces[currentMove.to.x][currentMove.to.y];
   if (currentPiece.promoted) {
     currentPiece.promoted = false;
     let imgName = currentPiece.color.substr(0, 1);
@@ -198,26 +214,77 @@ async function endTurn(currentMove, draw = true) {
 
   if (draw) {
     board.redraw();
-    // Player has moved, clear legal moves mark and mark the move then switch turns
+    blackStatus.innerHTML = "";
+    whiteStatus.innerHTML = "";
+    for (let color in board.players) {
+      board.players[color].score = 0;
+      board.players[color].captures.sort((a, b) => {
+        return a.value - b.value;
+      });
+      //  margin-left: calc(var(--square-size) * -0.4);
+      for (let piece of board.players[color].captures) {
+        board.players[color].score += Math.floor(piece.value / 100);
+        if (color === "white") {
+          if (whiteStatus.lastChild?.src === piece.img.src) {
+            whiteStatus.lastChild.style.marginRight = "calc(var(--square-size) * -0.15)";
+          }
+          whiteStatus.appendChild(piece.img);
+        }
+        if (color === "black") {
+          if (blackStatus.lastChild?.src === piece.img.src) {
+            blackStatus.lastChild.style.marginRight = "calc(var(--square-size) * -0.15)";
+          }
+          blackStatus.appendChild(piece.img);
+        }
+      }
+    }
+    let blackScore = document.createElement("p"),
+      whiteScore = document.createElement("p");
+
+    blackScore.textContent =
+      board.players.black.score - board.players.white.score >= 0 ? "+" + (board.players.black.score - board.players.white.score) : board.players.black.score - board.players.white.score;
+    whiteScore.textContent =
+      board.players.white.score - board.players.black.score >= 0 ? "+" + (board.players.white.score - board.players.black.score) : board.players.white.score - board.players.black.score;
+
+    blackStatus.appendChild(blackScore);
+    whiteStatus.appendChild(whiteScore);
+
+    // Player has moved, clear legal moves mark and mark the move
     guides.clearAll();
     guides.markMove(currentMove);
   }
 
-  let opponentColor = currentPiece.color === "black" ? "white" : "black";
+  let opponentColor = currentPlayer.opponent;
+  let opponent = board.players[opponentColor];
+  let totalNumberOfPieces = currentPlayer.pieces.length + opponent.pieces.length;
 
-  if (board.players[opponentColor].possibleMoves.length > 0) {
+  if (board.players[opponentColor].possibleMoves.length > 0 && totalNumberOfPieces > 2) {
     // If opponent has possible moves
     board.turn = opponentColor;
     // Check if it's AIs turn
     if (board.players[board.turn].ai) {
-      let delay = 250 + Math.floor(Math.random() * 250);
-      setTimeout(() => {
-        makeAiMove(board.players[board.turn]);
-      }, delay);
+      // let delay = 250 + Math.floor(Math.random() * 250);
+      // let delay = 25;
+      // setTimeout(() => {
+      makeAiMove(board.players[board.turn]);
+      // }, delay);
     }
   } else {
-    // Opponent has no moves. Player wins :)
-    messageEle.innerHTML = "Game Over<br> " + board.turn + " wins! <br>The game lasted for  " + board.moveIndex + " ply.";
+    console.log(board);
+    if (totalNumberOfPieces <= 2) {
+      // Only 2 pieces left(shpuld be the kings)
+      messageEle.innerHTML = "Insufficient material!<br>It's a draw!<br>The game lasted for  " + board.moveIndex + " ply.";
+    } else {
+      // Opponent has no moves. Check if opponent is in check
+      board.updatePieces(currentPlayer.color);
+      if (opponent.isChecked) {
+        messageEle.innerHTML = "Checkmate!<br> " + board.turn.charAt(0).toUpperCase() + board.turn.slice(1) + " wins! <br>The game lasted for  " + board.moveIndex + " ply.";
+      } else {
+        messageEle.innerHTML = "Stalemate!<br>It's a draw!<br>The game lasted for  " + board.moveIndex + " ply.";
+      }
+    }
+
+    messageEle.style.transition = "opacity 0.5s ease-in-out";
     messageEle.style.opacity = "1";
   }
 }
@@ -239,21 +306,15 @@ function updateScore() {
 
 document.querySelector("#themeSelect").addEventListener("change", (evt) => {
   theme = evt.target.value;
-  drawBoard();
+  drawBackground();
 });
 
-async function drawBoard(drawLines = false) {
+async function drawBackground(drawLines = false) {
+  bgCtx.save();
   bgCtx.clearRect(0, 0, size, size);
-  // if (themes[theme].hasOwnProperty("style")) {
-  //   for (let prop in themes[theme].style) {
-  //     canvas.style[prop] = themes[theme].style[prop];
-  //   }
-  // } else {
-  //   canvas.style.background = "none";
-  // }
   let img = null;
-  if (themes[theme].hasOwnProperty("style")) {
-    img = themes[theme].style.backgroundImage.split('"')[1];
+  if (themes[theme].hasOwnProperty("img")) {
+    img = themes[theme].img;
     img = await loadImage(img);
     bgCtx.drawImage(img, 0, 0, size, size);
   }
@@ -261,13 +322,14 @@ async function drawBoard(drawLines = false) {
   bgCtx.fillRect(0, 0, size, size);
   // bgCtx.globalCompositeOperation = "multiply";
   bgCtx.fillStyle = themes[theme].black;
-  bgCtx.fillRect(0 + startPos, 0 + startPos, size - squareSize, size - squareSize);
+  bgCtx.translate(startPos, startPos);
+  bgCtx.fillRect(0, 0, size - squareSize, size - squareSize);
   // bgCtx.globalCompositeOperation = "screen";
   bgCtx.fillStyle = themes[theme].white;
   for (let i = 0; i < 8; i += 2) {
     for (let j = 0; j < 8; j += 2) {
-      bgCtx.fillRect(i * squareSize + startPos, j * squareSize + startPos, squareSize, squareSize);
-      bgCtx.fillRect((1 + i) * squareSize + startPos, (1 + j) * squareSize + startPos, squareSize, squareSize);
+      bgCtx.fillRect(i * squareSize, j * squareSize, squareSize, squareSize);
+      bgCtx.fillRect((1 + i) * squareSize, (1 + j) * squareSize, squareSize, squareSize);
     }
   }
   // Draw lines
@@ -276,11 +338,11 @@ async function drawBoard(drawLines = false) {
   for (let i = 0; i <= 8; i++) {
     if (drawLines) {
       bgCtx.beginPath();
-      bgCtx.moveTo(i * squareSize + startPos, 0 + startPos);
-      bgCtx.lineTo(i * squareSize + startPos, size - startPos);
+      bgCtx.moveTo(i * squareSize, 0);
+      bgCtx.lineTo(i * squareSize, size - startPos);
       bgCtx.stroke();
       bgCtx.beginPath();
-      bgCtx.moveTo(0 + startPos, i * squareSize + startPos);
+      bgCtx.moveTo(0, i * squareSize);
       bgCtx.lineTo(size - startPos, i * squareSize + startPos);
       bgCtx.stroke();
     }
@@ -289,7 +351,8 @@ async function drawBoard(drawLines = false) {
     bgCtx.textAlign = "center";
     bgCtx.textBaseline = "middle";
     bgCtx.font = squareSize / 5 + "px Verdana";
-    bgCtx.fillText("abcdefgh".charAt(i), squareSize + i * squareSize, size - startPos / 2);
-    bgCtx.fillText("12345678".charAt(i), startPos / 2, size - squareSize * (i + 1));
+    bgCtx.fillText("abcdefgh".charAt(i), startPos + i * squareSize, size - startPos - startPos / 2);
+    bgCtx.fillText("12345678".charAt(i), -startPos / 2, size - startPos - squareSize * (i + 1));
   }
+  bgCtx.restore();
 }
