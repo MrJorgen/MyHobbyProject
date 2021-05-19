@@ -70,7 +70,7 @@ export function make2dArray(cols, rows) {
 }
 
 export const themes = {
-  line: "rgb(50, 50, 50)",
+  line: "rgba(128, 128, 128, 1",
   silver: {
     black: "#b0b2b5",
     white: "#e5e5e6",
@@ -82,16 +82,25 @@ export const themes = {
     padding: "rgb(211, 176, 141)",
   },
   texture_warm: {
-    black: "rgba(181, 136, 99, 0.5)",
-    white: "rgba(240, 217, 181, 0.5)",
-    padding: "rgba(211, 176, 141, 0.5)",
-    img: "./img/textures/seamless-wood-texture-4.jpg",
+    // black: "rgba(181, 136, 99, 1)",
+    // white: "rgba(240, 217, 181, 1)",
+    black: "rgba(69, 49, 33, 0.75)",
+    white: "rgba(255, 255, 255, 0.0)",
+    // img: "./img/textures/seamless-wood-texture-4.jpg",
+    // black: "rgba(0, 0, 0, 0.5)",
+    // white: "rgba(255, 255, 255, 0.75)",
+    img: "./img/textures/seamless-wood-background-1.jpg",
+    // padding: "rgba(211, 176, 141, 1)",
+    padding: "rgb(225 149 68)",
+    composit: "hard-light",
   },
   texture_dark: {
     black: "rgba(0, 0, 0, 0.5)",
-    white: "rgba(255, 255, 255, 0.5)",
-    padding: "rgba(128, 128, 128, 0.5)",
+    white: "rgba(255, 255, 255, 0.0)",
+    padding: "rgba(128, 128, 128, 0.75)",
     img: "./img/textures/seamless-wood-texture-4.jpg",
+    // composit: "overlay",
+    composit: "hard-light",
   },
   pieces: ["neo", "game_room", "tournament"],
 };

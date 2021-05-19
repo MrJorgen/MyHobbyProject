@@ -10,6 +10,9 @@ export class Move {
     this.weight = weight;
     if (this.capture) {
       this.weight = capture.value - piece.value;
+    } else if (this.piece.type === "pawn") {
+      // this.weight = Math.abs(from.y - to.y);
+      // this.weight += 3.5 - Math.abs(to.x - 3.5) * 0.1;
     }
   }
 }

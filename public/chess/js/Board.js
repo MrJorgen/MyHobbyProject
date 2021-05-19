@@ -1,5 +1,11 @@
+"use strict";
 import { Player } from "./Player.js";
-import { ChessPiece } from "./Piece.js";
+import { Rook } from "./pieces/Rook.js";
+import { Knight } from "./pieces/Knight.js";
+import { Bishop } from "./pieces/Bishop.js";
+import { Queen } from "./pieces/Queen.js";
+import { King } from "./pieces/King.js";
+import { Pawn } from "./pieces/Pawn.js";
 import { loadImage, colors, make2dArray } from "./utilities.js";
 
 export class ChessBoard {
@@ -19,6 +25,90 @@ export class ChessBoard {
     this.verify = false;
     this.calculatedMoves = 0;
     this.latestVerifiedMove = null;
+    this.fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    this.fiftyMove = 0;
+  }
+
+  async decodeFen(fen) {
+    this.fen = fen || this.fen;
+    if (this.fen) {
+      this.clearAll();
+      console.log(this);
+      let fenArray = this.fen.split(" ");
+      let x = 0,
+        y = 0,
+        pieceChars = "rnbqkpRNBQKP";
+      for (let char of fenArray[0]) {
+        if (char !== "/") {
+          if (pieceChars.includes(char)) {
+            let tmpPiece = {};
+
+            // Check if Char is lower- or uppercase(black or white)
+            if (char === char.toLowerCase()) {
+              tmpPiece.color = "black";
+              tmpPiece.imgName = `./img/pieces/${this.theme}/b`;
+            } else {
+              tmpPiece.color = "white";
+              tmpPiece.imgName = `./img/pieces/${this.theme}/w`;
+            }
+
+            tmpPiece.imgName += `${char.toLowerCase()}.png`;
+            tmpPiece.x = x;
+            tmpPiece.y = y;
+            tmpPiece.img = await loadImage(tmpPiece.imgName);
+
+            switch (char.toLowerCase()) {
+              case "r":
+                this.pieces[x][y] = new Rook(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+                break;
+              case "n":
+                this.pieces[x][y] = new Knight(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+                break;
+              case "b":
+                this.pieces[x][y] = new Bishop(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+                break;
+              case "q":
+                this.pieces[x][y] = new Queen(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+                break;
+              case "k":
+                this.pieces[x][y] = new King(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+                break;
+              case "p":
+                this.pieces[x][y] = new Pawn(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+                break;
+            }
+
+            // this.pieces[x][y] = new ChessPiece(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+            this.players[tmpPiece.color].pieces.push(this.pieces[x][y]);
+            this.drawPiece(tmpPiece, tmpPiece);
+            x++;
+          } else {
+            x += parseInt(char);
+          }
+        } else if (char === "/") {
+          y++;
+          x = 0;
+        }
+      }
+
+      this.turn = "black";
+      if (fenArray[1] === "w") {
+        this.turn = "white";
+      }
+
+      console.log(fenArray);
+      // Finally update what moves each piece can make on the current board setup
+      this.updatePieces("white");
+      this.updatePieces("black");
+      this.getAllPossibleMoves();
+      // this.verifyMoves(this.turn);
+    } else {
+      console.error("There is no FEN string to decode!");
+    }
+  }
+
+  clearAll() {
+    this.pieces = make2dArray(8, 8);
   }
 
   async loadPieces() {
@@ -54,9 +144,13 @@ export class ChessBoard {
     delete this.pieces[to.x][to.y];
     this.history.push(incomingMove);
     this.moveIndex++;
+    if (!this.verify) {
+      this.fiftyMove++;
+    }
 
     if (capture && !this.verify) {
       this.players[myColor].captures.push(capture);
+      this.fiftyMove = 0;
     }
 
     this.pieces[to.x][to.y] = this.pieces[from.x][from.y];
@@ -68,7 +162,12 @@ export class ChessBoard {
       this.makeMove(incomingMove.castle);
     }
     // Check if it's a pawn to promote
-    this.pawnPromo(to);
+    if (incomingMove.piece.type === "pawn") {
+      if (!this.verify) {
+        this.fiftyMove = 0;
+      }
+      this.pawnPromo(to);
+    }
 
     // Player has made a move and should no longer be in check(else it would be illegal)
     this.players[myColor].isChecked = false;
@@ -92,8 +191,8 @@ export class ChessBoard {
 
   pawnPromo(to) {
     // TODO: Make this so you can chose what to promote to(bishop, knight, rook or queen)
-    if (this.pieces[to.x][to.y].type === "pawn" && (to.y === 0 || to.y === 7)) {
-      this.pieces[to.x][to.y] = new ChessPiece("queen", this.pieces[to.x][to.y].color, null, this.pieces[to.x][to.y].x, this.pieces[to.x][to.y].y, 900, true);
+    if (to.y === 0 || to.y === 7) {
+      this.pieces[to.x][to.y] = new Queen(this.pieces[to.x][to.y].color, null, this.pieces[to.x][to.y].x, this.pieces[to.x][to.y].y, true);
       this.pieces[to.x][to.y].findLegalMoves(this);
     }
   }

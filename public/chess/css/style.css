@@ -143,5 +143,21 @@ canvas {
   width: calc(var(--square-size) / 2);
   height: calc(var(--square-size) / 2);
   margin-left: calc(var(--square-size) * -0.2);
-  display: inline-block;
+}
+
+#whiteStatus p,
+#blackStatus p {
+  line-height: calc(var(--square-size) / 2);
+}
+
+#blackStatus p {
+  align-self: flex-end;
+}
+
+#whiteStatus p {
+  align-self: flex-start;
+}
+
+.stack {
+  margin-right: calc(var(--square-size) * -0.15);
 }

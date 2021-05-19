@@ -28,7 +28,6 @@ let root = document.documentElement,
   whiteStatus = document.querySelector("#whiteStatus");
 root.style.setProperty("--size", size + "px");
 root.style.setProperty("--square-size", squareSize + "px");
-//   margin-left: calc(var(--square-size) * -0.4);
 
 canvas.width = canvas2.width = canvas3.width = animCanvas.width = size;
 canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
@@ -43,8 +42,10 @@ let settings = {
 
 // Make the board
 const board = new ChessBoard(piecesCtx, settings);
+await board.decodeFen();
 // Load pieces etc
-await board.setup(themes.pieces[2]);
+// await board.setup(themes.pieces[2]);
+// await board.decodeFen("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2");
 
 const guides = new GuideLayer(guideCtx, squareSize);
 drawBackground(false);
@@ -52,21 +53,30 @@ drawBackground(false);
 // let stop = performance.now();
 // let start = performance.now();
 // console.log("It took " + (stop - start) + " ms for the AI to make it's move");
+
 if (!settings.ai.black || !settings.ai.white) {
   setupEventListeners();
 }
 
+if (settings.ai.black && board.turn === "black") {
+  makeAiMove(board.players.black);
+}
+
+if (settings.ai.white && board.turn === "white") {
+  makeAiMove(board.players.white);
+}
+
 function setupEventListeners() {
+  animCanvas.addEventListener("contextmenu", (event) => event.preventDefault());
   animCanvas.addEventListener("mousedown", grabPiece);
   animCanvas.addEventListener("mousemove", handleMouseMove);
   animCanvas.addEventListener("mouseup", dropPiece);
 }
 
-animCanvas.addEventListener("contextmenu", (event) => event.preventDefault());
-
-if (settings.ai.white) {
-  makeAiMove(board.players.white);
-}
+document.querySelector("#themeSelect").addEventListener("change", (evt) => {
+  theme = evt.target.value;
+  drawBackground();
+});
 
 function grabPiece(evt) {
   if (evt.which === 3) {
@@ -183,33 +193,60 @@ function handleMouseMove(evt) {
 }
 
 async function makeAiMove(player) {
-  // Find a random move
-  let moveIndex = Math.floor(Math.random() * player.possibleMoves.length);
-  let currentMove = player.possibleMoves[moveIndex];
+  if (player.possibleMoves.length > 0) {
+    // Find a random move
+    let currentMove;
 
-  player.possibleMoves.sort((a, b) => {
-    return b.weight - a.weight;
-  });
+    player.possibleMoves.sort((a, b) => {
+      return b.weight - a.weight;
+    });
 
-  if (player.possibleMoves[0].weight > 0) {
-    currentMove = player.possibleMoves[0];
+    if (player.possibleMoves[0].weight > 0) {
+      let tmpArray = [];
+      let bestMove = player.possibleMoves[0];
+      for (let move of player.possibleMoves) {
+        if (move.weight === bestMove.weight) {
+          tmpArray.push(move);
+        }
+      }
+      let moveIndex = Math.floor(Math.random() * tmpArray.length);
+      currentMove = tmpArray[moveIndex];
+    }
+    if (!currentMove) {
+      let moveIndex = Math.floor(Math.random() * player.possibleMoves.length);
+      currentMove = player.possibleMoves[moveIndex];
+    }
+
+    board.makeMove(currentMove);
+    endTurn(currentMove);
+  } else {
+    let currentPlayer = board.players[board.turn];
+    board.turn = currentPlayer.opponent;
+    endTurn(false, false);
   }
-  board.makeMove(currentMove);
-  endTurn(currentMove);
 }
 
 async function endTurn(currentMove, draw = true) {
-  board.sounds.move.play();
-  let currentPiece = board.pieces[currentMove.to.x][currentMove.to.y],
-    currentPlayer = board.players[currentMove.piece.color];
-  // Pawn promotion
-  if (currentPiece.promoted) {
-    currentPiece.promoted = false;
-    let imgName = currentPiece.color.substr(0, 1);
-    let src = `./img/pieces/${board.theme}/${imgName}q.png`;
-    if (draw) {
-      currentPiece.img = await loadImage(src);
+  let currentPlayer, currentPiece;
+  if (currentMove) {
+    if (currentMove.capture) {
+      board.sounds.capture.play();
+    } else {
+      board.sounds.move.play();
     }
+    (currentPiece = board.pieces[currentMove.to.x][currentMove.to.y]), (currentPlayer = board.players[currentMove.piece.color]);
+    // Pawn promotion
+    if (currentPiece.promoted) {
+      debugger;
+      currentPiece.promoted = false;
+      let imgName = currentPiece.color.substr(0, 1);
+      let src = `./img/pieces/${board.theme}/${imgName}q.png`;
+      if (draw) {
+        currentPiece.img = await loadImage(src);
+      }
+    }
+  } else {
+    currentPlayer = board.players[board.turn];
   }
 
   if (draw) {
@@ -221,33 +258,33 @@ async function endTurn(currentMove, draw = true) {
       board.players[color].captures.sort((a, b) => {
         return a.value - b.value;
       });
-      //  margin-left: calc(var(--square-size) * -0.4);
       for (let piece of board.players[color].captures) {
         board.players[color].score += Math.floor(piece.value / 100);
         if (color === "white") {
           if (whiteStatus.lastChild?.src === piece.img.src) {
-            whiteStatus.lastChild.style.marginRight = "calc(var(--square-size) * -0.15)";
+            whiteStatus.lastChild.classList.add("stack");
           }
           whiteStatus.appendChild(piece.img);
         }
         if (color === "black") {
           if (blackStatus.lastChild?.src === piece.img.src) {
-            blackStatus.lastChild.style.marginRight = "calc(var(--square-size) * -0.15)";
+            blackStatus.lastChild.classList.add("stack");
           }
           blackStatus.appendChild(piece.img);
         }
       }
     }
-    let blackScore = document.createElement("p"),
-      whiteScore = document.createElement("p");
-
-    blackScore.textContent =
-      board.players.black.score - board.players.white.score >= 0 ? "+" + (board.players.black.score - board.players.white.score) : board.players.black.score - board.players.white.score;
-    whiteScore.textContent =
-      board.players.white.score - board.players.black.score >= 0 ? "+" + (board.players.white.score - board.players.black.score) : board.players.white.score - board.players.black.score;
-
-    blackStatus.appendChild(blackScore);
-    whiteStatus.appendChild(whiteScore);
+    if (blackStatus.hasChildNodes() && board.players.black.score >= board.players.white.score) {
+      let blackScoreEle = document.createElement("p");
+      blackScoreEle.textContent = "+" + (board.players.black.score - board.players.white.score);
+      blackStatus.appendChild(blackScoreEle);
+    }
+    if (whiteStatus.hasChildNodes() && board.players.white.score >= board.players.black.score) {
+      let whiteScoreEle = document.createElement("p");
+      whiteScoreEle.textContent =
+        board.players.white.score - board.players.black.score >= 0 ? "+" + (board.players.white.score - board.players.black.score) : board.players.white.score - board.players.black.score;
+      whiteStatus.appendChild(whiteScoreEle);
+    }
 
     // Player has moved, clear legal moves mark and mark the move
     guides.clearAll();
@@ -258,95 +295,89 @@ async function endTurn(currentMove, draw = true) {
   let opponent = board.players[opponentColor];
   let totalNumberOfPieces = currentPlayer.pieces.length + opponent.pieces.length;
 
-  if (board.players[opponentColor].possibleMoves.length > 0 && totalNumberOfPieces > 2) {
+  if (board.players[opponentColor].possibleMoves.length > 0 && totalNumberOfPieces > 2 && board.fiftyMove < 50) {
     // If opponent has possible moves
     board.turn = opponentColor;
     // Check if it's AIs turn
     if (board.players[board.turn].ai) {
       // let delay = 250 + Math.floor(Math.random() * 250);
-      // let delay = 25;
-      // setTimeout(() => {
-      makeAiMove(board.players[board.turn]);
-      // }, delay);
+      let delay = 25;
+      setTimeout(() => {
+        makeAiMove(board.players[board.turn]);
+      }, delay);
     }
   } else {
     console.log(board);
-    if (totalNumberOfPieces <= 2) {
+    if (totalNumberOfPieces <= 2 || board.fiftyMove >= 50) {
       // Only 2 pieces left(shpuld be the kings)
-      messageEle.innerHTML = "Insufficient material!<br>It's a draw!<br>The game lasted for  " + board.moveIndex + " ply.";
-    } else {
+      messageEle.innerHTML = "It's a draw!";
+    } else if (board.players[opponentColor].possibleMoves.length <= 0) {
       // Opponent has no moves. Check if opponent is in check
       board.updatePieces(currentPlayer.color);
       if (opponent.isChecked) {
-        messageEle.innerHTML = "Checkmate!<br> " + board.turn.charAt(0).toUpperCase() + board.turn.slice(1) + " wins! <br>The game lasted for  " + board.moveIndex + " ply.";
+        messageEle.innerHTML = "Checkmate by " + board.turn + "!";
       } else {
-        messageEle.innerHTML = "Stalemate!<br>It's a draw!<br>The game lasted for  " + board.moveIndex + " ply.";
+        messageEle.innerHTML = "Stalemate!";
       }
     }
+
+    messageEle.innerHTML += "<br><small>The game lasted for  " + board.moveIndex + " ply.</small>";
 
     messageEle.style.transition = "opacity 0.5s ease-in-out";
     messageEle.style.opacity = "1";
   }
 }
 
-function updateScore() {
-  let score = {
-    white: 0,
-    black: 0,
-  };
-  for (let x = 0; x < 8; x++) {
-    for (let y = 0; y < 8; y++) {
-      if (board.pieces[x][y].type !== "king") {
-        score[board.pieces[x][y].color] += board.pieces[x][y].value;
-      }
-    }
-  }
-  infoDiv.innerHTML = `<h3>Score</h3><br>White: ${39 - score.black}<br>Black: ${39 - score.white}`;
-}
-
-document.querySelector("#themeSelect").addEventListener("change", (evt) => {
-  theme = evt.target.value;
-  drawBackground();
-});
-
 async function drawBackground(drawLines = false) {
   bgCtx.save();
   bgCtx.clearRect(0, 0, size, size);
-  let img = null;
+
+  // Draw image if in the theme
   if (themes[theme].hasOwnProperty("img")) {
-    img = themes[theme].img;
+    let img = themes[theme].img;
     img = await loadImage(img);
-    bgCtx.drawImage(img, 0, 0, size, size);
+    // bgCtx.drawImage(img, 0, 0, size, size);
+    bgCtx.fillStyle = themes[theme].padding;
+    bgCtx.fillRect(0, 0, size, size);
+    bgCtx.drawImage(img, startPos + 0.5, startPos + 0.5, squareSize * 8, squareSize * 8);
+    bgCtx.globalCompositeOperation = themes[theme].composit;
+  } else {
+    bgCtx.fillStyle = themes[theme].padding;
+    bgCtx.fillRect(0, 0, size, size);
   }
-  bgCtx.fillStyle = themes[theme].padding;
-  bgCtx.fillRect(0, 0, size, size);
-  // bgCtx.globalCompositeOperation = "multiply";
-  bgCtx.fillStyle = themes[theme].black;
   bgCtx.translate(startPos, startPos);
-  bgCtx.fillRect(0, 0, size - squareSize, size - squareSize);
-  // bgCtx.globalCompositeOperation = "screen";
-  bgCtx.fillStyle = themes[theme].white;
-  for (let i = 0; i < 8; i += 2) {
-    for (let j = 0; j < 8; j += 2) {
-      bgCtx.fillRect(i * squareSize, j * squareSize, squareSize, squareSize);
-      bgCtx.fillRect((1 + i) * squareSize, (1 + j) * squareSize, squareSize, squareSize);
+
+  // Draw squares
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
+      if ((i + j) % 2 === 0) {
+        bgCtx.fillStyle = themes[theme].white;
+      } else {
+        bgCtx.fillStyle = themes[theme].black;
+      }
+      bgCtx.fillRect(i * squareSize + 0.5, j * squareSize + 0.5, squareSize, squareSize);
     }
   }
   // Draw lines
+  // bgCtx.globalCompositeOperation = "source-over";
   bgCtx.strokeStyle = themes.line;
   bgCtx.lineWidth = 2.5;
   for (let i = 0; i <= 8; i++) {
     if (drawLines) {
+      // Horizontal?
       bgCtx.beginPath();
       bgCtx.moveTo(i * squareSize, 0);
-      bgCtx.lineTo(i * squareSize, size - startPos);
+      bgCtx.lineTo(i * squareSize, squareSize * 8);
       bgCtx.stroke();
+
+      // Vertical?
       bgCtx.beginPath();
       bgCtx.moveTo(0, i * squareSize);
-      bgCtx.lineTo(size - startPos, i * squareSize + startPos);
+      bgCtx.lineTo(squareSize * 8, i * squareSize);
       bgCtx.stroke();
     }
 
+    bgCtx.globalCompositeOperation = "source-over";
     bgCtx.fillStyle = "black";
     bgCtx.textAlign = "center";
     bgCtx.textBaseline = "middle";
