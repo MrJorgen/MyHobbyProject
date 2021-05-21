@@ -1,9 +1,10 @@
-import { ChessPiece } from "./Piece.js";
+import ChessPiece from "./Piece.js";
 
-export class Rook extends ChessPiece {
+class Rook extends ChessPiece {
   constructor(color, img, posX, posY) {
     super(color, img, posX, posY);
     this.type = "rook";
+    this.hasMoved = true;
     this.moves = [
       { x: 1, repeat: true },
       { x: -1, repeat: true },
@@ -13,3 +14,5 @@ export class Rook extends ChessPiece {
     this.value = 500;
   }
 }
+
+export default Rook;

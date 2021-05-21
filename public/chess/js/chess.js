@@ -1,6 +1,6 @@
 import { ChessBoard } from "./Board.js";
 import { GuideLayer } from "./GuideLayer.js";
-import { loadImage, themes } from "./utilities.js";
+import { loadImage, themes, make2dArray, ChessImages } from "./utilities.js";
 
 const infoDiv = document.querySelector("#info"),
   messageEle = document.querySelector("#message"),
@@ -31,28 +31,68 @@ root.style.setProperty("--square-size", squareSize + "px");
 
 canvas.width = canvas2.width = canvas3.width = animCanvas.width = size;
 canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
-let settings = {
-  theme: themes.pieces[2],
+const settings = {
+  theme: themes.pieces[3],
   ai: {
     white: false,
-    black: true,
+    black: false,
   },
   squareSize,
 };
 
+let images = new ChessImages(settings);
+await images.loadImages();
+
+// Positions from
+// https://www.chessprogramming.org/Perft_Results
+
+let fenStrings = [
+  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+  "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -",
+  "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -",
+  "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1",
+  "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8",
+  "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10",
+  "2r3k1/1q1nbppp/r3p3/3pP3/pPpP4/P1Q2N2/2RN1PPP/2R4K b - b3 0 23", // En Passant test
+];
+
+/*
+Pos 5(index 4)
+
+Depth	Nodes
+1	    44
+2	    1,486
+3	    62,379
+4	    2,103,487
+5	    89,941,194
+
+*/
+
 // Make the board
 const board = new ChessBoard(piecesCtx, settings);
-await board.decodeFen();
+window.board = board;
 // Load pieces etc
-// await board.setup(themes.pieces[2]);
-// await board.decodeFen("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2");
+await board.decodeFen(fenStrings[0]);
 
 const guides = new GuideLayer(guideCtx, squareSize);
 drawBackground(false);
 
-// let stop = performance.now();
-// let start = performance.now();
-// console.log("It took " + (stop - start) + " ms for the AI to make it's move");
+let test = make2dArray(8, 8);
+for (let x = 0; x < test.length; x++) {
+  for (let y = 0; y < test[x].length; y++) {
+    if (board.pieces[x][y]) {
+      test[x][y] = Object.assign({
+        x: board.pieces[x][y].x,
+        y: board.pieces[x][y].y,
+        type: board.pieces[x][y].type,
+        color: board.pieces[x][y].color,
+      });
+    }
+  }
+}
+console.log(test);
+let worker = new Worker("./js/worker.js", { type: "module" });
+worker.postMessage(test);
 
 if (!settings.ai.black || !settings.ai.white) {
   setupEventListeners();
@@ -65,6 +105,16 @@ if (settings.ai.black && board.turn === "black") {
 if (settings.ai.white && board.turn === "white") {
   makeAiMove(board.players.white);
 }
+
+window.test = function (depth) {
+  let correct = [0, 44, 1486, 62379, 2103487, 89941194];
+
+  let start = performance.now();
+  let numPos = board.perft(depth);
+  let stop = performance.now();
+  console.log(`Depth: ${depth} ply. Result: ${numPos} positions. Time: ${(stop - start).toFixed(0)} ms.`);
+  // return `Depth: ${depth} ply. Result: ${numPos} positions. Time: ${(stop - start).toFixed(0)} ms.`;
+};
 
 function setupEventListeners() {
   animCanvas.addEventListener("contextmenu", (event) => event.preventDefault());
@@ -81,17 +131,19 @@ document.querySelector("#themeSelect").addEventListener("change", (evt) => {
 function grabPiece(evt) {
   if (evt.which === 3) {
     evt.preventDefault();
-    board.unMakeMove();
-    guides.clearAll();
-    board.redraw();
-    board.turn = board.turn === "black" ? "white" : "black";
-    if (board.players[board.turn].ai) {
-      setTimeout(() => {
-        grabPiece(evt);
-      }, 250);
-      // makeAiMove(board.players[board.turn]);
-    } else {
-      setupEventListeners();
+    if (board.history.length > 0) {
+      board.unMakeMove();
+      guides.clearAll();
+      board.redraw();
+      board.turn = board.turn === "black" ? "white" : "black";
+      if (board.players[board.turn].ai) {
+        setTimeout(() => {
+          grabPiece(evt);
+        }, 250);
+        // makeAiMove(board.players[board.turn]);
+      } else {
+        setupEventListeners();
+      }
     }
     return;
   }
@@ -234,15 +286,13 @@ async function endTurn(currentMove, draw = true) {
     } else {
       board.sounds.move.play();
     }
-    (currentPiece = board.pieces[currentMove.to.x][currentMove.to.y]), (currentPlayer = board.players[currentMove.piece.color]);
+    currentPiece = board.pieces[currentMove.to.x][currentMove.to.y];
+    currentPlayer = board.players[currentMove.piece.color];
     // Pawn promotion
     if (currentPiece.promoted) {
-      debugger;
       currentPiece.promoted = false;
-      let imgName = currentPiece.color.substr(0, 1);
-      let src = `./img/pieces/${board.theme}/${imgName}q.png`;
-      if (draw) {
-        currentPiece.img = await loadImage(src);
+      if (draw && !currentPiece.img) {
+        currentPiece.img = await loadImage(currentPiece.imgName);
       }
     }
   } else {
@@ -264,22 +314,22 @@ async function endTurn(currentMove, draw = true) {
           if (whiteStatus.lastChild?.src === piece.img.src) {
             whiteStatus.lastChild.classList.add("stack");
           }
-          whiteStatus.appendChild(piece.img);
+          whiteStatus.appendChild(await loadImage(piece.img.src));
         }
         if (color === "black") {
           if (blackStatus.lastChild?.src === piece.img.src) {
             blackStatus.lastChild.classList.add("stack");
           }
-          blackStatus.appendChild(piece.img);
+          blackStatus.appendChild(await loadImage(piece.img.src));
         }
       }
     }
-    if (blackStatus.hasChildNodes() && board.players.black.score >= board.players.white.score) {
+    if (blackStatus.hasChildNodes() && board.players.black.score > board.players.white.score) {
       let blackScoreEle = document.createElement("p");
       blackScoreEle.textContent = "+" + (board.players.black.score - board.players.white.score);
       blackStatus.appendChild(blackScoreEle);
     }
-    if (whiteStatus.hasChildNodes() && board.players.white.score >= board.players.black.score) {
+    if (whiteStatus.hasChildNodes() && board.players.white.score > board.players.black.score) {
       let whiteScoreEle = document.createElement("p");
       whiteScoreEle.textContent =
         board.players.white.score - board.players.black.score >= 0 ? "+" + (board.players.white.score - board.players.black.score) : board.players.white.score - board.players.black.score;
@@ -295,7 +345,7 @@ async function endTurn(currentMove, draw = true) {
   let opponent = board.players[opponentColor];
   let totalNumberOfPieces = currentPlayer.pieces.length + opponent.pieces.length;
 
-  if (board.players[opponentColor].possibleMoves.length > 0 && totalNumberOfPieces > 2 && board.fiftyMove < 50) {
+  if (board.players[opponentColor].possibleMoves.length > 0 && totalNumberOfPieces > 2 && board.fiftyMove < 100) {
     // If opponent has possible moves
     board.turn = opponentColor;
     // Check if it's AIs turn
@@ -308,7 +358,7 @@ async function endTurn(currentMove, draw = true) {
     }
   } else {
     console.log(board);
-    if (totalNumberOfPieces <= 2 || board.fiftyMove >= 50) {
+    if (totalNumberOfPieces <= 2 || board.fiftyMove >= 100) {
       // Only 2 pieces left(shpuld be the kings)
       messageEle.innerHTML = "It's a draw!";
     } else if (board.players[opponentColor].possibleMoves.length <= 0) {

@@ -8,6 +8,9 @@ export class Move {
     this.castle = castle;
     this.isCastleRookMove = isCastleRookMove;
     this.weight = weight;
+    this.enPassant = false;
+    this.promote = false;
+    this.promotPiece = null;
     if (this.capture) {
       this.weight = capture.value - piece.value;
     } else if (this.piece.type === "pawn") {

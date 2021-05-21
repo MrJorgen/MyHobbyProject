@@ -2,14 +2,15 @@ import { Move } from "../Move.js";
 
 // https://www.chessprogramming.org/Simplified_Evaluation_Function
 
-export class ChessPiece {
+export default class ChessPiece {
   constructor(color, img, posX, posY) {
+    this.color = color;
     this.img = img;
     this.x = posX;
     this.y = posY;
-    this.color = color;
+    this.isWhite = color === "white";
+    this.isBlack = color === "black";
     this.hasMoved = false;
-    this.pinned = false;
     this.legalMoves = [];
     this.enPassant = false;
   }
@@ -31,41 +32,20 @@ export class ChessPiece {
         y = this.y,
         repeat = this.moves[i].repeat || false;
 
-      let enPassant = false;
-
       do {
         x += this.moves[i].x || 0;
         y += this.moves[i].y || 0;
         if (x >= 0 && x <= 7 && y >= 0 && y <= 7) {
-          // Pawn captures
-          if (this.type === "pawn" && !repeat) {
-            if (x >= 1 && board.pieces[x - 1][y] && board.pieces[x - 1][y].color === opponent) {
-              this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x: x - 1, y }, this, board.pieces[x - 1][y]));
-              this.check(board.pieces[x - 1][y], board);
-            }
-            if (x <= 6 && board.pieces[x + 1][y] && board.pieces[x + 1][y].color === opponent) {
-              this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x: x + 1, y }, this, board.pieces[x + 1][y]));
-              this.check(board.pieces[x + 1][y], board);
-            }
-            if (!this.hasMoved) {
-              repeat = true;
-            }
-          } else if (this.type === "pawn" && repeat) {
-            repeat = false;
-            board.enPassant = this;
-          }
-
           if (board.pieces[x][y]) {
             repeat = false;
             // Capture opponents piece
-            if (board.pieces[x][y].color === opponent && this.type !== "pawn") {
+            if (board.pieces[x][y].color === opponent) {
               this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, board.pieces[x][y]));
               this.check(board.pieces[x][y], board);
             }
           } else {
             // Move to empty square
             this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, false));
-            this.enPassant = enPassant;
           }
         } else {
           repeat = false;
@@ -81,3 +61,10 @@ export class ChessPiece {
     }
   }
 }
+
+// import Rook from "./Rook.js";
+// import Knight from "./Knight.js";
+// import Bishop from "./Bishop.js";
+// import Queen from "./Queen.js";
+// import King from "./King.js";
+// import Pawn from "./Pawn.js";

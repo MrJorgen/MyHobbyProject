@@ -1,43 +1,45 @@
 "use strict";
 import { Player } from "./Player.js";
-import { Rook } from "./pieces/Rook.js";
-import { Knight } from "./pieces/Knight.js";
-import { Bishop } from "./pieces/Bishop.js";
-import { Queen } from "./pieces/Queen.js";
-import { King } from "./pieces/King.js";
-import { Pawn } from "./pieces/Pawn.js";
-import { loadImage, colors, make2dArray } from "./utilities.js";
+import Rook from "./pieces/Rook.js";
+import Knight from "./pieces/Knight.js";
+import Bishop from "./pieces/Bishop.js";
+import Queen from "./pieces/Queen.js";
+import King from "./pieces/King.js";
+import Pawn from "./pieces/Pawn.js";
+import { loadImage, make2dArray, ChessImages } from "./utilities.js";
 
 export class ChessBoard {
   constructor(ctx, settings) {
-    this.pieces = null;
-    this.turn = "white";
     this.ctx = ctx;
     this.squareSize = settings.squareSize;
     this.players = {
       white: new Player("white", settings.ai.white),
       black: new Player("black", settings.ai.black),
     };
+    this.theme = settings.theme;
+    this.pieces = null;
+    this.turn = "white";
     this.history = [];
     this.moveIndex = 0;
     this.sounds = { move: new Audio("./sounds/move-self.webm"), capture: new Audio("./sounds/capture.webm"), illegal: new Audio("./sounds/illegal.webm") };
-    this.theme = settings.theme;
     this.verify = false;
     this.calculatedMoves = 0;
     this.latestVerifiedMove = null;
     this.fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     this.fiftyMove = 0;
+    this.enPassant = false;
   }
 
   async decodeFen(fen) {
     this.fen = fen || this.fen;
     if (this.fen) {
       this.clearAll();
-      console.log(this);
-      let fenArray = this.fen.split(" ");
-      let x = 0,
+      let fenArray = this.fen.split(" "),
+        x = 0,
         y = 0,
         pieceChars = "rnbqkpRNBQKP";
+
+      // Check if/what piece it is
       for (let char of fenArray[0]) {
         if (char !== "/") {
           if (pieceChars.includes(char)) {
@@ -46,39 +48,38 @@ export class ChessBoard {
             // Check if Char is lower- or uppercase(black or white)
             if (char === char.toLowerCase()) {
               tmpPiece.color = "black";
-              tmpPiece.imgName = `./img/pieces/${this.theme}/b`;
+              tmpPiece.imgName = `./img/pieces/${this.theme.name}/b`;
             } else {
               tmpPiece.color = "white";
-              tmpPiece.imgName = `./img/pieces/${this.theme}/w`;
+              tmpPiece.imgName = `./img/pieces/${this.theme.name}/w`;
             }
 
-            tmpPiece.imgName += `${char.toLowerCase()}.png`;
+            tmpPiece.imgName += `${char.toLowerCase()}${this.theme.format}`;
+            tmpPiece.img = await loadImage(tmpPiece.imgName);
             tmpPiece.x = x;
             tmpPiece.y = y;
-            tmpPiece.img = await loadImage(tmpPiece.imgName);
 
             switch (char.toLowerCase()) {
               case "r":
-                this.pieces[x][y] = new Rook(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+                this.pieces[x][y] = new Rook(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
                 break;
               case "n":
-                this.pieces[x][y] = new Knight(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+                this.pieces[x][y] = new Knight(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
                 break;
               case "b":
-                this.pieces[x][y] = new Bishop(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+                this.pieces[x][y] = new Bishop(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
                 break;
               case "q":
-                this.pieces[x][y] = new Queen(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+                this.pieces[x][y] = new Queen(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
                 break;
               case "k":
-                this.pieces[x][y] = new King(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+                this.pieces[x][y] = new King(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
                 break;
               case "p":
-                this.pieces[x][y] = new Pawn(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
+                this.pieces[x][y] = new Pawn(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
                 break;
             }
 
-            // this.pieces[x][y] = new ChessPiece(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y, tmpPiece.value);
             this.players[tmpPiece.color].pieces.push(this.pieces[x][y]);
             this.drawPiece(tmpPiece, tmpPiece);
             x++;
@@ -91,17 +92,58 @@ export class ChessBoard {
         }
       }
 
-      this.turn = "black";
-      if (fenArray[1] === "w") {
+      if (fenArray.length >= 2) {
+        // Whos turn is it?
         this.turn = "white";
+        if (fenArray[1] === "b") {
+          this.turn = "black";
+          this.moveIndex++;
+        }
       }
 
+      if (fenArray.length >= 3) {
+        // Castle availability
+        if (fenArray[2].charAt(0) !== "-") {
+          let rooks = {
+            q: { x: 0, y: 0 },
+            k: { x: 7, y: 0 },
+            Q: { x: 0, y: 7 },
+            K: { x: 7, y: 7 },
+          };
+          for (let rook of fenArray[2]) {
+            if (this.pieces[rooks[rook].x][rooks[rook].y]) {
+              this.pieces[rooks[rook].x][rooks[rook].y].hasMoved = false;
+            }
+          }
+        }
+      }
+
+      if (fenArray.length >= 4) {
+        // En passant
+        if (fenArray[3].length > 1) {
+          let laneChars = "abcdefgh";
+          let x = laneChars.search(fenArray[3].charAt(0));
+          let y = 8 - parseInt(fenArray[3].charAt(1));
+          console.log(x, y);
+          this.enPassant = { x, y };
+        }
+      }
+
+      if (fenArray.length >= 5) {
+        this.fiftyMove = parseInt(fenArray[4]);
+      }
+
+      if (fenArray.length >= 6) {
+        this.moveIndex += parseInt(fenArray[5]) * 2;
+      }
+
+      console.log(this);
       console.log(fenArray);
+
       // Finally update what moves each piece can make on the current board setup
       this.updatePieces("white");
       this.updatePieces("black");
       this.getAllPossibleMoves();
-      // this.verifyMoves(this.turn);
     } else {
       console.error("There is no FEN string to decode!");
     }
@@ -111,29 +153,21 @@ export class ChessBoard {
     this.pieces = make2dArray(8, 8);
   }
 
-  async loadPieces() {
-    for (let color of colors) {
-      for (let piece of color) {
-        let img = await loadImage(`./img/pieces/${this.theme}/${piece.imgName}.png`);
-        this.pieces[piece.x][piece.y] = new ChessPiece(piece.type, piece.color, img, piece.x, piece.y, piece.value);
-        this.players[piece.color].pieces.push(this.pieces[piece.x][piece.y]);
-      }
-    }
-  }
+  perft(depth, color = this.turn) {
+    if (depth == 0) return 1;
 
-  async setup() {
-    this.pieces = make2dArray(8, 8);
-    await this.loadPieces(this.theme);
-    this.ctx.clearRect(0, 0, this.squareSize * 8, this.squareSize * 8);
-    for (let tmp of this.pieces) {
-      for (let piece of tmp) {
-        if (piece) {
-          this.drawPiece(piece, piece);
-          piece.findLegalMoves(this);
-        }
-      }
-    }
-    this.getAllPossibleMoves();
+    let numPositions = 0;
+    // this.updatePieces("black");
+    // this.updatePieces("white");
+    // this.getAllPossibleMoves();
+
+    this.players[color].possibleMoves.forEach((move) => {
+      this.makeMove(move);
+      // console.log("From: ", move.from, "To: ", move.to, "Piece: ", move.piece.color, move.piece.type);
+      numPositions += parseInt(this.perft(depth - 1, this.players[color].opponent));
+      this.unMakeMove();
+    });
+    return numPositions;
   }
 
   makeMove(incomingMove) {
@@ -141,7 +175,6 @@ export class ChessBoard {
       myColor = incomingMove.piece.color;
 
     // Delete the to square, just to make sure it is empty when landing on it
-    delete this.pieces[to.x][to.y];
     this.history.push(incomingMove);
     this.moveIndex++;
     if (!this.verify) {
@@ -149,20 +182,31 @@ export class ChessBoard {
     }
 
     if (capture && !this.verify) {
+      delete this.pieces[capture.x][capture.y];
       this.players[myColor].captures.push(capture);
       this.fiftyMove = 0;
     }
 
-    this.pieces[to.x][to.y] = this.pieces[from.x][from.y];
-    this.pieces[from.x][from.y].move(to, this.verify);
+    this.pieces[to.x][to.y] = incomingMove.piece;
+    this.pieces[to.x][to.y].move(to, this.verify);
     delete this.pieces[from.x][from.y];
+
+    if (!this.verify) {
+      this.enPassant = false;
+      if (incomingMove.enPassant) {
+        this.enPassant = {
+          x: incomingMove.piece.x,
+          y: incomingMove.piece.y - incomingMove.piece.moves.y,
+        };
+      }
+    }
 
     // Is it a castle move?
     if (incomingMove.castle) {
       this.makeMove(incomingMove.castle);
     }
     // Check if it's a pawn to promote
-    if (incomingMove.piece.type === "pawn") {
+    if (incomingMove.promote) {
       if (!this.verify) {
         this.fiftyMove = 0;
       }
@@ -175,11 +219,12 @@ export class ChessBoard {
 
     // Update moves
     this.updatePieces(this.players[myColor].opponent);
+    // this.updatePieces(this.players[myColor].color);
     this.getAllPossibleMoves([this.players[myColor].opponent]);
   }
 
   updatePieces(color) {
-    // When a piece has moved update player[color] pieces legal moves
+    // When a piece has moved update player[color] each piece legal moves
     for (let x = 0; x < this.pieces.length; x++) {
       for (let y = 0; y < this.pieces[x].length; y++) {
         if (this.pieces[x][y] && this.pieces[x][y].color === color) {
@@ -191,13 +236,21 @@ export class ChessBoard {
 
   pawnPromo(to) {
     // TODO: Make this so you can chose what to promote to(bishop, knight, rook or queen)
-    if (to.y === 0 || to.y === 7) {
-      this.pieces[to.x][to.y] = new Queen(this.pieces[to.x][to.y].color, null, this.pieces[to.x][to.y].x, this.pieces[to.x][to.y].y, true);
-      this.pieces[to.x][to.y].findLegalMoves(this);
-    }
+    let imgNames = {
+      rook: "r",
+      bishop: "b",
+      knight: "n",
+      queen: "q",
+    };
+    let imgName = `./img/pieces/${this.theme.name}/${this.pieces[to.x][to.y].color.charAt(0)}${imgNames[this.pieces[to.x][to.y].type]}`;
+    imgName += `${this.theme.format}`;
+
+    this.pieces[to.x][to.y].imgName = imgName;
+    this.pieces[to.x][to.y].findLegalMoves(this);
   }
 
   unMakeMove() {
+    if (this.history.length <= 0) return;
     let currentMove = (this.latestVerifiedMove = this.history.pop());
 
     this.moveIndex--;
@@ -208,10 +261,14 @@ export class ChessBoard {
 
     // Place captured piece back
     if (currentMove.capture) {
-      this.pieces[currentMove.to.x][currentMove.to.y] = currentMove.capture;
-      this.players[currentMove.capture.color].updatePieces(this);
+      this.pieces[currentMove.capture.x][currentMove.capture.y] = currentMove.capture;
+      // this.players[currentMove.capture.color].updatePieces(this);
     }
 
+    if (currentMove.piece.promoted) {
+      let currentPiece = currentMove.piece;
+      currentMove.piece = new Pawn(currentPiece.color, null, currentPiece.x, currentPiece.y);
+    }
     // Place current piece back
     this.pieces[currentMove.from.x][currentMove.from.y] = currentMove.piece;
     this.pieces[currentMove.from.x][currentMove.from.y].x = currentMove.from.x;
@@ -223,11 +280,12 @@ export class ChessBoard {
     }
 
     // Update the players pieces
-    this.players[currentMove.piece.color].updatePieces(this);
+    // this.players[currentMove.piece.color].updatePieces(this);
+    // this.getAllPossibleMoves();
 
-    if (!this.verify) {
-      this.updatePieces(currentMove.piece.color);
-    }
+    // if (!this.verify) {
+    //   this.updatePieces(currentMove.piece.color);
+    // }
   }
 
   getAllPossibleMoves(colors = ["black", "white"]) {
@@ -275,6 +333,10 @@ export class ChessBoard {
       }
     }
 
+    if (myKing === undefined) {
+      console.error(`${color} has no King!!!`);
+      debugger;
+    }
     isChecked = myKing.isChecked;
     for (let move of player.possibleMoves) {
       myKing.isChecked = false;

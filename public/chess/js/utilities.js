@@ -4,62 +4,35 @@ export function loadImage(src) {
     image.addEventListener("load", () => {
       resolve(image);
     });
-    // image.src = `./img/${src}.svg`;
     image.src = src;
   });
 }
 
-export function loadImages(theme) {
-  black.forEach(async (piece) => {
-    piece.img = await loadImage(`./img/pieces/${theme}/${piece.imgName}.png`);
-    delete piece.imgName;
-  });
+export class ChessImages {
+  constructor(settings) {
+    this.settings = settings;
+  }
 
-  black.forEach(async (piece) => {
-    piece.img = await loadImage(`./img/pieces/${theme}/${piece.imgName}.png`);
-    delete piece.imgName;
-  });
+  async loadImages() {
+    const settings = this.settings;
+    this.black = {
+      pawn: await loadImage(`./img/pieces/${settings.theme.name}/bp${settings.theme.format}`),
+      rook: await loadImage(`./img/pieces/${settings.theme.name}/br${settings.theme.format}`),
+      knight: await loadImage(`./img/pieces/${settings.theme.name}/bn${settings.theme.format}`),
+      bishop: await loadImage(`./img/pieces/${settings.theme.name}/bb${settings.theme.format}`),
+      queen: await loadImage(`./img/pieces/${settings.theme.name}/bq${settings.theme.format}`),
+      king: await loadImage(`./img/pieces/${settings.theme.name}/bk${settings.theme.format}`),
+    };
+    this.white = {
+      pawn: await loadImage(`./img/pieces/${settings.theme.name}/wp${settings.theme.format}`),
+      rook: await loadImage(`./img/pieces/${settings.theme.name}/wr${settings.theme.format}`),
+      knight: await loadImage(`./img/pieces/${settings.theme.name}/wn${settings.theme.format}`),
+      bishop: await loadImage(`./img/pieces/${settings.theme.name}/wb${settings.theme.format}`),
+      queen: await loadImage(`./img/pieces/${settings.theme.name}/wq${settings.theme.format}`),
+      king: await loadImage(`./img/pieces/${settings.theme.name}/wk${settings.theme.format}`),
+    };
+  }
 }
-
-const black = [
-  { color: "black", x: 0, y: 0, imgName: "br", type: "rook", value: 500 },
-  { color: "black", x: 1, y: 0, imgName: "bn", type: "knight", value: 320 },
-  { color: "black", x: 2, y: 0, imgName: "bb", type: "bishop", value: 330 },
-  { color: "black", x: 3, y: 0, imgName: "bq", type: "queen", value: 900 },
-  { color: "black", x: 4, y: 0, imgName: "bk", type: "king", value: Infinity },
-  { color: "black", x: 5, y: 0, imgName: "bb", type: "bishop", value: 330 },
-  { color: "black", x: 6, y: 0, imgName: "bn", type: "knight", value: 320 },
-  { color: "black", x: 7, y: 0, imgName: "br", type: "rook", value: 500 },
-  { color: "black", x: 0, y: 1, imgName: "bp", type: "pawn", value: 100 },
-  { color: "black", x: 1, y: 1, imgName: "bp", type: "pawn", value: 100 },
-  { color: "black", x: 2, y: 1, imgName: "bp", type: "pawn", value: 100 },
-  { color: "black", x: 3, y: 1, imgName: "bp", type: "pawn", value: 100 },
-  { color: "black", x: 4, y: 1, imgName: "bp", type: "pawn", value: 100 },
-  { color: "black", x: 5, y: 1, imgName: "bp", type: "pawn", value: 100 },
-  { color: "black", x: 6, y: 1, imgName: "bp", type: "pawn", value: 100 },
-  { color: "black", x: 7, y: 1, imgName: "bp", type: "pawn", value: 100 },
-];
-
-const white = [
-  { color: "white", x: 0, y: 7, imgName: "wr", type: "rook", value: 500 },
-  { color: "white", x: 1, y: 7, imgName: "wn", type: "knight", value: 320 },
-  { color: "white", x: 2, y: 7, imgName: "wb", type: "bishop", value: 330 },
-  { color: "white", x: 3, y: 7, imgName: "wq", type: "queen", value: 900 },
-  { color: "white", x: 4, y: 7, imgName: "wk", type: "king", value: Infinity },
-  { color: "white", x: 5, y: 7, imgName: "wb", type: "bishop", value: 330 },
-  { color: "white", x: 6, y: 7, imgName: "wn", type: "knight", value: 320 },
-  { color: "white", x: 7, y: 7, imgName: "wr", type: "rook", value: 500 },
-  { color: "white", x: 0, y: 6, imgName: "wp", type: "pawn", value: 100 },
-  { color: "white", x: 1, y: 6, imgName: "wp", type: "pawn", value: 100 },
-  { color: "white", x: 2, y: 6, imgName: "wp", type: "pawn", value: 100 },
-  { color: "white", x: 3, y: 6, imgName: "wp", type: "pawn", value: 100 },
-  { color: "white", x: 4, y: 6, imgName: "wp", type: "pawn", value: 100 },
-  { color: "white", x: 5, y: 6, imgName: "wp", type: "pawn", value: 100 },
-  { color: "white", x: 6, y: 6, imgName: "wp", type: "pawn", value: 100 },
-  { color: "white", x: 7, y: 6, imgName: "wp", type: "pawn", value: 100 },
-];
-
-export const colors = [black, white];
 
 export function make2dArray(cols, rows) {
   let arr = new Array(cols);
@@ -82,15 +55,9 @@ export const themes = {
     padding: "rgb(211, 176, 141)",
   },
   texture_warm: {
-    // black: "rgba(181, 136, 99, 1)",
-    // white: "rgba(240, 217, 181, 1)",
     black: "rgba(69, 49, 33, 0.75)",
     white: "rgba(255, 255, 255, 0.0)",
-    // img: "./img/textures/seamless-wood-texture-4.jpg",
-    // black: "rgba(0, 0, 0, 0.5)",
-    // white: "rgba(255, 255, 255, 0.75)",
     img: "./img/textures/seamless-wood-background-1.jpg",
-    // padding: "rgba(211, 176, 141, 1)",
     padding: "rgb(225 149 68)",
     composit: "hard-light",
   },
@@ -99,19 +66,12 @@ export const themes = {
     white: "rgba(255, 255, 255, 0.0)",
     padding: "rgba(128, 128, 128, 0.75)",
     img: "./img/textures/seamless-wood-texture-4.jpg",
-    // composit: "overlay",
     composit: "hard-light",
   },
-  pieces: ["neo", "game_room", "tournament"],
+  pieces: [
+    { name: "default", format: ".svg" },
+    { name: "neo", format: ".png" },
+    { name: "game_room", format: ".png" },
+    { name: "tournament", format: ".png" },
+  ],
 };
-
-const test = [
-  ["a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"],
-  ["a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7"],
-  ["a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"],
-  ["a5", "b5", "c5", "d5", "e5", "f5", "g5", "h5"],
-  ["a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4"],
-  ["a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3"],
-  ["a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2"],
-  ["a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"],
-];

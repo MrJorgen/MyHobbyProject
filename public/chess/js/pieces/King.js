@@ -1,7 +1,7 @@
-import { ChessPiece } from "./Piece.js";
 import { Move } from "../Move.js";
+import ChessPiece from "./Piece.js";
 
-export class King extends ChessPiece {
+export default class King extends ChessPiece {
   constructor(color, img, posX, posY) {
     super(color, img, posX, posY);
     this.type = "king";
