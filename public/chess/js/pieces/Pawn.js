@@ -6,8 +6,8 @@ import Bishop from "./Bishop.js";
 import Knight from "./Knight.js";
 
 export default class Pawn extends ChessPiece {
-  constructor(color, img, posX, posY) {
-    super(color, img, posX, posY);
+  constructor(color, posX, posY) {
+    super(color, posX, posY);
     this.type = "pawn";
     this.value = 100;
     if (color === "white") {
@@ -78,10 +78,11 @@ export default class Pawn extends ChessPiece {
   promoteMove(pos) {
     let currentMove = this.legalMoves.pop();
     let piecesArray = [
-      new Queen(this.color, null, pos.x, pos.y, false),
-      new Rook(this.color, null, pos.x, pos.y, false),
-      new Bishop(this.color, null, pos.x, pos.y, false),
-      new Knight(this.color, null, pos.x, pos.y, false),
+      // Pieces that pawn promotes to
+      new Queen(this.color, pos.x, pos.y, false),
+      new Rook(this.color, pos.x, pos.y, false),
+      new Bishop(this.color, pos.x, pos.y, false),
+      new Knight(this.color, pos.x, pos.y, false),
     ];
     for (let piece of piecesArray) {
       piece.promoted = true;

@@ -1,4 +1,5 @@
 import { ChessBoard } from "./Board.js";
+import { Drawing } from "./Drawing.js";
 import { GuideLayer } from "./GuideLayer.js";
 import { loadImage, themes, make2dArray, ChessImages } from "./utilities.js";
 
@@ -69,30 +70,61 @@ Depth	Nodes
 */
 
 // Make the board
-const board = new ChessBoard(piecesCtx, settings);
+const board = new ChessBoard(settings);
+const drawing = new Drawing(piecesCtx, guideCtx, animCtx, images, squareSize);
 window.board = board;
 // Load pieces etc
-await board.decodeFen(fenStrings[0]);
+board.decodeFen(fenStrings[0]);
+drawing.redraw(board.pieces);
+
+let sounds = { move: new Audio("./sounds/move-self.webm"), capture: new Audio("./sounds/capture.webm"), illegal: new Audio("./sounds/illegal.webm") };
 
 const guides = new GuideLayer(guideCtx, squareSize);
 drawBackground(false);
+testWorkers();
 
-let test = make2dArray(8, 8);
-for (let x = 0; x < test.length; x++) {
-  for (let y = 0; y < test[x].length; y++) {
-    if (board.pieces[x][y]) {
-      test[x][y] = Object.assign({
-        x: board.pieces[x][y].x,
-        y: board.pieces[x][y].y,
-        type: board.pieces[x][y].type,
-        color: board.pieces[x][y].color,
-      });
+function testWorkers() {
+  let start = performance.now();
+  let stop = performance.now();
+  // Testing workers
+  // -----------------------------------------------------------------------------
+  let workers = [];
+  for (let x = 0; x < board.pieces.length; x++) {
+    for (let y = 0; y < board.pieces[x].length; y++) {
+      if (board.pieces[x][y]) {
+        let newWorker = new Worker("./js/workers/findLegalMoves.js", { type: "module" });
+        newWorker.postMessage({ board, x, y });
+        newWorker.addEventListener("message", result);
+        workers.push(newWorker);
+      }
     }
   }
+  let workersTerminated = 0;
+  function result(evt) {
+    evt.target.terminate();
+    if (evt.data) {
+      let { x, y, legalMoves } = evt.data;
+      board.pieces[x][y].legalMoves = legalMoves;
+    }
+    workersTerminated++;
+    if (workers.length === workersTerminated) {
+      stop = performance.now();
+      console.log(`It took ${stop - start} ms to compute with workers.`);
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  start = performance.now();
+  for (let x = 0; x < board.pieces.length; x++) {
+    for (let y = 0; y < board.pieces[x].length; y++) {
+      if (board.pieces[x][y] && board.pieces[x][y].type === "pawn") {
+        board.pieces[x][y].findLegalMoves(board);
+      }
+    }
+  }
+  stop = performance.now();
+  console.log(`It took ${stop - start} ms to compute without workers.`);
 }
-console.log(test);
-let worker = new Worker("./js/worker.js", { type: "module" });
-worker.postMessage(test);
 
 if (!settings.ai.black || !settings.ai.white) {
   setupEventListeners();
@@ -134,7 +166,7 @@ function grabPiece(evt) {
     if (board.history.length > 0) {
       board.unMakeMove();
       guides.clearAll();
-      board.redraw();
+      drawing.redraw(board.pieces);
       board.turn = board.turn === "black" ? "white" : "black";
       if (board.players[board.turn].ai) {
         setTimeout(() => {
@@ -158,10 +190,10 @@ function grabPiece(evt) {
     mouse.piece = {
       x: coords.x,
       y: coords.y,
-      img: board.pieces[coords.x][coords.y].img,
+      img: images[board.pieces[coords.x][coords.y].color][board.pieces[coords.x][coords.y].type],
     };
 
-    board.clearSquare(coords);
+    drawing.clearSquare(coords);
     animCtx.drawImage(mouse.piece.img, mouse.x - startPos, mouse.y - startPos, squareSize, squareSize);
 
     // Draw guides showing the possible moves
@@ -178,21 +210,19 @@ function grabPiece(evt) {
 async function dropPiece(evt) {
   // Dropping a piece on the board
   if (mouse.dragging) {
-    let opponent = board.turn === "black" ? "white" : "black";
-    let moveIsLegal = false;
-    let coords = {
-      x: Math.floor((mouse.x - startPos) / squareSize),
-      y: Math.floor((mouse.y - startPos) / squareSize),
-    };
+    let moveIsLegal = false,
+      coords = {
+        x: Math.floor((mouse.x - startPos) / squareSize),
+        y: Math.floor((mouse.y - startPos) / squareSize),
+      },
+      currentMove = undefined;
 
     // Check if the square is in the array of legal moves
-    let currentMove = undefined;
     for (let i = 0; i < board.pieces[mouse.piece.x][mouse.piece.y].legalMoves.length; i++) {
       if (board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].to.x === coords.x && board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].to.y === coords.y) {
         moveIsLegal = true;
         currentMove = board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i];
-        currentMove.from = { x: mouse.piece.x, y: mouse.piece.y };
-
+        console.log(currentMove);
         break;
       }
     }
@@ -205,7 +235,7 @@ async function dropPiece(evt) {
     } else {
       // Move is not legal, so set piece back where it was
       guides.clearAll();
-      board.drawPiece(mouse.piece, mouse.piece);
+      drawing.drawPiece(mouse.piece.img, mouse.piece);
       delete mouse.piece;
     }
     animCtx.clearRect(0, 0, size, size);
@@ -282,58 +312,57 @@ async function endTurn(currentMove, draw = true) {
   let currentPlayer, currentPiece;
   if (currentMove) {
     if (currentMove.capture) {
-      board.sounds.capture.play();
+      sounds.capture.play();
     } else {
-      board.sounds.move.play();
+      sounds.move.play();
     }
     currentPiece = board.pieces[currentMove.to.x][currentMove.to.y];
     currentPlayer = board.players[currentMove.piece.color];
-    // Pawn promotion
-    if (currentPiece.promoted) {
-      currentPiece.promoted = false;
-      if (draw && !currentPiece.img) {
-        currentPiece.img = await loadImage(currentPiece.imgName);
-      }
-    }
   } else {
     currentPlayer = board.players[board.turn];
   }
 
   if (draw) {
-    board.redraw();
-    blackStatus.innerHTML = "";
-    whiteStatus.innerHTML = "";
-    for (let color in board.players) {
-      board.players[color].score = 0;
-      board.players[color].captures.sort((a, b) => {
-        return a.value - b.value;
-      });
-      for (let piece of board.players[color].captures) {
-        board.players[color].score += Math.floor(piece.value / 100);
-        if (color === "white") {
-          if (whiteStatus.lastChild?.src === piece.img.src) {
-            whiteStatus.lastChild.classList.add("stack");
+    drawing.redraw(board.pieces);
+    if (currentMove.capture) {
+      blackStatus.innerHTML = "";
+      whiteStatus.innerHTML = "";
+      for (let color in board.players) {
+        board.players[color].score = 0;
+        board.players[color].captures.sort((a, b) => {
+          return a.value - b.value;
+        });
+        for (let piece of board.players[color].captures) {
+          // let tmpImg = await loadImage(images[piece.color][piece.type].src);
+          let tmpImg = document.createElement("img");
+          tmpImg.src = images[piece.color][piece.type].src;
+          tmpImg.dataset.type = piece.type;
+          if (color === "white") {
+            if (whiteStatus.hasChildNodes() && whiteStatus.lastChild.dataset.type === piece.type) {
+              whiteStatus.lastChild.classList.add("stack");
+            }
+            whiteStatus.appendChild(tmpImg);
           }
-          whiteStatus.appendChild(await loadImage(piece.img.src));
-        }
-        if (color === "black") {
-          if (blackStatus.lastChild?.src === piece.img.src) {
-            blackStatus.lastChild.classList.add("stack");
+          if (color === "black") {
+            if (blackStatus.hasChildNodes() && blackStatus.lastChild.dataset.type === piece.type) {
+              blackStatus.lastChild.classList.add("stack");
+            }
+            blackStatus.appendChild(tmpImg);
           }
-          blackStatus.appendChild(await loadImage(piece.img.src));
+          board.players[color].score += Math.floor(piece.value / 100);
         }
       }
-    }
-    if (blackStatus.hasChildNodes() && board.players.black.score > board.players.white.score) {
-      let blackScoreEle = document.createElement("p");
-      blackScoreEle.textContent = "+" + (board.players.black.score - board.players.white.score);
-      blackStatus.appendChild(blackScoreEle);
-    }
-    if (whiteStatus.hasChildNodes() && board.players.white.score > board.players.black.score) {
-      let whiteScoreEle = document.createElement("p");
-      whiteScoreEle.textContent =
-        board.players.white.score - board.players.black.score >= 0 ? "+" + (board.players.white.score - board.players.black.score) : board.players.white.score - board.players.black.score;
-      whiteStatus.appendChild(whiteScoreEle);
+      if (blackStatus.hasChildNodes() && board.players.black.score > board.players.white.score) {
+        let blackScoreEle = document.createElement("p");
+        blackScoreEle.textContent = "+" + (board.players.black.score - board.players.white.score);
+        blackStatus.appendChild(blackScoreEle);
+      }
+      if (whiteStatus.hasChildNodes() && board.players.white.score > board.players.black.score) {
+        let whiteScoreEle = document.createElement("p");
+        whiteScoreEle.textContent =
+          board.players.white.score - board.players.black.score >= 0 ? "+" + (board.players.white.score - board.players.black.score) : board.players.white.score - board.players.black.score;
+        whiteStatus.appendChild(whiteScoreEle);
+      }
     }
 
     // Player has moved, clear legal moves mark and mark the move

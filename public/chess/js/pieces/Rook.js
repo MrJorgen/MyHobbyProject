@@ -1,8 +1,8 @@
 import ChessPiece from "./Piece.js";
 
 class Rook extends ChessPiece {
-  constructor(color, img, posX, posY) {
-    super(color, img, posX, posY);
+  constructor(color, posX, posY) {
+    super(color, posX, posY);
     this.type = "rook";
     this.hasMoved = true;
     this.moves = [

@@ -2,8 +2,8 @@ import { Move } from "../Move.js";
 import ChessPiece from "./Piece.js";
 
 export default class King extends ChessPiece {
-  constructor(color, img, posX, posY) {
-    super(color, img, posX, posY);
+  constructor(color, posX, posY) {
+    super(color, posX, posY);
     this.type = "king";
     this.value = Infinity;
     this.moves = [{ x: 1 }, { x: -1 }, { y: 1 }, { y: -1 }, { x: 1, y: 1 }, { x: 1, y: -1 }, { x: -1, y: 1 }, { x: -1, y: -1 }];

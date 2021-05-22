@@ -36,7 +36,6 @@ export class GuideLayer {
     let { x, y } = pos;
     let trim = 0.5;
     let radius = this.squareSize * 0.05;
-    // this.ctx.lineWidth = this.squareSize * 0.025;
     this.ctx.lineWidth = this.squareSize * 0.04;
     x = x * this.squareSize + 0.5;
     y = y * this.squareSize + 0.5;
@@ -46,7 +45,6 @@ export class GuideLayer {
     let x2 = x - this.ctx.lineWidth * trim + this.squareSize,
       y2 = y - this.ctx.lineWidth * trim + this.squareSize;
 
-    // this.ctx.strokeStyle = "rgba(180, 50, 50, 0.75)";
     this.ctx.strokeStyle = "rgba(200, 70, 70, 1)";
     this.ctx.beginPath();
     this.ctx.moveTo(x1 + radius, y1);
@@ -58,7 +56,6 @@ export class GuideLayer {
 
     // Below is for circle
     /*
-  
       let { x, y } = pos;
       x = (x + 1) * this.squareSize;
       y = (y + 1) * this.squareSize;
@@ -68,6 +65,6 @@ export class GuideLayer {
       this.ctx.beginPath();
       this.ctx.arc(x, y, this.squareSize * 0.45, 0, Math.PI * 2);
       this.ctx.stroke();
-      */
+    */
   }
 }

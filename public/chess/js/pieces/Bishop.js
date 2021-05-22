@@ -1,8 +1,8 @@
 import ChessPiece from "./Piece.js";
 
 export default class Bishop extends ChessPiece {
-  constructor(color, img, posX, posY) {
-    super(color, img, posX, posY);
+  constructor(color, posX, posY) {
+    super(color, posX, posY);
     this.type = "bishop";
     this.value = 330;
     this.moves = [

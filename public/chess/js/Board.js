@@ -6,11 +6,10 @@ import Bishop from "./pieces/Bishop.js";
 import Queen from "./pieces/Queen.js";
 import King from "./pieces/King.js";
 import Pawn from "./pieces/Pawn.js";
-import { loadImage, make2dArray, ChessImages } from "./utilities.js";
+import { make2dArray } from "./utilities.js";
 
 export class ChessBoard {
-  constructor(ctx, settings) {
-    this.ctx = ctx;
+  constructor(settings) {
     this.squareSize = settings.squareSize;
     this.players = {
       white: new Player("white", settings.ai.white),
@@ -21,7 +20,6 @@ export class ChessBoard {
     this.turn = "white";
     this.history = [];
     this.moveIndex = 0;
-    this.sounds = { move: new Audio("./sounds/move-self.webm"), capture: new Audio("./sounds/capture.webm"), illegal: new Audio("./sounds/illegal.webm") };
     this.verify = false;
     this.calculatedMoves = 0;
     this.latestVerifiedMove = null;
@@ -48,40 +46,35 @@ export class ChessBoard {
             // Check if Char is lower- or uppercase(black or white)
             if (char === char.toLowerCase()) {
               tmpPiece.color = "black";
-              tmpPiece.imgName = `./img/pieces/${this.theme.name}/b`;
             } else {
               tmpPiece.color = "white";
-              tmpPiece.imgName = `./img/pieces/${this.theme.name}/w`;
             }
 
-            tmpPiece.imgName += `${char.toLowerCase()}${this.theme.format}`;
-            tmpPiece.img = await loadImage(tmpPiece.imgName);
             tmpPiece.x = x;
             tmpPiece.y = y;
 
             switch (char.toLowerCase()) {
               case "r":
-                this.pieces[x][y] = new Rook(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
+                this.pieces[x][y] = new Rook(tmpPiece.color, tmpPiece.x, tmpPiece.y);
                 break;
               case "n":
-                this.pieces[x][y] = new Knight(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
+                this.pieces[x][y] = new Knight(tmpPiece.color, tmpPiece.x, tmpPiece.y);
                 break;
               case "b":
-                this.pieces[x][y] = new Bishop(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
+                this.pieces[x][y] = new Bishop(tmpPiece.color, tmpPiece.x, tmpPiece.y);
                 break;
               case "q":
-                this.pieces[x][y] = new Queen(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
+                this.pieces[x][y] = new Queen(tmpPiece.color, tmpPiece.x, tmpPiece.y);
                 break;
               case "k":
-                this.pieces[x][y] = new King(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
+                this.pieces[x][y] = new King(tmpPiece.color, tmpPiece.x, tmpPiece.y);
                 break;
               case "p":
-                this.pieces[x][y] = new Pawn(tmpPiece.color, tmpPiece.img, tmpPiece.x, tmpPiece.y);
+                this.pieces[x][y] = new Pawn(tmpPiece.color, tmpPiece.x, tmpPiece.y);
                 break;
             }
 
             this.players[tmpPiece.color].pieces.push(this.pieces[x][y]);
-            this.drawPiece(tmpPiece, tmpPiece);
             x++;
           } else {
             x += parseInt(char);
@@ -236,17 +229,15 @@ export class ChessBoard {
 
   pawnPromo(to) {
     // TODO: Make this so you can chose what to promote to(bishop, knight, rook or queen)
-    let imgNames = {
-      rook: "r",
-      bishop: "b",
-      knight: "n",
-      queen: "q",
-    };
-    let imgName = `./img/pieces/${this.theme.name}/${this.pieces[to.x][to.y].color.charAt(0)}${imgNames[this.pieces[to.x][to.y].type]}`;
-    imgName += `${this.theme.format}`;
-
-    this.pieces[to.x][to.y].imgName = imgName;
-    this.pieces[to.x][to.y].findLegalMoves(this);
+    let tmpPiece = this.pieces[to.x][to.y];
+    console.log("PawnPromo piece: ", tmpPiece);
+    if (!this.verify) {
+      debugger;
+    }
+    if (tmpPiece instanceof Pawn) {
+      this.pieces[to.x][to.y] = new Queen(tmpPiece.color, to.x, to.y, true);
+      this.pieces[to.x][to.y].findLegalMoves(this);
+    }
   }
 
   unMakeMove() {
@@ -255,20 +246,16 @@ export class ChessBoard {
 
     this.moveIndex--;
 
+    if (currentMove.promote && currentMove.piece.promoted) {
+      let currentPiece = currentMove.piece;
+      currentMove.piece.promoted = false;
+      currentMove.piece = new Pawn(currentPiece.color, currentPiece.x, currentPiece.y);
+    }
+
     // Clear spaces
     delete this.pieces[currentMove.to.x][currentMove.to.y];
     delete this.pieces[currentMove.from.x][currentMove.from.y];
 
-    // Place captured piece back
-    if (currentMove.capture) {
-      this.pieces[currentMove.capture.x][currentMove.capture.y] = currentMove.capture;
-      // this.players[currentMove.capture.color].updatePieces(this);
-    }
-
-    if (currentMove.piece.promoted) {
-      let currentPiece = currentMove.piece;
-      currentMove.piece = new Pawn(currentPiece.color, null, currentPiece.x, currentPiece.y);
-    }
     // Place current piece back
     this.pieces[currentMove.from.x][currentMove.from.y] = currentMove.piece;
     this.pieces[currentMove.from.x][currentMove.from.y].x = currentMove.from.x;
@@ -279,9 +266,14 @@ export class ChessBoard {
       this.unMakeMove();
     }
 
+    // Place captured piece back
+    if (currentMove.capture) {
+      this.pieces[currentMove.capture.x][currentMove.capture.y] = currentMove.capture;
+    }
+
     // Update the players pieces
-    // this.players[currentMove.piece.color].updatePieces(this);
-    // this.getAllPossibleMoves();
+    // this.updatePieces(currentMove.piece.color);
+    // this.getAllPossibleMoves(currentMove.piece.color);
 
     // if (!this.verify) {
     //   this.updatePieces(currentMove.piece.color);
@@ -364,31 +356,5 @@ export class ChessBoard {
     player.possibleMoves.forEach((move) => {
       this.pieces[move.from.x][move.from.y].legalMoves.push(move);
     });
-  }
-
-  redraw() {
-    let startPos = this.squareSize / 2;
-    this.ctx.clearRect(startPos, startPos, this.squareSize * 8, this.squareSize * 8);
-    for (let x = 0; x < this.pieces.length; x++) {
-      for (let y = 0; y < this.pieces[x].length; y++) {
-        if (this.pieces[x][y]) {
-          let piece = this.pieces[x][y];
-          this.ctx.drawImage(piece.img, piece.x * this.squareSize + startPos, piece.y * this.squareSize + startPos, this.squareSize, this.squareSize);
-        }
-      }
-    }
-  }
-
-  drawPiece(piece, coords) {
-    let { x, y } = coords;
-    let startPos = this.squareSize / 2;
-    this.ctx.clearRect(startPos + x * this.squareSize, startPos + y * this.squareSize, this.squareSize, this.squareSize);
-    this.ctx.drawImage(piece.img, x * this.squareSize + startPos, y * this.squareSize + startPos, this.squareSize, this.squareSize);
-  }
-
-  clearSquare(coords) {
-    let { x, y } = coords,
-      startPos = this.squareSize / 2;
-    this.ctx.clearRect(x * this.squareSize + startPos, y * this.squareSize + startPos, this.squareSize, this.squareSize);
   }
 }

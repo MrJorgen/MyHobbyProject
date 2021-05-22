@@ -3,9 +3,8 @@ import { Move } from "../Move.js";
 // https://www.chessprogramming.org/Simplified_Evaluation_Function
 
 export default class ChessPiece {
-  constructor(color, img, posX, posY) {
+  constructor(color, posX, posY) {
     this.color = color;
-    this.img = img;
     this.x = posX;
     this.y = posY;
     this.isWhite = color === "white";

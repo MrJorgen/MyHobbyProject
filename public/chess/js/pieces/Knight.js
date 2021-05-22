@@ -1,8 +1,8 @@
 import ChessPiece from "./Piece.js";
 
 export default class Knight extends ChessPiece {
-  constructor(color, img, posX, posY) {
-    super(color, img, posX, posY);
+  constructor(color, posX, posY) {
+    super(color, posX, posY);
     this.type = "knight";
     this.value = 320;
     this.moves = [
