@@ -11,7 +11,9 @@ export default class King extends ChessPiece {
   }
 
   findLegalMoves(board) {
+    // Add the kings normal moves
     super.findLegalMoves(board);
+    // Add the kings special moves(castling)
     if (this.x === 4) {
       if (!this.hasMoved && !this.isChecked) {
         let queenSideRook = undefined;

@@ -3,10 +3,6 @@ export class GuideLayer {
     this.ctx = ctx;
     this.squareSize = squareSize;
     this.padding = squareSize / 2;
-    this.setup();
-  }
-
-  setup() {
     this.ctx.translate(this.padding + 0.5, this.padding + 0.5);
   }
 
@@ -18,8 +14,8 @@ export class GuideLayer {
     let { from, to } = currentMove,
       squareSize = this.squareSize;
     this.ctx.fillStyle = "rgb(255, 255, 0, 0.4)";
-    this.ctx.fillRect(from.x * squareSize + 0.5, from.y * squareSize + 0.5, squareSize, squareSize);
-    this.ctx.fillRect(to.x * squareSize + 0.5, to.y * squareSize + 0.5, squareSize, squareSize);
+    this.ctx.fillRect(from.x * squareSize, from.y * squareSize, squareSize - 0, squareSize - 0);
+    this.ctx.fillRect(to.x * squareSize, to.y * squareSize, squareSize - 0, squareSize - 0);
   }
 
   moveToEmpty(pos) {

@@ -15,6 +15,7 @@ export class ChessBoard {
       white: new Player("white", settings.ai.white),
       black: new Player("black", settings.ai.black),
     };
+    this.settings = settings;
     this.theme = settings.theme;
     this.pieces = null;
     this.turn = "white";
@@ -231,9 +232,6 @@ export class ChessBoard {
     // TODO: Make this so you can chose what to promote to(bishop, knight, rook or queen)
     let tmpPiece = this.pieces[to.x][to.y];
     console.log("PawnPromo piece: ", tmpPiece);
-    if (!this.verify) {
-      debugger;
-    }
     if (tmpPiece instanceof Pawn) {
       this.pieces[to.x][to.y] = new Queen(tmpPiece.color, to.x, to.y, true);
       this.pieces[to.x][to.y].findLegalMoves(this);
@@ -317,17 +315,17 @@ export class ChessBoard {
       myKing,
       isChecked = false;
     this.verify = true;
-    for (let x = 0; x < 8; x++) {
+    outerLoop: for (let x = 0; x < 8; x++) {
       for (let y = 0; y < 8; y++) {
         if (this.pieces[x][y] && this.pieces[x][y].isKing && this.pieces[x][y].color === color) {
           myKing = this.pieces[x][y];
+          break outerLoop;
         }
       }
     }
 
     if (myKing === undefined) {
       console.error(`${color} has no King!!!`);
-      debugger;
     }
     isChecked = myKing.isChecked;
     for (let move of player.possibleMoves) {

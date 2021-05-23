@@ -43,11 +43,16 @@ export function make2dArray(cols, rows) {
 }
 
 export const themes = {
-  line: "rgba(128, 128, 128, 1",
   silver: {
-    black: "#b0b2b5",
-    white: "#e5e5e6",
+    black: "rgb(176, 178, 181)",
+    white: "rgb(229, 229, 230)",
     padding: "#cdcdd0",
+    line: "rgba(80, 80, 80, 1)",
+  },
+  green: {
+    black: "rgb(118, 150, 86)",
+    white: "rgb(238, 238, 210)",
+    padding: "rgb(178, 194, 148)",
   },
   brown: {
     black: "rgb(181,136,99)",

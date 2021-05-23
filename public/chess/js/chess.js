@@ -16,7 +16,7 @@ const infoDiv = document.querySelector("#info"),
 
 let mouse = { x: 0, y: 0, dragging: false },
   size = Math.floor(Math.min(window.innerWidth, window.innerHeight) * (1 / 11)),
-  theme = "brown";
+  theme = "green";
 
 const squareSize = size - (size % 2),
   startPos = size / 2;
@@ -36,9 +36,10 @@ const settings = {
   theme: themes.pieces[3],
   ai: {
     white: false,
-    black: false,
+    black: true,
   },
   squareSize,
+  rotate: false,
 };
 
 let images = new ChessImages(settings);
@@ -73,6 +74,17 @@ Depth	Nodes
 const board = new ChessBoard(settings);
 const drawing = new Drawing(piecesCtx, guideCtx, animCtx, images, squareSize);
 window.board = board;
+
+// Rotate the board if human plays black
+if (settings.ai.white && !settings.ai.black) {
+  settings.rotate = true;
+  // drawing.boardCtx.save();
+  // drawing.boardCtx.transform(1, 0, 0, -1, 0, size);
+  // drawing.boardCtx.restore();
+  // drawing.boardCtx.translate(0, size);
+  // drawing.boardCtx.scale(1, -1);
+}
+
 // Load pieces etc
 board.decodeFen(fenStrings[0]);
 drawing.redraw(board.pieces);
@@ -80,50 +92,28 @@ drawing.redraw(board.pieces);
 let sounds = { move: new Audio("./sounds/move-self.webm"), capture: new Audio("./sounds/capture.webm"), illegal: new Audio("./sounds/illegal.webm") };
 
 const guides = new GuideLayer(guideCtx, squareSize);
-drawBackground(false);
-testWorkers();
+drawBackground();
+// testWorkers();
 
 function testWorkers() {
-  let start = performance.now();
-  let stop = performance.now();
+  let startWorker = performance.now();
+
   // Testing workers
-  // -----------------------------------------------------------------------------
+
   let workers = [];
-  for (let x = 0; x < board.pieces.length; x++) {
-    for (let y = 0; y < board.pieces[x].length; y++) {
-      if (board.pieces[x][y]) {
-        let newWorker = new Worker("./js/workers/findLegalMoves.js", { type: "module" });
-        newWorker.postMessage({ board, x, y });
-        newWorker.addEventListener("message", result);
-        workers.push(newWorker);
-      }
-    }
-  }
-  let workersTerminated = 0;
-  function result(evt) {
-    evt.target.terminate();
-    if (evt.data) {
-      let { x, y, legalMoves } = evt.data;
-      board.pieces[x][y].legalMoves = legalMoves;
-    }
-    workersTerminated++;
-    if (workers.length === workersTerminated) {
-      stop = performance.now();
-      console.log(`It took ${stop - start} ms to compute with workers.`);
-    }
+  for (let i = 1; i <= 4; i++) {
+    let newBoard = Object.assign({}, board);
+    let newWorker = new Worker("./js/workers/findLegalMoves.js", { type: "module" });
+    newWorker.postMessage({ newBoard, depth: i });
+    newWorker.addEventListener("message", result);
+    workers.push(newWorker);
   }
 
-  // -----------------------------------------------------------------------------
-  start = performance.now();
-  for (let x = 0; x < board.pieces.length; x++) {
-    for (let y = 0; y < board.pieces[x].length; y++) {
-      if (board.pieces[x][y] && board.pieces[x][y].type === "pawn") {
-        board.pieces[x][y].findLegalMoves(board);
-      }
-    }
+  function result(evt) {
+    let numPositions = evt.data;
+    let stopWorker = performance.now();
+    console.log(`${numPositions} positions calculated in ${stopWorker - startWorker} ms with worker.`);
   }
-  stop = performance.now();
-  console.log(`It took ${stop - start} ms to compute without workers.`);
 }
 
 if (!settings.ai.black || !settings.ai.white) {
@@ -207,7 +197,7 @@ function grabPiece(evt) {
   }
 }
 
-async function dropPiece(evt) {
+function dropPiece(evt) {
   // Dropping a piece on the board
   if (mouse.dragging) {
     let moveIsLegal = false,
@@ -222,7 +212,6 @@ async function dropPiece(evt) {
       if (board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].to.x === coords.x && board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i].to.y === coords.y) {
         moveIsLegal = true;
         currentMove = board.pieces[mouse.piece.x][mouse.piece.y].legalMoves[i];
-        console.log(currentMove);
         break;
       }
     }
@@ -407,7 +396,7 @@ async function endTurn(currentMove, draw = true) {
   }
 }
 
-async function drawBackground(drawLines = false) {
+async function drawBackground() {
   bgCtx.save();
   bgCtx.clearRect(0, 0, size, size);
 
@@ -424,7 +413,7 @@ async function drawBackground(drawLines = false) {
     bgCtx.fillStyle = themes[theme].padding;
     bgCtx.fillRect(0, 0, size, size);
   }
-  bgCtx.translate(startPos, startPos);
+  bgCtx.translate(startPos + 0.5, startPos + 0.5);
 
   // Draw squares
   for (let i = 0; i < 8; i++) {
@@ -434,19 +423,19 @@ async function drawBackground(drawLines = false) {
       } else {
         bgCtx.fillStyle = themes[theme].black;
       }
-      bgCtx.fillRect(i * squareSize + 0.5, j * squareSize + 0.5, squareSize, squareSize);
+      bgCtx.fillRect(i * squareSize, j * squareSize, squareSize, squareSize);
     }
   }
   // Draw lines
   // bgCtx.globalCompositeOperation = "source-over";
-  bgCtx.strokeStyle = themes.line;
-  bgCtx.lineWidth = 2.5;
   for (let i = 0; i <= 8; i++) {
-    if (drawLines) {
+    if (themes[theme].hasOwnProperty("line")) {
+      bgCtx.strokeStyle = themes[theme].line;
+      bgCtx.lineWidth = 2.5;
       // Horizontal?
       bgCtx.beginPath();
-      bgCtx.moveTo(i * squareSize, 0);
-      bgCtx.lineTo(i * squareSize, squareSize * 8);
+      bgCtx.moveTo(i * squareSize + 0.5, 0.5);
+      bgCtx.lineTo(i * squareSize + 0.5, squareSize * 8 + 0.5);
       bgCtx.stroke();
 
       // Vertical?
