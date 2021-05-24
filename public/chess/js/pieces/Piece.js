@@ -7,8 +7,6 @@ export default class ChessPiece {
     this.color = color;
     this.x = posX;
     this.y = posY;
-    this.isWhite = color === "white";
-    this.isBlack = color === "black";
     this.hasMoved = false;
     this.legalMoves = [];
     this.enPassant = false;
@@ -60,10 +58,3 @@ export default class ChessPiece {
     }
   }
 }
-
-// import Rook from "./Rook.js";
-// import Knight from "./Knight.js";
-// import Bishop from "./Bishop.js";
-// import Queen from "./Queen.js";
-// import King from "./King.js";
-// import Pawn from "./Pawn.js";

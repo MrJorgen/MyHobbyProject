@@ -7,6 +7,7 @@ import Queen from "./pieces/Queen.js";
 import King from "./pieces/King.js";
 import Pawn from "./pieces/Pawn.js";
 import { make2dArray } from "./utilities.js";
+import { correct } from "./pos5.js";
 
 export class ChessBoard {
   constructor(settings) {
@@ -24,9 +25,28 @@ export class ChessBoard {
     this.verify = false;
     this.calculatedMoves = 0;
     this.latestVerifiedMove = null;
-    this.fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    this.fen = settings.fen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     this.fiftyMove = 0;
     this.enPassant = false;
+    this.perfLog = [];
+    this.depth = 0;
+    this.decodeFen(settings.fen);
+  }
+
+  displayMove(move) {
+    let lanes = "abcdefgh";
+    let tmpString = `${lanes.charAt(move.from.x)}${8 - move.from.y}`;
+    // tmpString += ` -> ${lanes.charAt(move.to.x)}${8 - move.to.y}`;
+    tmpString += `${lanes.charAt(move.to.x)}${8 - move.to.y}`;
+
+    if (move.promote) {
+      if (move.piece.type == "rook") tmpString += "r";
+      if (move.piece.type == "knight") tmpString += "n";
+      if (move.piece.type == "bishop") tmpString += "b";
+      if (move.piece.type == "queen") tmpString += "q";
+    }
+
+    return tmpString;
   }
 
   async decodeFen(fen) {
@@ -131,13 +151,10 @@ export class ChessBoard {
         this.moveIndex += parseInt(fenArray[5]) * 2;
       }
 
-      console.log(this);
-      console.log(fenArray);
-
       // Finally update what moves each piece can make on the current board setup
       this.updatePieces("white");
       this.updatePieces("black");
-      this.getAllPossibleMoves();
+      this.verifyMoves(this.turn);
     } else {
       console.error("There is no FEN string to decode!");
     }
@@ -150,15 +167,26 @@ export class ChessBoard {
   perft(depth, color = this.turn) {
     if (depth == 0) return 1;
 
-    let numPositions = 0;
-    // this.updatePieces("black");
-    // this.updatePieces("white");
-    // this.getAllPossibleMoves();
+    if (this.players[color].possibleMoves.length == 0) {
+      depth = 0;
+      return 0;
+    }
 
+    let numPositions = 0;
     this.players[color].possibleMoves.forEach((move) => {
       this.makeMove(move);
-      // console.log("From: ", move.from, "To: ", move.to, "Piece: ", move.piece.color, move.piece.type);
-      numPositions += parseInt(this.perft(depth - 1, this.players[color].opponent));
+      let currentMovePositions = parseInt(this.perft(depth - 1, this.players[color].opponent));
+      numPositions += currentMovePositions;
+      if (depth == 3 && this.settings.debug) {
+        // console.log(this.displayMove(move), move.piece.color, move.piece.type, currentMovePositions);
+        if (currentMovePositions === correct[this.displayMove(move)]) {
+          console.log(`${this.displayMove(move)}: ${currentMovePositions} -> ${correct[this.displayMove(move)]} `, "✔️");
+        } else {
+          console.log(`${this.displayMove(move)}: ${currentMovePositions} -> ${correct[this.displayMove(move)]}`, "❌", currentMovePositions - correct[this.displayMove(move)]);
+        }
+
+        this.perfLog.push(`${this.displayMove(move)}: ${currentMovePositions}`);
+      }
       this.unMakeMove();
     });
     return numPositions;
@@ -175,7 +203,7 @@ export class ChessBoard {
       this.fiftyMove++;
     }
 
-    if (capture && !this.verify) {
+    if (capture) {
       delete this.pieces[capture.x][capture.y];
       this.players[myColor].captures.push(capture);
       this.fiftyMove = 0;
@@ -201,9 +229,7 @@ export class ChessBoard {
     }
     // Check if it's a pawn to promote
     if (incomingMove.promote) {
-      if (!this.verify) {
-        this.fiftyMove = 0;
-      }
+      this.fiftyMove = 0;
       this.pawnPromo(to);
     }
 
@@ -211,18 +237,45 @@ export class ChessBoard {
     this.players[myColor].isChecked = false;
     this.players[myColor].getKing(this).isChecked = false;
 
+    // Check if it's an actual move and not a verify move(it'll be an infinite loop)
     // Update moves
-    this.updatePieces(this.players[myColor].opponent);
-    // this.updatePieces(this.players[myColor].color);
-    this.getAllPossibleMoves([this.players[myColor].opponent]);
+    if (!this.verify) {
+      this.updatePieces(this.players[this.turn].opponent);
+      this.verifyMoves(this.players[this.turn].opponent);
+    }
   }
 
-  updatePieces(color) {
-    // When a piece has moved update player[color] each piece legal moves
+  /**
+   * Sort pieces to each player
+   */
+  sortPieces() {
+    this.players.black.pieces = [];
+    this.players.white.pieces = [];
     for (let x = 0; x < this.pieces.length; x++) {
       for (let y = 0; y < this.pieces[x].length; y++) {
-        if (this.pieces[x][y] && this.pieces[x][y].color === color) {
-          this.pieces[x][y].findLegalMoves(this);
+        if (this.pieces[x][y]) {
+          this.players[this.pieces[x][y].color].pieces.push(this.pieces[x][y]);
+        }
+      }
+    }
+  }
+
+  /**
+   * Update player pieces and its legalmoves
+   * @param {string} color - Which player pieces to update.
+   */
+  updatePieces(color) {
+    // When a piece has moved update opponent pieces and its legal moves
+
+    this.players[color].pieces = [];
+    this.players[color].possibleMoves = [];
+
+    for (let outerLoop = 0; outerLoop < this.pieces.length; outerLoop++) {
+      for (let piece of this.pieces[outerLoop]) {
+        if (piece && piece.color === color) {
+          piece.findLegalMoves(this);
+          this.players[color].pieces.push(piece);
+          this.players[color].possibleMoves.push(...piece.legalMoves);
         }
       }
     }
@@ -231,11 +284,10 @@ export class ChessBoard {
   pawnPromo(to) {
     // TODO: Make this so you can chose what to promote to(bishop, knight, rook or queen)
     let tmpPiece = this.pieces[to.x][to.y];
-    console.log("PawnPromo piece: ", tmpPiece);
     if (tmpPiece instanceof Pawn) {
       this.pieces[to.x][to.y] = new Queen(tmpPiece.color, to.x, to.y, true);
-      this.pieces[to.x][to.y].findLegalMoves(this);
     }
+    this.pieces[to.x][to.y].findLegalMoves(this);
   }
 
   unMakeMove() {
@@ -267,71 +319,70 @@ export class ChessBoard {
     // Place captured piece back
     if (currentMove.capture) {
       this.pieces[currentMove.capture.x][currentMove.capture.y] = currentMove.capture;
+      this.players[currentMove.piece.color].captures.pop();
     }
 
     // Update the players pieces
-    // this.updatePieces(currentMove.piece.color);
-    // this.getAllPossibleMoves(currentMove.piece.color);
-
-    // if (!this.verify) {
-    //   this.updatePieces(currentMove.piece.color);
-    // }
+    if (!this.verify) {
+      this.updatePieces(currentMove.piece.color);
+    }
   }
 
-  getAllPossibleMoves(colors = ["black", "white"]) {
-    // Update what pieces the players "own"
-    for (let color of colors) {
-      this.players[color].pieces = [];
-      for (let x = 0; x < 8; x++) {
-        for (let y = 0; y < 8; y++) {
-          if (this.pieces[x][y] && this.pieces[x][y].color == color) {
-            this.players[color].pieces.push(this.pieces[x][y]);
-          }
+  newVerify(color) {
+    let player = this.players[color],
+      myKing = player.getKing(this),
+      opponent = this.players[this.players[color].opponent],
+      opponentMoves = [...opponent.possibleMoves],
+      indexesToRemove = [];
+
+    myKing.legalMoves.forEach((myKingMove, myKingIndex) => {
+      for (let opponentMove of opponentMoves) {
+        if (myKingMove.to.x === opponentMove.to.x && myKingMove.to.y === opponentMove.to.y) {
+          // King can't move here
+          indexesToRemove.push(myKingIndex);
         }
       }
-    }
+    });
+    indexesToRemove.reverse();
+    indexesToRemove.forEach((index) => myKing.legalMoves.splice(index, 1));
 
-    // Make an array of possible moves for each player
-    for (let color in this.players) {
-      let player = this.players[color];
-      player.possibleMoves = [];
-      for (let piece of player.pieces) {
-        if (piece.legalMoves.length > 0) {
-          for (let i = 0; i < piece.legalMoves.length; i++) {
-            player.possibleMoves.push(piece.legalMoves[i]);
-          }
-        }
-      }
-    }
-
-    if (colors.length < 2 && !this.verify) {
-      this.verifyMoves(colors[0]);
-    }
+    // console.log(opponentMoves);
   }
 
   verifyMoves(color) {
     let player = this.players[color],
+      opponentColor = player.opponent,
       tmpArray = [],
-      myKing,
       isChecked = false;
+
     this.verify = true;
-    outerLoop: for (let x = 0; x < 8; x++) {
-      for (let y = 0; y < 8; y++) {
-        if (this.pieces[x][y] && this.pieces[x][y].isKing && this.pieces[x][y].color === color) {
-          myKing = this.pieces[x][y];
-          break outerLoop;
+
+    for (let move of player.possibleMoves) {
+      isChecked = false;
+      this.makeMove(move);
+
+      this.updatePieces(opponentColor);
+      for (let move of this.players[opponentColor].possibleMoves) {
+        if (move.capture && move.capture.isKing) {
+          isChecked = true;
         }
       }
-    }
 
-    if (myKing === undefined) {
-      console.error(`${color} has no King!!!`);
-    }
-    isChecked = myKing.isChecked;
-    for (let move of player.possibleMoves) {
-      myKing.isChecked = false;
-      this.makeMove(move);
-      if (!myKing.isChecked) {
+      // outerLoop: for (let outerArray = 0; outerArray < this.pieces.length; outerArray++) {
+      //   for (let piece of this.pieces[outerArray]) {
+      //     if (piece && piece.color === opponentColor) {
+      //       piece.findLegalMoves(this);
+      //       for (let move of piece.legalMoves) {
+      //         if (move.capture && move.capture.isKing) {
+      //           isChecked = true;
+      //           break outerLoop;
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
+
+      if (!isChecked) {
         tmpArray.push(move);
       }
       this.unMakeMove();
@@ -347,9 +398,6 @@ export class ChessBoard {
         }
       }
     }
-
-    myKing.isChecked = isChecked;
-    this.players[color].isChecked = isChecked;
 
     player.possibleMoves.forEach((move) => {
       this.pieces[move.from.x][move.from.y].legalMoves.push(move);

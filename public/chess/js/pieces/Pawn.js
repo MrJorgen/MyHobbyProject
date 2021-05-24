@@ -37,12 +37,12 @@ export default class Pawn extends ChessPiece {
           if (x >= 1 && board.pieces[x - 1][y] && board.pieces[x - 1][y].color === opponent) {
             this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x: x - 1, y }, this, board.pieces[x - 1][y]));
             if (y === 0 || y === 7) this.promoteMove({ x, y });
-            this.check(board.pieces[x - 1][y], board);
+            super.check(board.pieces[x - 1][y], board);
           }
           if (x <= 6 && board.pieces[x + 1][y] && board.pieces[x + 1][y].color === opponent) {
             this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x: x + 1, y }, this, board.pieces[x + 1][y]));
             if (y === 0 || y === 7) this.promoteMove({ x, y });
-            this.check(board.pieces[x + 1][y], board);
+            super.check(board.pieces[x + 1][y], board);
           }
 
           // En Passant capture

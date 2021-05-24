@@ -1,7 +1,6 @@
 import { ChessBoard } from "./Board.js";
 import { Drawing } from "./Drawing.js";
-import { GuideLayer } from "./GuideLayer.js";
-import { loadImage, themes, make2dArray, ChessImages } from "./utilities.js";
+import { loadImage, themes, ChessImages } from "./utilities.js";
 
 const infoDiv = document.querySelector("#info"),
   messageEle = document.querySelector("#message"),
@@ -20,8 +19,9 @@ let mouse = { x: 0, y: 0, dragging: false },
 
 const squareSize = size - (size % 2),
   startPos = size / 2;
-
 size = squareSize * 9;
+canvas.width = canvas2.width = canvas3.width = animCanvas.width = size;
+canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
 
 // For displaying captured pieces
 let root = document.documentElement,
@@ -30,16 +30,27 @@ let root = document.documentElement,
 root.style.setProperty("--size", size + "px");
 root.style.setProperty("--square-size", squareSize + "px");
 
-canvas.width = canvas2.width = canvas3.width = animCanvas.width = size;
-canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
+const fenStrings = [
+  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+  "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -",
+  "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -",
+  "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1",
+  "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8",
+  "rnbq1k1r/pp1Pbpp1/2p4p/8/1PB5/8/P1P1NnPP/RNBQK2R w KQ - 1 8", // Bug fixing...
+  "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10",
+  "2r3k1/1q1nbppp/r3p3/3pP3/pPpP4/P1Q2N2/2RN1PPP/2R4K b - b3 0 23", // En Passant test
+];
+
 const settings = {
   theme: themes.pieces[3],
   ai: {
     white: false,
-    black: true,
+    black: false,
   },
   squareSize,
   rotate: false,
+  fen: fenStrings[4],
+  debug: true,
 };
 
 let images = new ChessImages(settings);
@@ -48,50 +59,16 @@ await images.loadImages();
 // Positions from
 // https://www.chessprogramming.org/Perft_Results
 
-let fenStrings = [
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-  "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -",
-  "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -",
-  "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1",
-  "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8",
-  "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10",
-  "2r3k1/1q1nbppp/r3p3/3pP3/pPpP4/P1Q2N2/2RN1PPP/2R4K b - b3 0 23", // En Passant test
-];
-
-/*
-Pos 5(index 4)
-
-Depth	Nodes
-1	    44
-2	    1,486
-3	    62,379
-4	    2,103,487
-5	    89,941,194
-
-*/
-
 // Make the board
 const board = new ChessBoard(settings);
 const drawing = new Drawing(piecesCtx, guideCtx, animCtx, images, squareSize);
 window.board = board;
 
-// Rotate the board if human plays black
-if (settings.ai.white && !settings.ai.black) {
-  settings.rotate = true;
-  // drawing.boardCtx.save();
-  // drawing.boardCtx.transform(1, 0, 0, -1, 0, size);
-  // drawing.boardCtx.restore();
-  // drawing.boardCtx.translate(0, size);
-  // drawing.boardCtx.scale(1, -1);
-}
-
-// Load pieces etc
-board.decodeFen(fenStrings[0]);
+// Draw the initial board
 drawing.redraw(board.pieces);
 
 let sounds = { move: new Audio("./sounds/move-self.webm"), capture: new Audio("./sounds/capture.webm"), illegal: new Audio("./sounds/illegal.webm") };
 
-const guides = new GuideLayer(guideCtx, squareSize);
 drawBackground();
 // testWorkers();
 
@@ -101,7 +78,7 @@ function testWorkers() {
   // Testing workers
 
   let workers = [];
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 3; i++) {
     let newBoard = Object.assign({}, board);
     let newWorker = new Worker("./js/workers/findLegalMoves.js", { type: "module" });
     newWorker.postMessage({ newBoard, depth: i });
@@ -110,9 +87,9 @@ function testWorkers() {
   }
 
   function result(evt) {
-    let numPositions = evt.data;
+    let { numPositions, depth } = evt.data;
     let stopWorker = performance.now();
-    console.log(`${numPositions} positions calculated in ${stopWorker - startWorker} ms with worker.`);
+    console.log(`${depth} ply(${numPositions} positions) calculated in ${parseInt(stopWorker - startWorker)} ms using a worker.`);
   }
 }
 
@@ -129,7 +106,7 @@ if (settings.ai.white && board.turn === "white") {
 }
 
 window.test = function (depth) {
-  let correct = [0, 44, 1486, 62379, 2103487, 89941194];
+  let pos5 = [0, 44, 1486, 62379, 2103487, 89941194];
 
   let start = performance.now();
   let numPos = board.perft(depth);
@@ -155,7 +132,7 @@ function grabPiece(evt) {
     evt.preventDefault();
     if (board.history.length > 0) {
       board.unMakeMove();
-      guides.clearAll();
+      drawing.clearAll();
       drawing.redraw(board.pieces);
       board.turn = board.turn === "black" ? "white" : "black";
       if (board.players[board.turn].ai) {
@@ -183,15 +160,16 @@ function grabPiece(evt) {
       img: images[board.pieces[coords.x][coords.y].color][board.pieces[coords.x][coords.y].type],
     };
 
+    drawing.markOrigin(coords);
     drawing.clearSquare(coords);
-    animCtx.drawImage(mouse.piece.img, mouse.x - startPos, mouse.y - startPos, squareSize, squareSize);
+    drawing.animateImage(mouse.piece.img, mouse.x, mouse.y);
 
     // Draw guides showing the possible moves
     for (let move of board.pieces[coords.x][coords.y].legalMoves) {
       if (move.capture) {
-        guides.moveToCapture(move.to);
+        drawing.moveToCapture(move.to);
       } else {
-        guides.moveToEmpty(move.to);
+        drawing.moveToEmpty(move.to);
       }
     }
   }
@@ -223,7 +201,7 @@ function dropPiece(evt) {
       endTurn(currentMove);
     } else {
       // Move is not legal, so set piece back where it was
-      guides.clearAll();
+      drawing.clearAll();
       drawing.drawPiece(mouse.piece.img, mouse.piece);
       delete mouse.piece;
     }
@@ -257,8 +235,7 @@ function handleMouseMove(evt) {
     }
 
     if (mouse.dragging) {
-      animCtx.clearRect(0, 0, size, size);
-      animCtx.drawImage(mouse.piece.img, mouse.x - startPos, mouse.y - startPos, squareSize, squareSize);
+      drawing.animateImage(mouse.piece.img, mouse.x, mouse.y);
     }
   }
 }
@@ -355,8 +332,8 @@ async function endTurn(currentMove, draw = true) {
     }
 
     // Player has moved, clear legal moves mark and mark the move
-    guides.clearAll();
-    guides.markMove(currentMove);
+    drawing.clearAll();
+    drawing.markMove(currentMove);
   }
 
   let opponentColor = currentPlayer.opponent;
