@@ -21,7 +21,7 @@ export default class ChessPiece {
     this.hasMoved = true;
   }
 
-  findLegalMoves(board) {
+  findLegalMoves(board, onlyCaptures = false) {
     this.legalMoves = [];
     let opponent = board.players[this.color].opponent;
     for (let i = 0; i < this.moves.length; i++) {
@@ -41,8 +41,10 @@ export default class ChessPiece {
               this.check(board.pieces[x][y], board);
             }
           } else {
-            // Move to empty square
-            this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, false));
+            if (!onlyCaptures) {
+              // Move to empty square
+              this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, false));
+            }
           }
         } else {
           repeat = false;

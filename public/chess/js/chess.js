@@ -1,5 +1,8 @@
 import { ChessBoard } from "./Board.js";
 import { Drawing } from "./Drawing.js";
+import Bishop from "./pieces/Bishop.js";
+import King from "./pieces/King.js";
+import Knight from "./pieces/Knight.js";
 import { loadImage, themes, ChessImages } from "./utilities.js";
 
 const infoDiv = document.querySelector("#info"),
@@ -31,14 +34,14 @@ root.style.setProperty("--size", size + "px");
 root.style.setProperty("--square-size", squareSize + "px");
 
 const fenStrings = [
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-  "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -",
-  "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -",
-  "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1",
-  "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8",
+  "2r3k1/1q1nbppp/r3p3/3pP3/pPpP4/P1Q2N2/2RN1PPP/2R4K b - b3 0 23", // En Passant test
+  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", // Pos 1
+  "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -", // Pos 2
+  "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - -", // Pos 3
+  "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1", // Pos 4
+  "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8", // Pos 5
   "rnbq1k1r/pp1Pbpp1/2p4p/8/1PB5/8/P1P1NnPP/RNBQK2R w KQ - 1 8", // Bug fixing...
   "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10",
-  "2r3k1/1q1nbppp/r3p3/3pP3/pPpP4/P1Q2N2/2RN1PPP/2R4K b - b3 0 23", // En Passant test
 ];
 
 const settings = {
@@ -47,10 +50,9 @@ const settings = {
     white: false,
     black: false,
   },
-  squareSize,
   rotate: false,
-  fen: fenStrings[4],
-  debug: true,
+  fen: fenStrings[1],
+  debug: false,
 };
 
 let images = new ChessImages(settings);
@@ -71,6 +73,7 @@ let sounds = { move: new Audio("./sounds/move-self.webm"), capture: new Audio(".
 
 drawBackground();
 // testWorkers();
+// animatePerft();
 
 function testWorkers() {
   let startWorker = performance.now();
@@ -127,12 +130,33 @@ document.querySelector("#themeSelect").addEventListener("change", (evt) => {
   drawBackground();
 });
 
+function animatePerft() {
+  let i = 0;
+  animate(i);
+  function animate(i, color = board.turn) {
+    console.log(i);
+    setTimeout(() => {
+      board.makeMove(board.players[color].possibleMoves[i]);
+      drawing.redraw(board.pieces);
+      setTimeout(() => {
+        board.unMakeMove();
+        drawing.redraw(board.pieces);
+        i++;
+        if (i < board.players[color].possibleMoves.length) {
+          animate(i);
+        } else {
+          animate(i, board.players[color].opponent);
+        }
+      }, 250);
+    }, 250);
+  }
+}
+
 function grabPiece(evt) {
   if (evt.which === 3) {
     evt.preventDefault();
     if (board.history.length > 0) {
       board.unMakeMove();
-      drawing.clearAll();
       drawing.redraw(board.pieces);
       board.turn = board.turn === "black" ? "white" : "black";
       if (board.players[board.turn].ai) {
@@ -167,7 +191,9 @@ function grabPiece(evt) {
     // Draw guides showing the possible moves
     for (let move of board.pieces[coords.x][coords.y].legalMoves) {
       if (move.capture) {
-        drawing.moveToCapture(move.to);
+        // drawing.moveToCapture(move.to);
+        drawing.moveToCapture(move.capture);
+        drawing.moveToEmpty(move.to);
       } else {
         drawing.moveToEmpty(move.to);
       }
@@ -201,11 +227,11 @@ function dropPiece(evt) {
       endTurn(currentMove);
     } else {
       // Move is not legal, so set piece back where it was
-      drawing.clearAll();
+      drawing.clearGuide();
       drawing.drawPiece(mouse.piece.img, mouse.piece);
       delete mouse.piece;
     }
-    animCtx.clearRect(0, 0, size, size);
+    drawing.clearAnim();
     delete mouse.piece;
     mouse.dragging = false;
     // if (animCanvas.style.cursor == "wait") {
@@ -332,15 +358,37 @@ async function endTurn(currentMove, draw = true) {
     }
 
     // Player has moved, clear legal moves mark and mark the move
-    drawing.clearAll();
+    drawing.clearAnim();
+    drawing.clearGuide();
     drawing.markMove(currentMove);
   }
-
+  // Insufficent material
+  // ------------------------------------------------------------
+  /*
+    king against king;
+    king against king and bishop;
+    king against king and knight;
+    king and bishop against king and bishop, with both bishops on squares of the same color
+  */
   let opponentColor = currentPlayer.opponent;
   let opponent = board.players[opponentColor];
-  let totalNumberOfPieces = currentPlayer.pieces.length + opponent.pieces.length;
+  let totalNumberOfPieces = 0,
+    bishopOrKnight = 0;
+  for (let x = 0; x < board.pieces.length; x++) {
+    for (let y = 0; y < board.pieces[x].length; y++) {
+      if (board.pieces[x][y] !== undefined) {
+        totalNumberOfPieces++;
+        if (board.pieces[x][y] instanceof Bishop || board.pieces[x][y] instanceof Knight) {
+          bishopOrKnight++;
+        }
+      }
+    }
+  }
+  // ------------------------------------------------------------
 
-  if (board.players[opponentColor].possibleMoves.length > 0 && totalNumberOfPieces > 2 && board.fiftyMove < 100) {
+  let insufficentMaterial = (totalNumberOfPieces == 3 && bishopOrKnight == 1) || totalNumberOfPieces < 3;
+
+  if (board.players[opponentColor].possibleMoves.length > 0 && !insufficentMaterial && board.fiftyMove < 100) {
     // If opponent has possible moves
     board.turn = opponentColor;
     // Check if it's AIs turn
@@ -353,8 +401,7 @@ async function endTurn(currentMove, draw = true) {
     }
   } else {
     console.log(board);
-    if (totalNumberOfPieces <= 2 || board.fiftyMove >= 100) {
-      // Only 2 pieces left(shpuld be the kings)
+    if (insufficentMaterial || board.fiftyMove >= 100) {
       messageEle.innerHTML = "It's a draw!";
     } else if (board.players[opponentColor].possibleMoves.length <= 0) {
       // Opponent has no moves. Check if opponent is in check
@@ -366,7 +413,7 @@ async function endTurn(currentMove, draw = true) {
       }
     }
 
-    messageEle.innerHTML += "<br><small>The game lasted for  " + board.moveIndex + " ply.</small>";
+    messageEle.innerHTML += "<br><small>The game lasted for  " + board.history.length + " ply.</small>";
 
     messageEle.style.transition = "opacity 0.5s ease-in-out";
     messageEle.style.opacity = "1";

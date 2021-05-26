@@ -11,26 +11,27 @@ import { correct } from "./pos5.js";
 
 export class ChessBoard {
   constructor(settings) {
-    this.squareSize = settings.squareSize;
-    this.players = {
-      white: new Player("white", settings.ai.white),
-      black: new Player("black", settings.ai.black),
-    };
-    this.settings = settings;
-    this.theme = settings.theme;
-    this.pieces = null;
-    this.turn = "white";
-    this.history = [];
-    this.moveIndex = 0;
-    this.verify = false;
-    this.calculatedMoves = 0;
-    this.latestVerifiedMove = null;
-    this.fen = settings.fen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    this.fiftyMove = 0;
-    this.enPassant = false;
-    this.perfLog = [];
-    this.depth = 0;
-    this.decodeFen(settings.fen);
+    if (!(settings instanceof ChessBoard)) {
+      this.players = {
+        white: new Player("white", settings.ai.white),
+        black: new Player("black", settings.ai.black),
+      };
+      this.settings = settings;
+      this.theme = settings.theme;
+      this.pieces = null;
+      this.turn = "white";
+      this.history = [];
+      this.moveIndex = 0;
+      this.verify = false;
+      this.calculatedMoves = 0;
+      this.latestVerifiedMove = null;
+      this.fen = settings.fen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+      this.fiftyMove = 0;
+      this.enPassant = false;
+      this.perfLog = [];
+      this.depth = 0;
+      this.decodeFen(settings.fen);
+    }
   }
 
   displayMove(move) {
@@ -40,10 +41,10 @@ export class ChessBoard {
     tmpString += `${lanes.charAt(move.to.x)}${8 - move.to.y}`;
 
     if (move.promote) {
-      if (move.piece.type == "rook") tmpString += "r";
-      if (move.piece.type == "knight") tmpString += "n";
-      if (move.piece.type == "bishop") tmpString += "b";
-      if (move.piece.type == "queen") tmpString += "q";
+      if (move.promotePiece.type == "rook") tmpString += "r";
+      if (move.promotePiece.type == "knight") tmpString += "n";
+      if (move.promotePiece.type == "bishop") tmpString += "b";
+      if (move.promotePiece.type == "queen") tmpString += "q";
     }
 
     return tmpString;
@@ -95,7 +96,6 @@ export class ChessBoard {
                 break;
             }
 
-            this.players[tmpPiece.color].pieces.push(this.pieces[x][y]);
             x++;
           } else {
             x += parseInt(char);
@@ -138,7 +138,6 @@ export class ChessBoard {
           let laneChars = "abcdefgh";
           let x = laneChars.search(fenArray[3].charAt(0));
           let y = 8 - parseInt(fenArray[3].charAt(1));
-          console.log(x, y);
           this.enPassant = { x, y };
         }
       }
@@ -152,8 +151,8 @@ export class ChessBoard {
       }
 
       // Finally update what moves each piece can make on the current board setup
-      this.updatePieces("white");
       this.updatePieces("black");
+      this.updatePieces("white");
       this.verifyMoves(this.turn);
     } else {
       console.error("There is no FEN string to decode!");
@@ -165,7 +164,7 @@ export class ChessBoard {
   }
 
   perft(depth, color = this.turn) {
-    if (depth == 0) return 1;
+    if (depth <= 0) return 1;
 
     if (this.players[color].possibleMoves.length == 0) {
       depth = 0;
@@ -197,43 +196,44 @@ export class ChessBoard {
       myColor = incomingMove.piece.color;
 
     // Delete the to square, just to make sure it is empty when landing on it
+    // this.history.push(incomingMove);
     this.history.push(incomingMove);
-    this.moveIndex++;
     if (!this.verify) {
+      this.moveIndex++;
       this.fiftyMove++;
     }
 
     if (capture) {
       delete this.pieces[capture.x][capture.y];
       this.players[myColor].captures.push(capture);
-      this.fiftyMove = 0;
+      if (!this.verify) this.fiftyMove = 0;
     }
 
     this.pieces[to.x][to.y] = incomingMove.piece;
     this.pieces[to.x][to.y].move(to, this.verify);
     delete this.pieces[from.x][from.y];
 
-    if (!this.verify) {
-      this.enPassant = false;
-      if (incomingMove.enPassant) {
-        this.enPassant = {
-          x: incomingMove.piece.x,
-          y: incomingMove.piece.y - incomingMove.piece.moves.y,
-        };
-      }
+    this.enPassant = false;
+    if (incomingMove.enPassant) {
+      this.enPassant = {
+        x: incomingMove.piece.x,
+        y: incomingMove.piece.y - incomingMove.piece.moves.y,
+      };
     }
 
     // Is it a castle move?
     if (incomingMove.castle) {
       this.makeMove(incomingMove.castle);
+      this.moveIndex--;
+      this.fiftyMove--;
     }
     // Check if it's a pawn to promote
     if (incomingMove.promote) {
-      this.fiftyMove = 0;
-      this.pawnPromo(to);
+      if (!this.verify) this.fiftyMove = 0;
+      this.pawnPromo(incomingMove);
     }
 
-    // Player has made a move and should no longer be in check(else it would be illegal)
+    // Player has made a move and should no longer be in check(otherwise it would be illegal)
     this.players[myColor].isChecked = false;
     this.players[myColor].getKing(this).isChecked = false;
 
@@ -241,22 +241,7 @@ export class ChessBoard {
     // Update moves
     if (!this.verify) {
       this.updatePieces(this.players[this.turn].opponent);
-      this.verifyMoves(this.players[this.turn].opponent);
-    }
-  }
-
-  /**
-   * Sort pieces to each player
-   */
-  sortPieces() {
-    this.players.black.pieces = [];
-    this.players.white.pieces = [];
-    for (let x = 0; x < this.pieces.length; x++) {
-      for (let y = 0; y < this.pieces[x].length; y++) {
-        if (this.pieces[x][y]) {
-          this.players[this.pieces[x][y].color].pieces.push(this.pieces[x][y]);
-        }
-      }
+      this.verifyMoves();
     }
   }
 
@@ -267,34 +252,30 @@ export class ChessBoard {
   updatePieces(color) {
     // When a piece has moved update opponent pieces and its legal moves
 
-    this.players[color].pieces = [];
     this.players[color].possibleMoves = [];
 
-    for (let outerLoop = 0; outerLoop < this.pieces.length; outerLoop++) {
-      for (let piece of this.pieces[outerLoop]) {
-        if (piece && piece.color === color) {
-          piece.findLegalMoves(this);
-          this.players[color].pieces.push(piece);
-          this.players[color].possibleMoves.push(...piece.legalMoves);
+    for (let x = 0; x < this.pieces.length; x++) {
+      for (let y = 0; y < this.pieces[x].length; y++) {
+        // let piece = this.pieces[x][y];
+        if (this.pieces[x][y] && this.pieces[x][y].color === color) {
+          this.pieces[x][y].findLegalMoves(this);
+          this.players[color].possibleMoves.push(...this.pieces[x][y].legalMoves);
         }
       }
     }
   }
 
-  pawnPromo(to) {
+  pawnPromo(incomingMove) {
+    let { to } = incomingMove;
     // TODO: Make this so you can chose what to promote to(bishop, knight, rook or queen)
     let tmpPiece = this.pieces[to.x][to.y];
-    if (tmpPiece instanceof Pawn) {
-      this.pieces[to.x][to.y] = new Queen(tmpPiece.color, to.x, to.y, true);
-    }
+    this.pieces[to.x][to.y] = incomingMove.promotePiece;
     this.pieces[to.x][to.y].findLegalMoves(this);
   }
 
   unMakeMove() {
     if (this.history.length <= 0) return;
     let currentMove = (this.latestVerifiedMove = this.history.pop());
-
-    this.moveIndex--;
 
     if (currentMove.promote && currentMove.piece.promoted) {
       let currentPiece = currentMove.piece;
@@ -319,11 +300,21 @@ export class ChessBoard {
     // Place captured piece back
     if (currentMove.capture) {
       this.pieces[currentMove.capture.x][currentMove.capture.y] = currentMove.capture;
+      this.enPassant = currentMove.enPassant;
       this.players[currentMove.piece.color].captures.pop();
+    }
+
+    if (this.history.length > 0 && this.history[this.history.length - 1].enPassant) {
+      let lastMove = this.history[this.history.length - 1];
+      board.enPassant = {
+        x: lastMove.from.x,
+        y: lastMove.from.y + lastMove.piece.moves.y,
+      };
     }
 
     // Update the players pieces
     if (!this.verify) {
+      this.moveIndex--;
       this.updatePieces(currentMove.piece.color);
     }
   }
@@ -349,40 +340,31 @@ export class ChessBoard {
     // console.log(opponentMoves);
   }
 
-  verifyMoves(color) {
+  verifyMoves(color = this.players[this.turn].opponent) {
     let player = this.players[color],
-      opponentColor = player.opponent,
+      myKing = player.getKing(this),
+      opponent = this.players[player.opponent],
       tmpArray = [],
-      isChecked = false;
+      isChecked = myKing.isChecked;
 
     this.verify = true;
 
-    for (let move of player.possibleMoves) {
-      isChecked = false;
+    let checkMoves = [...player.possibleMoves];
+
+    for (let move of checkMoves) {
+      myKing.isChecked = false;
       this.makeMove(move);
 
-      this.updatePieces(opponentColor);
-      for (let move of this.players[opponentColor].possibleMoves) {
-        if (move.capture && move.capture.isKing) {
-          isChecked = true;
+      for (let x = 0; x < this.pieces.length; x++) {
+        for (let y = 0; y < this.pieces.length; y++) {
+          let piece = this.pieces[x][y] || undefined;
+          if (piece && piece.color === opponent.color) {
+            piece.findLegalMoves(this, true);
+          }
         }
       }
 
-      // outerLoop: for (let outerArray = 0; outerArray < this.pieces.length; outerArray++) {
-      //   for (let piece of this.pieces[outerArray]) {
-      //     if (piece && piece.color === opponentColor) {
-      //       piece.findLegalMoves(this);
-      //       for (let move of piece.legalMoves) {
-      //         if (move.capture && move.capture.isKing) {
-      //           isChecked = true;
-      //           break outerLoop;
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
-
-      if (!isChecked) {
+      if (!myKing.isChecked) {
         tmpArray.push(move);
       }
       this.unMakeMove();
@@ -391,16 +373,27 @@ export class ChessBoard {
 
     player.possibleMoves = tmpArray;
     this.verify = false;
+
     for (let x = 0; x < 8; x++) {
       for (let y = 0; y < 8; y++) {
-        if (this.pieces[x][y]) {
+        if (this.pieces[x][y]?.color === player.color) {
           this.pieces[x][y].legalMoves = [];
         }
       }
     }
 
+    myKing.isChecked = isChecked;
+    this.players[color].isChecked = isChecked;
+
     player.possibleMoves.forEach((move) => {
       this.pieces[move.from.x][move.from.y].legalMoves.push(move);
     });
+    this.updatePieces(opponent.color);
+  }
+
+  makeCopy() {
+    let tmpBoard = new ChessBoard(this);
+    tmpBoard = Object.assign(tmpBoard, this);
+    return tmpBoard;
   }
 }

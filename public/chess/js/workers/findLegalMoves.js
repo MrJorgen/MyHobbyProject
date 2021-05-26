@@ -23,10 +23,6 @@ self.onmessage = (evt) => {
 
   board.decodeFen();
 
-  ["black", "white"].forEach((color) => {
-    board.updatePieces(color);
-  });
-
   let numPositions = board.perft(depth);
   console.log(board);
   postMessage({ numPositions, depth });

@@ -13,12 +13,13 @@ export class Drawing {
 
   redraw(pieces) {
     let startPos = this.padding;
-    this.boardCtx.clearRect(startPos, startPos, this.squareSize * 8, this.squareSize * 8);
+    this.boardCtx.clearRect(0, 0, this.squareSize * 8, this.squareSize * 8);
     for (let x = 0; x < pieces.length; x++) {
       for (let y = 0; y < pieces[x].length; y++) {
         if (pieces[x][y]) {
           let piece = pieces[x][y];
-          this.boardCtx.drawImage(this.images[piece.color][piece.type], piece.x * this.squareSize, piece.y * this.squareSize, this.squareSize, this.squareSize);
+          // this.boardCtx.drawImage(this.images[piece.color][piece.type], piece.x * this.squareSize, piece.y * this.squareSize, this.squareSize, this.squareSize);
+          this.drawPiece(this.images[piece.color][piece.type], piece);
         }
       }
     }
@@ -26,7 +27,6 @@ export class Drawing {
 
   drawPiece(img, coords) {
     let { x, y } = coords;
-    let startPos = this.squareSize / 2;
     this.boardCtx.clearRect(x * this.squareSize, y * this.squareSize, this.squareSize, this.squareSize);
     this.boardCtx.drawImage(img, x * this.squareSize, y * this.squareSize, this.squareSize, this.squareSize);
   }
@@ -37,22 +37,31 @@ export class Drawing {
   }
 
   animateImage(img, x, y) {
-    let scale = 1.1,
-      sF = 1 / ((scale - 1) / 2 + 1);
+    let scale = 1.1;
+    if (this.squareSize * scale > img.width) {
+      scale = img.width / this.squareSize;
+    }
+    let halfScale = (scale - 1) / 2 + 1;
+
     this.animCtx.save();
     this.animCtx.clearRect(-this.padding, -this.padding, this.squareSize * 9, this.squareSize * 9);
     this.animCtx.translate(x, y);
-    this.animCtx.scale(scale, scale);
+    // this.animCtx.scale(scale, scale);
     this.animCtx.shadowBlur = 10;
     this.animCtx.shadowOffsetX = 5;
     this.animCtx.shadowOffsetY = 5;
     this.animCtx.shadowColor = "rgba(0, 0, 0, 0.5)";
-    this.animCtx.drawImage(img, -this.squareSize * sF, -this.squareSize * sF, this.squareSize, this.squareSize);
+    this.animCtx.drawImage(img, -this.squareSize * halfScale, -this.squareSize * halfScale, this.squareSize * scale, this.squareSize * scale);
     this.animCtx.restore();
   }
 
-  clearAll() {
-    this.guideCtx.clearRect(0, 0, this.squareSize * 8 + 0.5, this.squareSize * 8 + 0.5);
+  clearGuide() {
+    // this.guideCtx.clearRect(0, 0, this.squareSize * 8 + 0.5, this.squareSize * 8 + 0.5);
+    this.guideCtx.clearRect(-this.padding, -this.padding, this.squareSize * 9, this.squareSize * 9);
+  }
+
+  clearAnim() {
+    this.animCtx.clearRect(-this.padding, -this.padding, this.squareSize * 9 + 0.5, this.squareSize * 9 + 0.5);
   }
 
   markMove(currentMove) {

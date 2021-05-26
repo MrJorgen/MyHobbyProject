@@ -10,7 +10,7 @@ export class Move {
     this.weight = weight;
     this.enPassant = false;
     this.promote = false;
-    this.promotPiece = null;
+    this.promotePiece = null;
     if (this.capture) {
       this.weight = capture.value - piece.value;
     } else if (this.piece.type === "pawn") {
