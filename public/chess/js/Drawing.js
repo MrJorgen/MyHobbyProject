@@ -12,13 +12,11 @@ export class Drawing {
   }
 
   redraw(pieces) {
-    let startPos = this.padding;
     this.boardCtx.clearRect(0, 0, this.squareSize * 8, this.squareSize * 8);
     for (let x = 0; x < pieces.length; x++) {
       for (let y = 0; y < pieces[x].length; y++) {
         if (pieces[x][y]) {
           let piece = pieces[x][y];
-          // this.boardCtx.drawImage(this.images[piece.color][piece.type], piece.x * this.squareSize, piece.y * this.squareSize, this.squareSize, this.squareSize);
           this.drawPiece(this.images[piece.color][piece.type], piece);
         }
       }
@@ -46,7 +44,6 @@ export class Drawing {
     this.animCtx.save();
     this.animCtx.clearRect(-this.padding, -this.padding, this.squareSize * 9, this.squareSize * 9);
     this.animCtx.translate(x, y);
-    // this.animCtx.scale(scale, scale);
     this.animCtx.shadowBlur = 10;
     this.animCtx.shadowOffsetX = 5;
     this.animCtx.shadowOffsetY = 5;
@@ -56,7 +53,6 @@ export class Drawing {
   }
 
   clearGuide() {
-    // this.guideCtx.clearRect(0, 0, this.squareSize * 8 + 0.5, this.squareSize * 8 + 0.5);
     this.guideCtx.clearRect(-this.padding, -this.padding, this.squareSize * 9, this.squareSize * 9);
   }
 
@@ -65,22 +61,26 @@ export class Drawing {
   }
 
   markMove(currentMove) {
-    let { from, to } = currentMove,
-      squareSize = this.squareSize;
-    this.guideCtx.fillStyle = "rgb(255, 255, 0, 0.4)";
-    this.guideCtx.fillRect(from.x * squareSize, from.y * squareSize, squareSize - 0, squareSize - 0);
-    this.guideCtx.fillRect(to.x * squareSize, to.y * squareSize, squareSize - 0, squareSize - 0);
+    let { from, to } = currentMove;
+    this.markSquare(from);
+    this.markSquare(to);
   }
 
-  markOrigin(to) {
+  markSquare(coords) {
     this.guideCtx.fillStyle = "rgb(255, 255, 0, 0.4)";
-    this.guideCtx.fillRect(to.x * this.squareSize, to.y * this.squareSize, this.squareSize - 0, this.squareSize - 0);
+    this.guideCtx.fillRect(coords.x * this.squareSize, coords.y * this.squareSize, this.squareSize + 1, this.squareSize + 1);
+  }
+
+  attackedSquare(coords) {
+    // this.guideCtx.fillStyle = "rgb(128, 255, 255, 0.3)";
+    this.guideCtx.fillStyle = "rgb(192, 64, 64, 0.3)";
+    this.guideCtx.fillRect(coords.x * this.squareSize, coords.y * this.squareSize, this.squareSize + 1, this.squareSize + 1);
   }
 
   moveToEmpty(pos) {
     let { x, y } = pos;
-    x = (x + 1) * this.squareSize - this.padding;
-    y = (y + 1) * this.squareSize - this.padding;
+    x = x * this.squareSize + this.padding;
+    y = y * this.squareSize + this.padding;
     this.guideCtx.fillStyle = "rgba(0, 0, 0, 0.25)";
     this.guideCtx.beginPath();
     this.guideCtx.arc(x, y, this.squareSize * 0.2, 0, Math.PI * 2);

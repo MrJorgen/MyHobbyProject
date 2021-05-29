@@ -5,16 +5,8 @@ export default class Queen extends ChessPiece {
     super(color, posX, posY);
     this.type = "queen";
     this.value = 900;
+    this.isSlidingPiece = true;
     this.promoted = promoted;
-    this.moves = [
-      { x: 1, repeat: true },
-      { x: -1, repeat: true },
-      { y: 1, repeat: true },
-      { y: -1, repeat: true },
-      { x: 1, y: 1, repeat: true },
-      { x: 1, y: -1, repeat: true },
-      { x: -1, y: 1, repeat: true },
-      { x: -1, y: -1, repeat: true },
-    ];
+    this.moves = [{ x: 1 }, { x: -1 }, { y: 1 }, { y: -1 }, { x: 1, y: 1 }, { x: 1, y: -1 }, { x: -1, y: 1 }, { x: -1, y: -1 }];
   }
 }

@@ -3,6 +3,7 @@ export class Move {
     this.from = from;
     this.to = to;
     this.piece = piece;
+    this.color = this.piece.color;
     this.capture = capture;
     this.hasMoved = piece.hasMoved;
     this.castle = castle;

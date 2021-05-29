@@ -22,25 +22,31 @@ export default class Pawn extends ChessPiece {
   findLegalMoves(board, onlyCaptures = false) {
     let opponent = board.players[this.color].opponent,
       { x, y } = this,
-      repeat = false,
-      enPassant = false;
+      repeat = false;
 
     this.legalMoves = [];
+    this.attackSquares = [];
     do {
       x += this.moves.x;
       y += this.moves.y;
       if (x >= 0 && x <= 7 && y >= 0 && y <= 7) {
         // Pawn captures
         if (!repeat) {
-          if (x >= 1 && board.pieces[x - 1][y] && board.pieces[x - 1][y].color === opponent) {
-            this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x: x - 1, y }, this, board.pieces[x - 1][y]));
-            if (y === 0 || y === 7) this.promoteMove({ x, y });
-            super.check(board.pieces[x - 1][y], board);
+          if (x >= 1) {
+            this.attackSquares.push({ x: x - 1, y });
+            if (board.pieces[x - 1][y] && board.pieces[x - 1][y].color === opponent) {
+              this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x: x - 1, y }, this, board.pieces[x - 1][y]));
+              if (y === 0 || y === 7) this.promoteMove({ x, y });
+              super.check(board.pieces[x - 1][y], board);
+            }
           }
-          if (x <= 6 && board.pieces[x + 1][y] && board.pieces[x + 1][y].color === opponent) {
-            this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x: x + 1, y }, this, board.pieces[x + 1][y]));
-            if (y === 0 || y === 7) this.promoteMove({ x, y });
-            super.check(board.pieces[x + 1][y], board);
+          if (x <= 6) {
+            this.attackSquares.push({ x: x + 1, y });
+            if (board.pieces[x + 1][y] && board.pieces[x + 1][y].color === opponent) {
+              this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x: x + 1, y }, this, board.pieces[x + 1][y]));
+              if (y === 0 || y === 7) this.promoteMove({ x, y });
+              super.check(board.pieces[x + 1][y], board);
+            }
           }
 
           // En Passant capture
@@ -58,7 +64,6 @@ export default class Pawn extends ChessPiece {
         } else {
           // This is the double move
           repeat = false;
-          enPassant = true;
         }
 
         if (board.pieces[x][y]) {
@@ -68,7 +73,7 @@ export default class Pawn extends ChessPiece {
             // Move to empty square
             this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, false));
             if (y === 0 || y === 7) this.promoteMove({ x, y });
-            this.legalMoves[this.legalMoves.length - 1].enPassant = enPassant;
+            this.legalMoves[this.legalMoves.length - 1].enPassant = !repeat;
           }
         }
       } else {

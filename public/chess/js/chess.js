@@ -18,10 +18,10 @@ const infoDiv = document.querySelector("#info"),
 
 let mouse = { x: 0, y: 0, dragging: false },
   size = Math.floor(Math.min(window.innerWidth, window.innerHeight) * (1 / 11)),
-  theme = "green";
+  theme = "brown";
 
 const squareSize = size - (size % 2),
-  startPos = size / 2;
+  startPos = size / 2 - 0.5;
 size = squareSize * 9;
 canvas.width = canvas2.width = canvas3.width = animCanvas.width = size;
 canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
@@ -42,6 +42,8 @@ const fenStrings = [
   "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8", // Pos 5
   "rnbq1k1r/pp1Pbpp1/2p4p/8/1PB5/8/P1P1NnPP/RNBQK2R w KQ - 1 8", // Bug fixing...
   "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10",
+  "K7/p7/8/2b5/8/8/8/R2N3k w - - 1 1",
+  "r3k3/1p3p2/p2q2p1/bn3P2/1N2PQP1/PB6/3K1R1r/3R4 w - - 0 1",
 ];
 
 const settings = {
@@ -52,7 +54,7 @@ const settings = {
   },
   rotate: false,
   fen: fenStrings[1],
-  debug: false,
+  debug: true,
 };
 
 let images = new ChessImages(settings);
@@ -67,13 +69,14 @@ const drawing = new Drawing(piecesCtx, guideCtx, animCtx, images, squareSize);
 window.board = board;
 
 // Draw the initial board
+drawBackground();
 drawing.redraw(board.pieces);
 
 let sounds = { move: new Audio("./sounds/move-self.webm"), capture: new Audio("./sounds/capture.webm"), illegal: new Audio("./sounds/illegal.webm") };
 
-drawBackground();
+setupEventListeners();
 // testWorkers();
-// animatePerft();
+// animatePerft(board.turn);
 
 function testWorkers() {
   let startWorker = performance.now();
@@ -123,6 +126,7 @@ function setupEventListeners() {
   animCanvas.addEventListener("mousedown", grabPiece);
   animCanvas.addEventListener("mousemove", handleMouseMove);
   animCanvas.addEventListener("mouseup", dropPiece);
+  document.addEventListener("keyup", navigateHistory);
 }
 
 document.querySelector("#themeSelect").addEventListener("change", (evt) => {
@@ -130,31 +134,9 @@ document.querySelector("#themeSelect").addEventListener("change", (evt) => {
   drawBackground();
 });
 
-function animatePerft() {
-  let i = 0;
-  animate(i);
-  function animate(i, color = board.turn) {
-    console.log(i);
-    setTimeout(() => {
-      board.makeMove(board.players[color].possibleMoves[i]);
-      drawing.redraw(board.pieces);
-      setTimeout(() => {
-        board.unMakeMove();
-        drawing.redraw(board.pieces);
-        i++;
-        if (i < board.players[color].possibleMoves.length) {
-          animate(i);
-        } else {
-          animate(i, board.players[color].opponent);
-        }
-      }, 250);
-    }, 250);
-  }
-}
-
-function grabPiece(evt) {
-  if (evt.which === 3) {
-    evt.preventDefault();
+function navigateHistory(evt) {
+  evt.preventDefault();
+  if (evt.which == 37) {
     if (board.history.length > 0) {
       board.unMakeMove();
       drawing.redraw(board.pieces);
@@ -168,8 +150,36 @@ function grabPiece(evt) {
         setupEventListeners();
       }
     }
-    return;
   }
+}
+
+function animatePerft(color = board.turn) {
+  let i = 0,
+    delay = 200,
+    movesToAnimate = [...board.players[color].possibleMoves];
+  animate(i, color);
+  function animate(i, color) {
+    console.log(i);
+    setTimeout(() => {
+      board.makeMove(movesToAnimate[i]);
+      drawing.markMove(movesToAnimate[i]);
+      drawing.redraw(board.pieces);
+      setTimeout(() => {
+        board.unMakeMove();
+        drawing.clearGuide();
+        drawing.redraw(board.pieces);
+        i++;
+        if (i < movesToAnimate.length) {
+          animate(i, color);
+        } else {
+          animatePerft(board.players[color].opponent);
+        }
+      }, delay);
+    }, delay);
+  }
+}
+
+function grabPiece(evt) {
   let coords = {
     x: Math.floor((mouse.x - startPos) / squareSize),
     y: Math.floor((mouse.y - startPos) / squareSize),
@@ -184,7 +194,7 @@ function grabPiece(evt) {
       img: images[board.pieces[coords.x][coords.y].color][board.pieces[coords.x][coords.y].type],
     };
 
-    drawing.markOrigin(coords);
+    drawing.markSquare(coords);
     drawing.clearSquare(coords);
     drawing.animateImage(mouse.piece.img, mouse.x, mouse.y);
 
@@ -222,7 +232,6 @@ function dropPiece(evt) {
 
     if (moveIsLegal) {
       // It's a legal move
-
       board.makeMove(currentMove);
       endTurn(currentMove);
     } else {
@@ -361,6 +370,11 @@ async function endTurn(currentMove, draw = true) {
     drawing.clearAnim();
     drawing.clearGuide();
     drawing.markMove(currentMove);
+    if (board.settings.debug) {
+      board.players[board.turn].attackedSquares.forEach((square) => {
+        drawing.attackedSquare(square);
+      });
+    }
   }
   // Insufficent material
   // ------------------------------------------------------------

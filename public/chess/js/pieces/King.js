@@ -11,9 +11,10 @@ export default class King extends ChessPiece {
     this.isChecked = false;
   }
 
-  findLegalMoves(board) {
+  findLegalMoves(board, onlyCaptures = false) {
     // Add the kings normal moves
-    super.findLegalMoves(board);
+    super.findLegalMoves(board, onlyCaptures);
+    if (onlyCaptures) return;
     // Add the kings special moves(castling)
     if (this.x === 4 && (this.y == 7 || this.y == 0)) {
       if (!this.hasMoved && !this.isChecked) {
