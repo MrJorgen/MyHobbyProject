@@ -8,7 +8,6 @@ import King from "./pieces/King.js";
 import Pawn from "./pieces/Pawn.js";
 import { make2dArray } from "./utilities.js";
 import { correct } from "./pos5.js";
-import { Drawing } from "./Drawing.js";
 
 export class ChessBoard {
   constructor(settings) {
@@ -29,6 +28,7 @@ export class ChessBoard {
       this.fiftyMove = 0;
       this.enPassant = false;
       this.perfLog = [];
+      this.isPerfRunning = false;
       this.depth = 0;
       this.decodeFen(settings.fen);
     }
@@ -164,30 +164,40 @@ export class ChessBoard {
   }
 
   perft(depth, color = this.turn) {
-    if (depth <= 0) return 1;
+    if (depth <= 0 || this.players[color].possibleMoves.length == 0) return 1;
+    // if (depth == 1) {
+    //   return this.players[color].possibleMoves.length;
+    // }
 
-    if (this.players[color].possibleMoves.length == 0) {
-      depth = 0;
-      return 0;
-    }
+    // if (this.players[color].possibleMoves.length == 0) {
+    //   depth = 0;
+    //   return 0;
+    // }
 
     let numPositions = 0;
-    this.players[color].possibleMoves.forEach((move) => {
+    this.calculatedMoves++;
+
+    this.updateAllPieces(color);
+    let tmpMoves = [...this.players[color].possibleMoves];
+
+    for (let move of tmpMoves) {
+      // console.log(this.displayMove(move), move.piece.color, move.piece.type);
+      this.perfLog.push({ move: this.displayMove(move), player: move.color });
       this.makeMove(move);
-      let currentMovePositions = parseInt(this.perft(depth - 1, this.players[color].opponent));
+      let currentMovePositions = this.perft(depth - 1, this.players[color].opponent);
       numPositions += currentMovePositions;
-      if (depth == 3 && this.settings.debug) {
+      if (depth == 2 && this.settings.debug) {
         // console.log(this.displayMove(move), move.piece.color, move.piece.type, currentMovePositions);
         // if (currentMovePositions === correct[this.displayMove(move)]) {
         //   console.log(`${this.displayMove(move)}: ${currentMovePositions} -> ${correct[this.displayMove(move)]} `, "✔️");
         // } else {
         //   console.log(`${this.displayMove(move)}: ${currentMovePositions} -> ${correct[this.displayMove(move)]}`, "❌", currentMovePositions - correct[this.displayMove(move)]);
         // }
-
-        this.perfLog.push(`${this.displayMove(move)}: ${currentMovePositions}`);
+        // this.perfLog.push(`${this.displayMove(move)}: ${currentMovePositions}`);
       }
+      // this.perfLog.push({ move: this.displayMove(move), positions: currentMovePositions, player: move.color });
       this.unMakeMove();
-    });
+    }
     return numPositions;
   }
 
@@ -195,14 +205,18 @@ export class ChessBoard {
     let { from, to, capture } = incomingMove,
       myColor = incomingMove.piece.color;
 
-    // Delete the to square, just to make sure it is empty when landing on it
-    incomingMove.enPassant = this.enPassant;
+    // incomingMove.enPassant = this.enPassant;
     this.history.push(incomingMove);
 
     this.moveIndex++;
     this.fiftyMove++;
 
     if (capture) {
+      if (capture.isKing) {
+        console.log(this);
+        console.log(incomingMove);
+        throw new Error("The " + myColor + " player is about to capture " + this.players[myColor].opponent + "s king!");
+      }
       delete this.pieces[capture.x][capture.y];
       this.players[myColor].captures.push(capture);
       if (!this.verify) this.fiftyMove = 0;
@@ -214,11 +228,12 @@ export class ChessBoard {
 
     this.enPassant = false;
     if (incomingMove.enPassant) {
-      console.log("A pawn can be captured en passant!");
       this.enPassant = {
         x: incomingMove.piece.x,
         y: incomingMove.piece.y - incomingMove.piece.moves.y,
       };
+      // TODO: En passant gets lost when unmaking a move that captures an en passant pawn normally
+      // this.history[this.history.length - 1].enPassant = this.enPassant;
     }
 
     // Is it a castle move?
@@ -237,22 +252,17 @@ export class ChessBoard {
     this.players[myColor].isChecked = false;
     this.players[myColor].getKing(this).isChecked = false;
 
-    // Update moves
-
-    // What is needed here is what squares the opponent(this current player who just made a move) attacks
-    this.updatePieces(this.turn);
-
-    // What is needed here is what moves the upcoming(current opponent) can do
-    this.updatePieces(this.players[this.turn].opponent);
-
-    // Verify checks
-    this.newVerify(this.players[this.turn].opponent);
+    // Move is done now prepare for the next
+    // What is needed here is what squares the upcoming opponent(this current player who just made a move) attacks and
+    // what moves the upcoming(current opponent) can do
+    if (!this.perfRunning) {
+      this.updateAllPieces(this.players[myColor].opponent);
+      // this.updatePieces(myColor);
+      // this.updatePieces(this.players[myColor].opponent);
+      // this.newVerify(this.players[myColor].opponent);
+    }
   }
 
-  /**
-   * Update player pieces and its legalMoves
-   * @param {string} color - Which player pieces to update.
-   */
   updatePieces(color) {
     this.players[color].possibleMoves = [];
     this.players[color].attackedSquares = [];
@@ -267,6 +277,34 @@ export class ChessBoard {
         }
       }
     }
+  }
+
+  updateAllPieces(nextMoveColor) {
+    let opponent = this.players[nextMoveColor].opponent;
+    this.players[nextMoveColor].possibleMoves = [];
+    this.players[opponent].attackedSquares = [];
+
+    for (let x = 0; x < 8; x++) {
+      for (let y = 0; y < 8; y++) {
+        if (this.pieces[x][y] && this.pieces[x][y].color === opponent) {
+          this.pieces[x][y].findLegalMoves(this);
+          this.players[opponent].attackedSquares.push(...this.pieces[x][y].attackSquares);
+        }
+      }
+    }
+
+    for (let x = 0; x < 8; x++) {
+      for (let y = 0; y < 8; y++) {
+        if (this.pieces[x][y] && this.pieces[x][y].color === nextMoveColor) {
+          this.pieces[x][y].findLegalMoves(this);
+          this.players[nextMoveColor].possibleMoves.push(...this.pieces[x][y].legalMoves);
+        }
+      }
+    }
+
+    this.players[nextMoveColor].attackedSquares = [];
+    this.players[opponent].possibleMoves = [];
+    this.newVerify(nextMoveColor);
   }
 
   gatherPlayerMoves(color) {
@@ -330,9 +368,12 @@ export class ChessBoard {
 
     // Update the players pieces
     this.moveIndex--;
-    this.updatePieces(currentMove.piece.color);
-    this.updatePieces(this.players[currentMove.piece.color].opponent);
-    this.newVerify(this.players[this.turn].opponent);
+    if (!this.isPerfRunning) {
+      // this.updatePieces(this.players[currentMove.piece.color].opponent);
+      // this.updatePieces(currentMove.piece.color);
+      // this.newVerify(currentMove.piece.color);
+      this.updateAllPieces(currentMove.piece.color);
+    }
   }
 
   clearAllPlayersMoves(pieces) {
@@ -364,9 +405,11 @@ export class ChessBoard {
 
     opponentAttacks = [...opponent.attackedSquares];
     playerMoves = [...player.possibleMoves];
-    myKing = playerPieces.find((piece) => piece.isKing);
+    myKing = player.getKing(this);
+    // myKing = playerPieces.find((piece) => piece.isKing);
 
     // Filter out what moves the king can/can't do
+    // The king is the only piece that can't move to an attacked square
     for (let attackedSquare of opponentAttacks) {
       myKing.legalMoves.forEach((kingMove, i) => {
         if (kingMove.to.x === attackedSquare.x && kingMove.to.y === attackedSquare.y) {
@@ -375,17 +418,19 @@ export class ChessBoard {
         }
       });
     }
+    this.pieces[myKing.x][myKing.y].legalMoves = myKing.legalMoves;
 
     if (player.isChecked) {
-      let nrAttackOnKing = opponentPieces.filter((piece) => piece.isChecking);
-      // Allow pieces to block
-      if (nrAttackOnKing.length == 1) {
+      let piecesAttackingKing = opponentPieces.filter((piece) => piece.isChecking);
+      // Allow all friendly pieces(but the king) to only block check or take the attacking piece
+      if (piecesAttackingKing.length == 1) {
         playerPieces.forEach((piece) => {
-          // Skip checking the since it's already done
+          // Skip checking the king since it's already done
           if (!piece.isKing) {
             if (piece.isPinned) {
               // If the piece is pinned it can't move
               piece.legalMoves = [];
+              piece.isPinned = false;
             } else {
               // The piece is not pinned, now find what(if any) move(s) can block the check
               let tmpMoves = [];
@@ -402,12 +447,32 @@ export class ChessBoard {
         });
         this.gatherPlayerMoves(player.color);
       }
-      // Pieces can't block attacks from 2 or more pieces
-      if (nrAttackOnKing.length >= 2) {
+      // Pieces can't block attacks from 2 or more pieces(the only option is to move the king)
+      if (piecesAttackingKing.length >= 2) {
         this.players[player.color].possibleMoves = myKing.legalMoves;
         this.clearAllPlayersMoves(playerPieces);
         this.setMovesToPieces(player.color);
       }
+      piecesAttackingKing.forEach((piece) => {
+        piece.isChecking = false;
+      });
+    } else {
+      // Player is not in check but may have pinned pieces restricting their movement
+      playerPieces.forEach((piece) => {
+        if (piece.isPinned) {
+          let tmpMoves = [];
+          piece.legalMoves.forEach((move) => {
+            piece.pinnedSquares.forEach((square) => {
+              if (square.x == move.to.x && square.y == move.to.y) {
+                tmpMoves.push(move);
+              }
+            });
+          });
+          piece.legalMoves = tmpMoves;
+          piece.isPinned = false;
+        }
+      });
+      this.gatherPlayerMoves(player.color);
     }
   }
 }

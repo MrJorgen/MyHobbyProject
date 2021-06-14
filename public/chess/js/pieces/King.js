@@ -14,7 +14,10 @@ export default class King extends ChessPiece {
   findLegalMoves(board, onlyCaptures = false) {
     // Add the kings normal moves
     super.findLegalMoves(board, onlyCaptures);
+
+    // Exit if only capture moves are collected
     if (onlyCaptures) return;
+
     // Add the kings special moves(castling)
     if (this.x === 4 && (this.y == 7 || this.y == 0)) {
       if (!this.hasMoved && !this.isChecked) {
@@ -43,12 +46,12 @@ export default class King extends ChessPiece {
             }
           }
           // Check if it's attacked
-          // Get opponents possible moves
+          // Get opponents attacked squares
           if (canCastle) {
-            for (let move of opponent.possibleMoves) {
+            for (let move of opponent.attackedSquares) {
               // Compare squares
-              if (move.to.y === this.y) {
-                if (move.to.x === this.x - 2 || move.to.x === this.x - 1) {
+              if (move.y === this.y) {
+                if (move.x === this.x - 2 || move.x === this.x - 1) {
                   canCastle = false;
                   break;
                 }
@@ -81,12 +84,12 @@ export default class King extends ChessPiece {
             }
           }
           // Check if it's attacked
-          // Get opponents possible moves
+          // Get opponents attacked squares
           if (canCastle) {
-            for (let move of opponent.possibleMoves) {
+            for (let move of opponent.attackedSquares) {
               // Compare squares
-              if (move.to.y === this.y) {
-                if (move.to.x === this.x + 2 || move.to.x === this.x + 1) {
+              if (move.y === this.y) {
+                if (move.x === this.x + 2 || move.x === this.x + 1) {
                   canCastle = false;
                   break;
                 }

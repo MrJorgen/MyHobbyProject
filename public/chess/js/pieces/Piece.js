@@ -10,7 +10,7 @@ export default class ChessPiece {
     this.hasMoved = false;
     this.legalMoves = [];
     this.attackSquares = [];
-    this.pinnedMoves = [];
+    this.pinnedSquares = [];
     this.enPassant = false;
     this.isChecking = false;
     this.isPinned = false;
@@ -26,13 +26,6 @@ export default class ChessPiece {
     this.hasMoved = true;
   }
 
-  // TODO: Make an array of "pinned squares" for pinned pieces(attach to the pinned piece?) but it can only move if the king is not in check
-  // -------------------------------------------------------------------------------------------------------------------------------------------------------
-  // DONE: Make an array of squares that block a check(attach to the king or the player?) Stop before the king and include the square the attacking piece is currently standing on,
-  //       (a capture of a piece that is checking the king is a legal move)
-  // -------------------------------------------------------------------------------------------------------------------------------------------------------
-  // DONE : Add one square beyond the king to the array of attacked squares to avoid allowing the king to escape check by moving away and along the "beam" of a sliding piece
-
   findLegalMoves(board, onlyCaptures = false) {
     this.legalMoves = [];
     this.attackSquares = [];
@@ -44,7 +37,10 @@ export default class ChessPiece {
       let branchMoves = [];
       let x = this.x,
         y = this.y,
-        repeat = this.isSlidingPiece;
+        repeat = this.isSlidingPiece,
+        pinnedPiece = null,
+        searchPin = false,
+        pinnedSquares = [];
 
       do {
         x += this.moves[i].x || 0;
@@ -53,17 +49,106 @@ export default class ChessPiece {
           if (board.pieces[x][y]) {
             // Capture opponents piece
             if (board.pieces[x][y].color === opponent) {
-              this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, board.pieces[x][y]));
-              this.check(board.pieces[x][y], board);
+              if (!searchPin) {
+                this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, board.pieces[x][y]));
+                this.check(board.pieces[x][y], board);
+              }
+              if (searchPin && board.pieces[x][y].isKing) {
+                pinnedPiece.isPinned = true;
+                pinnedPiece.pinnedSquares = [...pinnedSquares, { x: this.x, y: this.y }];
+                repeat = false;
+              }
+              if (searchPin && !board.pieces[x][y].isKing) {
+                pinnedPiece.isPinned = false;
+                searchPin = false;
+                repeat = false;
+              }
+              if (!searchPin && !board.pieces[x][y].isKing) {
+                pinnedPiece = board.pieces[x][y];
+                searchPin = true;
+              }
             } else if (board.pieces[x][y].color === this.color) {
-              branchMoves.push({ x, y });
+              if (!searchPin) {
+                branchMoves.push({ x, y });
+              }
+              repeat = false;
             }
-            repeat = false;
           } else {
             if (!onlyCaptures) {
               // Move to empty square
-              this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, false));
+              if (!searchPin) {
+                this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, false));
+                branchMoves.push({ x, y });
+              }
+              pinnedSquares.push({ x, y });
+            }
+          }
+          if (this.isSlidingPiece && this.isChecking && !blocksAdded) {
+            board.players[opponent].blockSquares = [{ x: this.x, y: this.y }];
+            board.players[opponent].blockSquares.push(...branchMoves);
+            x += this.moves[i].x || 0;
+            y += this.moves[i].y || 0;
+            if (x >= 0 && x <= 7 && y >= 0 && y <= 7) {
               branchMoves.push({ x, y });
+            }
+            blocksAdded = true;
+          }
+          if (!this.isSlidingPiece && this.isChecking && !blocksAdded) {
+            board.players[opponent].blockSquares = [{ x: this.x, y: this.y }];
+            blocksAdded = true;
+          }
+        } else {
+          repeat = false;
+        }
+      } while (repeat);
+      this.attackSquares.push(...branchMoves);
+    }
+  }
+
+  getAttackSquares(board, onlyCaptures = false) {
+    this.attackSquares = [];
+
+    for (let i = 0; i < this.moves.length; i++) {
+      let branchMoves = [];
+      let x = this.x,
+        y = this.y,
+        repeat = this.isSlidingPiece,
+        pinnedPiece = null,
+        searchPin = false,
+        pinnedSquares = [];
+
+      do {
+        x += this.moves[i].x || 0;
+        y += this.moves[i].y || 0;
+        if (x >= 0 && x <= 7 && y >= 0 && y <= 7) {
+          if (board.pieces[x][y]) {
+            // Capture opponents piece
+            if (board.pieces[x][y].color === opponent) {
+              if (!searchPin) {
+                this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, board.pieces[x][y]));
+                this.check(board.pieces[x][y], board);
+              }
+              if (searchPin && board.pieces[x][y].isKing) {
+                pinnedPiece.isPinned = true;
+                pinnedPiece.pinnedSquares = [...pinnedSquares, { x: this.x, y: this.y }];
+                repeat = false;
+              }
+              pinnedPiece = board.pieces[x][y];
+              searchPin = true;
+            } else if (board.pieces[x][y].color === this.color) {
+              if (!searchPin) {
+                branchMoves.push({ x, y });
+              }
+              repeat = false;
+            }
+          } else {
+            if (!onlyCaptures) {
+              // Move to empty square
+              if (!searchPin) {
+                this.legalMoves.push(new Move({ x: this.x, y: this.y }, { x, y }, this, false));
+                branchMoves.push({ x, y });
+              }
+              pinnedSquares.push({ x, y });
             }
           }
           if (this.isSlidingPiece && this.isChecking && !blocksAdded) {

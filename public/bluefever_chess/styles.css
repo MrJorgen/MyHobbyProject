@@ -1,0 +1,224 @@
+:root {
+  --dark: rgb(181, 136, 99);
+  --light: rgb(240, 217, 181);
+  --selected: rgb(126, 86, 52);
+  --current: rgb(224, 224, 6, 0.45);
+}
+
+*,
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  margin-top: 10px;
+}
+
+#fenContainer {
+  width: calc(var(--size) * 8);
+  margin-left: var(--size);
+}
+
+#fenInDiv {
+  position: relative;
+  margin-left: var(--size);
+}
+
+#gameStatus {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+}
+
+h3 {
+  margin-left: var(--size);
+  font-size: 2em;
+  font-weight: normal;
+}
+
+.highLight {
+  background-image: linear-gradient(rgba(255, 255, 0, 0.5), rgba(255, 255, 0, 0.5));
+}
+
+.marker {
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.25);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+#rightPanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 28px;
+  height: calc(var(--size) * 8);
+}
+
+.capturedPieces {
+  margin: 10px 30px 10px 30px;
+}
+
+.capturedPieces img {
+  width: calc(var(--size) * 0.5);
+  height: calc(var(--size) * 0.5);
+  margin-left: -2%;
+}
+
+img.stack {
+  margin-left: -10%;
+}
+
+.capture {
+  width: 90%;
+  height: 90%;
+  border-radius: 50%;
+  border: 5px solid rgba(255, 0, 0, 0.4);
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  position: absolute;
+}
+
+#board {
+  position: relative;
+  margin-top: 20px;
+  margin-left: var(--size);
+  width: calc(var(--size) * 8);
+  height: calc(var(--size) * 8);
+  border: 2px solid black;
+  box-sizing: content-box;
+  float: left;
+}
+
+#engineOutput {
+  position: relative;
+  font-size: 1.1em;
+  margin-left: 30px;
+}
+
+.square {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  font-size: 1.5em;
+}
+
+.fileName {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  cursor: pointer;
+}
+
+.rankName {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  cursor: pointer;
+}
+
+.selected .rankName {
+  left: 1px;
+  top: 1px;
+}
+
+.selected .fileName {
+  right: 1px;
+  bottom: 1px;
+}
+
+.dark {
+  /* background-color: rgb(95, 188, 211); */
+  background-color: var(--dark);
+  color: var(--light);
+}
+
+.light {
+  /* background-color: rgb(175, 221, 233); */
+  background-color: var(--light);
+  color: var(--dark);
+}
+
+.selected {
+  /* background-color: rgb(33, 103, 120); */
+  /* background-color: var(--selected); */
+  border-radius: 4px;
+  border: 4px solid rgba(0, 128, 0, 1);
+}
+
+.current {
+  background-color: var(--current);
+}
+
+.rank1 {
+  top: calc(var(--size) * 7);
+}
+.rank2 {
+  top: calc(var(--size) * 6);
+}
+.rank3 {
+  top: calc(var(--size) * 5);
+}
+.rank4 {
+  top: calc(var(--size) * 4);
+}
+.rank5 {
+  top: calc(var(--size) * 3);
+}
+.rank6 {
+  top: calc(var(--size) * 2);
+}
+.rank7 {
+  top: var(--size);
+}
+.rank8 {
+  top: 0px;
+}
+
+.file1 {
+  left: 0px;
+}
+.file2 {
+  left: var(--size);
+}
+.file3 {
+  left: calc(var(--size) * 2);
+}
+.file4 {
+  left: calc(var(--size) * 3);
+}
+.file5 {
+  left: calc(var(--size) * 4);
+}
+.file6 {
+  left: calc(var(--size) * 5);
+}
+.file7 {
+  left: calc(var(--size) * 6);
+}
+.file8 {
+  left: calc(var(--size) * 7);
+}
+
+.piece {
+  position: absolute;
+}
+
+img.piece {
+  width: var(--size);
+  height: var(--size);
+  transition: all 0.15s ease-in-out;
+}
+
+.current-move {
+  background-color: rgba(255, 255, 0, 0.5);
+}

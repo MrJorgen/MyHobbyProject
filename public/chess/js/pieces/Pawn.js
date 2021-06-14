@@ -19,6 +19,8 @@ export default class Pawn extends ChessPiece {
     }
   }
 
+  // Attacked squares are only for knowing which squares the king can't move to(can't move into check)
+
   findLegalMoves(board, onlyCaptures = false) {
     let opponent = board.players[this.color].opponent,
       { x, y } = this,
@@ -48,7 +50,9 @@ export default class Pawn extends ChessPiece {
               super.check(board.pieces[x + 1][y], board);
             }
           }
-
+          if (this.isChecking) {
+            board.players[opponent].blockSquares = [];
+          }
           // En Passant capture
           if (board.enPassant && y === board.enPassant.y && (board.enPassant.x === x - 1 || board.enPassant.x === x + 1)) {
             if (board.pieces[board.enPassant.x][board.enPassant.y - this.moves.y]?.color !== this.color) {

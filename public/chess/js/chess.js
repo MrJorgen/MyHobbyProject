@@ -14,25 +14,28 @@ const infoDiv = document.querySelector("#info"),
   canvas3 = document.querySelector("#piecesCanvas"),
   piecesCtx = canvas3.getContext("2d"),
   animCanvas = document.querySelector("#animCanvas"),
-  animCtx = animCanvas.getContext("2d");
+  animCtx = animCanvas.getContext("2d"),
+  root = document.documentElement,
+  blackStatus = document.querySelector("#blackStatus"),
+  whiteStatus = document.querySelector("#whiteStatus");
 
 let mouse = { x: 0, y: 0, dragging: false },
   size = Math.floor(Math.min(window.innerWidth, window.innerHeight) * (1 / 11)),
-  theme = "brown";
+  theme = "green";
 
 const squareSize = size - (size % 2),
   startPos = size / 2 - 0.5;
+
 size = squareSize * 9;
+
 canvas.width = canvas2.width = canvas3.width = animCanvas.width = size;
 canvas.height = canvas2.height = canvas3.height = animCanvas.height = size;
 
-// For displaying captured pieces
-let root = document.documentElement,
-  blackStatus = document.querySelector("#blackStatus"),
-  whiteStatus = document.querySelector("#whiteStatus");
 root.style.setProperty("--size", size + "px");
 root.style.setProperty("--square-size", squareSize + "px");
 
+// Positions from
+// https://www.chessprogramming.org/Perft_Results
 const fenStrings = [
   "2r3k1/1q1nbppp/r3p3/3pP3/pPpP4/P1Q2N2/2RN1PPP/2R4K b - b3 0 23", // En Passant test
   "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", // Pos 1
@@ -47,21 +50,18 @@ const fenStrings = [
 ];
 
 const settings = {
+  fen: fenStrings[5],
   theme: themes.pieces[3],
   ai: {
     white: false,
     black: false,
   },
   rotate: false,
-  fen: fenStrings[1],
   debug: true,
 };
 
 let images = new ChessImages(settings);
 await images.loadImages();
-
-// Positions from
-// https://www.chessprogramming.org/Perft_Results
 
 // Make the board
 const board = new ChessBoard(settings);
@@ -75,7 +75,7 @@ drawing.redraw(board.pieces);
 let sounds = { move: new Audio("./sounds/move-self.webm"), capture: new Audio("./sounds/capture.webm"), illegal: new Audio("./sounds/illegal.webm") };
 
 setupEventListeners();
-// testWorkers();
+testWorkers();
 // animatePerft(board.turn);
 
 function testWorkers() {
@@ -84,7 +84,7 @@ function testWorkers() {
   // Testing workers
 
   let workers = [];
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= 5; i++) {
     let newBoard = Object.assign({}, board);
     let newWorker = new Worker("./js/workers/findLegalMoves.js", { type: "module" });
     newWorker.postMessage({ newBoard, depth: i });
@@ -439,16 +439,38 @@ async function drawBackground() {
   bgCtx.clearRect(0, 0, size, size);
 
   // Draw image if in the theme
-  if (themes[theme].hasOwnProperty("img")) {
-    let img = themes[theme].img;
+  if (themes.boards[theme].hasOwnProperty("img")) {
+    let img = themes.boards[theme].img;
     img = await loadImage(img);
     // bgCtx.drawImage(img, 0, 0, size, size);
-    bgCtx.fillStyle = themes[theme].padding;
+    bgCtx.fillStyle = themes.boards[theme].padding;
     bgCtx.fillRect(0, 0, size, size);
     bgCtx.drawImage(img, startPos + 0.5, startPos + 0.5, squareSize * 8, squareSize * 8);
-    bgCtx.globalCompositeOperation = themes[theme].composit;
+    bgCtx.globalCompositeOperation = themes.boards[theme].composit;
+  } else if (themes.boards[theme].hasOwnProperty("img_light")) {
+    let img_light = themes.boards[theme].img_light;
+    img_light = await loadImage(img_light);
+    let img_dark = themes.boards[theme].img_dark;
+    img_dark = await loadImage(img_dark);
+    bgCtx.save();
+    bgCtx.fillStyle = themes.boards[theme].padding;
+    bgCtx.fillRect(0, 0, size, size);
+    bgCtx.translate(startPos, startPos);
+
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        if ((i + j) % 2 === 0) {
+          // Dark
+          bgCtx.drawImage(img_dark, i * squareSize, j * squareSize, squareSize, squareSize, i * squareSize, j * squareSize, squareSize, squareSize);
+        } else {
+          // Light
+          bgCtx.drawImage(img_light, i * squareSize, j * squareSize, squareSize, squareSize, i * squareSize, j * squareSize, squareSize, squareSize);
+        }
+      }
+    }
+    bgCtx.restore();
   } else {
-    bgCtx.fillStyle = themes[theme].padding;
+    bgCtx.fillStyle = themes.boards[theme].padding;
     bgCtx.fillRect(0, 0, size, size);
   }
   bgCtx.translate(startPos + 0.5, startPos + 0.5);
@@ -457,9 +479,9 @@ async function drawBackground() {
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
       if ((i + j) % 2 === 0) {
-        bgCtx.fillStyle = themes[theme].white;
+        bgCtx.fillStyle = themes.boards[theme].white;
       } else {
-        bgCtx.fillStyle = themes[theme].black;
+        bgCtx.fillStyle = themes.boards[theme].black;
       }
       bgCtx.fillRect(i * squareSize, j * squareSize, squareSize, squareSize);
     }
@@ -467,7 +489,7 @@ async function drawBackground() {
   // Draw lines
   // bgCtx.globalCompositeOperation = "source-over";
   for (let i = 0; i <= 8; i++) {
-    if (themes[theme].hasOwnProperty("line")) {
+    if (themes.boards[theme].hasOwnProperty("line")) {
       bgCtx.strokeStyle = themes[theme].line;
       bgCtx.lineWidth = 2.5;
       // Horizontal?

@@ -43,35 +43,45 @@ export function make2dArray(cols, rows) {
 }
 
 export const themes = {
-  silver: {
-    black: "rgb(176, 178, 181)",
-    white: "rgb(229, 229, 230)",
-    padding: "#cdcdd0",
-    line: "rgba(80, 80, 80, 1)",
-  },
-  green: {
-    black: "rgb(118, 150, 86)",
-    white: "rgb(238, 238, 210)",
-    padding: "rgb(178, 194, 148)",
-  },
-  brown: {
-    black: "rgb(181,136,99)",
-    white: "rgb(240,217,181)",
-    padding: "rgb(211, 176, 141)",
-  },
-  texture_warm: {
-    black: "rgba(69, 49, 33, 0.75)",
-    white: "rgba(255, 255, 255, 0.0)",
-    img: "./img/textures/seamless-wood-background-1.jpg",
-    padding: "rgb(225 149 68)",
-    composit: "hard-light",
-  },
-  texture_dark: {
-    black: "rgba(0, 0, 0, 0.5)",
-    white: "rgba(255, 255, 255, 0.0)",
-    padding: "rgba(128, 128, 128, 0.75)",
-    img: "./img/textures/seamless-wood-texture-4.jpg",
-    composit: "hard-light",
+  boards: {
+    silver: {
+      black: "rgb(176, 178, 181)",
+      white: "rgb(229, 229, 230)",
+      padding: "#cdcdd0",
+      line: "rgba(80, 80, 80, 1)",
+    },
+    green: {
+      black: "rgb(118, 150, 86)",
+      white: "rgb(238, 238, 210)",
+      padding: "rgb(178, 194, 148)",
+    },
+    brown: {
+      black: "rgb(181,136,99)",
+      white: "rgb(240,217,181)",
+      padding: "rgb(211, 176, 141)",
+    },
+    texture_warm: {
+      black: "rgba(69, 49, 33, 0.75)",
+      white: "rgba(255, 255, 255, 0.0)",
+      img: "./img/textures/seamless-wood-background-1.jpg",
+      padding: "rgb(225 149 68)",
+      composit: "hard-light",
+    },
+    texture_dark: {
+      black: "rgba(0, 0, 0, 0.5)",
+      white: "rgba(255, 255, 255, 0.0)",
+      padding: "rgba(128, 128, 128, 0.75)",
+      img: "./img/textures/seamless-wood-texture-4.jpg",
+      composit: "hard-light",
+    },
+    two_textures: {
+      black: "rgba(0, 0, 0, 0)",
+      white: "rgba(255, 255, 255, 0)",
+      padding: "rgba(128, 128, 128, 0.75)",
+      // img_light: "./img/textures/seamless-wood-texture-5.jpg",
+      img_light: "./img/textures/seamless-wood-background-1.jpg",
+      img_dark: "./img/textures/texture-seamless-wood-3.jpg",
+    },
   },
   pieces: [
     { name: "default", format: ".svg" },
