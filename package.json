@@ -16,7 +16,7 @@
     "node-tsv-json": "^0.2.1",
     "react-native": "^0.63.3",
     "request": "^2.88.0",
-    "socket.io": "^1.7.3"
+    "socket.io": "^4.5.3"
   },
   "scripts": {
     "start": "node app.js"
